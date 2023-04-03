@@ -1,50 +1,16 @@
-import asyncio
-
-parts = []
-
-class part():
-    voltage: float
-    async def onTick(self):
-        return NotImplemented
-    
-    def __init__(self):
-        parts.append(self)
-
-class sensor(part):
-
-    async def onTick(self):
-        print(self.voltage)
-
-class dial(part):
-
-    nextpart: part
-
-    async def onTick(self):
-        self.nextpart.voltage = self.voltage
-
+import parts
 
 class main():
-
-    async def Loop(loop):
-        
-        for part in parts:
-            await part.onTick()
-
     def main(self) -> None:
+        dial1 = parts.dial
+        sensor1 = parts.sensor
 
-        dial1 = dial()
+        dial1.setVoltage(dial1, 5, 0)
 
-        sensor1 = sensor()
+        dial1.next(dial1, sensor1, 0)
 
-        dial1.nextpart = sensor1
-
-        dial1.voltage = 5
-
-        loop = asyncio.new_event_loop()
-        loop.call_later(5, main())
-        task = loop.create_task(main().Loop())
-        loop.run_until_complete(task)
-
+        dial1.onUse(dial1)
+        
 
 
 
