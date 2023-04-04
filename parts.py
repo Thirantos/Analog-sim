@@ -1,33 +1,52 @@
 inputs = []
 
-class part():
-    voltage = []
 
-    nextPart = None
-    nextPort: int
+class part():
     
+    def __init__(self) -> None:
+        self.input = []
+        self.output: list[list] = []
+
     def next(self, part, port: int):
-        self.nextPart = part
-        self.nextPort = port
+        Port = [part,port]
+        self.output.append(Port)
+        
 
     def onUse(self):
         return NotImplemented
     
-    def setVoltage(self, voltageIn: float, port: int):
-        self.voltage[port].insert(port, voltageIn)
+    def setinput(self, inputIn: float, port: int):
+        self.input.insert(port, inputIn)
+
 
 class sensor(part):
 
+    def __init__(self) -> None:
+        super().__init__()
+
+    input = []
+
     def onUse(self):
-        assert len(self.voltage[0]) == 0, "too many arguments"
-        print(self.voltage[0])
+        assert len(self.input) == 1, "too many arguments"
+        print(self.input[0])
 
-
+ 
 class dial(part):
 
+    input = []
+    output: list[list] = []
+    
+    def __init__(self) -> None:
+        self.input = []
+        self.output: list[list] = []
+        super().__init__()
+
+
     def onUse(self):
-        self.nextPart.voltage[self.nextPort] = self.voltage[0]
-        self.nextPart.onUse()
+        for i in self.output:
+            i[0].setinput(i[0], self.input[0], i[1])
+            i[0].onUse(i[0])
+        
 
 def tick():
     for i in inputs:
