@@ -1,5 +1,8 @@
 #include <iostream>
 #include <vector>
+#include "raylib.h"
+#include "gui.hpp"
+
 
 class Part;
 
@@ -94,6 +97,7 @@ int main()
     for(Part* part: Inputs){
         part->onUse();
     }
+    gui();
 
     return 0;
 }
