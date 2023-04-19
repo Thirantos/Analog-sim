@@ -75,5 +75,12 @@
         "__string": "cpp",
         "chrono": "cpp",
         "algorithm": "cpp"
-    }
+    },
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "d:\\Projects\\git\\Analog-sim",
+            "binaryPath": "d:\\Projects\\git\\Analog-sim\\main.exe",
+            "binaryArgs": []
+        }
+    ]
 }
