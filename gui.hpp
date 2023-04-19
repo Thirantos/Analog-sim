@@ -2,8 +2,7 @@
 #include "include/raygui.h"
 
 
-class component;
-std::vector<component*> components;
+
 
 int drawGui(void){
 

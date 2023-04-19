@@ -1,8 +1,11 @@
 #include "include/raygui.h"
 #include "include/raylib.h"
 //#include "parts.hpp"
-#include "gui.hpp"
 
+#include <vector>
+class component;
+
+std::vector<component*> components;
 class component{
 public:
     Vector2 position;
@@ -27,3 +30,4 @@ public:
     }
 
 };
+
