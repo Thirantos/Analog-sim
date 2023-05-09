@@ -1,6 +1,6 @@
 //#include "include/raygui.h"
 #include "include/raylib.h"
-//#include "parts.hpp"
+#include "parts.hpp"
 
 #include <vector>
 class component;
@@ -20,14 +20,14 @@ public:
         components.push_back(this);
     }
 
-    int draw(){
-        Rectangle bounds;
-        bounds.x = position.x;
-        bounds.y = position.y;
-        bounds.width = 200;
-        bounds.height = 100;
-        GuiPanel(bounds, "Hello");
-    }
+    // int draw(){
+    //     Rectangle bounds;
+    //     bounds.x = position.x;
+    //     bounds.y = position.y;
+    //     bounds.width = 200;
+    //     bounds.height = 100;
+    //     GuiPanel(bounds, "Hello");
+    // }
 
 };
 
