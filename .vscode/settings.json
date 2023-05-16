@@ -81,6 +81,11 @@
             "cwd": "d:\\Projects\\git\\Analog-sim",
             "binaryPath": "d:\\Projects\\git\\Analog-sim\\main.exe",
             "binaryArgs": []
+        },
+        {
+            "cwd": "/Users/thijme/Documents/GitHub/Analog-sim",
+            "binaryPath": "/Users/thijme/Documents/GitHub/Analog-sim/main.exe",
+            "binaryArgs": []
         }
     ]
 }
