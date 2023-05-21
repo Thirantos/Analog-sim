@@ -1,40 +1,39 @@
 #include <iostream>
 #include <vector>
-#include "include/raylib.h"
 #include "gui.hpp"
-// #include "parts.hpp"
-#include "component.hpp"
+//#include "parts.hpp"
+//#include "component.hpp"
+
 
 int main()
 {
-    std::vector<Part*> Inputs;
-    component dial1 = component(0, 0, Dial(), 0);
-    component dial2 = component(0, 0, Dial(), 0);
-    dial1.part.input[0] = 0.5f;
-    dial2.part.input[0] = 0.2f;
+    std::vector<Component*> Inputs;
+    Component dial1(0, 5, new Dial(), 0);
+    Component dial2(5, 10, new Dial(), 0);
+    dial1.part->input.assign(0.5, 0);
+    dial2.part->input.assign(0.2, 0);
 
-    component plus1 = component(0, 0, Plus(), 2);
+    Component plus1(20,30, new Plus(), 2);
 
-    component sensor1 = component(0, 0, Sensor(), 1);
-    component sensor2 = component(0, 0, Sensor(), 1);
-    component sensor3 = component(0, 0, Sensor(), 1);
-
-
-    dial1.part.next(&sensor1.part, 0);
-    dial2.part.next(&sensor2.part, 0);
-
-    dial1.part.next(&plus1.part, 0);
-    dial2.part.next(&plus1.part, 1);
+    Component sensor1(16, 4,  new Sensor(), 1);
+    Component sensor2(70, 29, new Sensor(), 1);
+    Component sensor3(64, 75, new Sensor(), 1);
 
 
-    plus1.part.next(&sensor3.part, 0);
+    dial1.part->next(&sensor1, 0);
+    dial2.part->next(&sensor2, 0);
+    dial1.part->next(&plus1, 0);
+    dial2.part->next(&plus1, 1);
 
-    Inputs.push_back(&dial1.part);
-    Inputs.push_back(&dial2.part);
+
+    plus1.part->next(&sensor3, 0);
+
+    Inputs.push_back(&dial1);
+    Inputs.push_back(&dial2);
 
 
-    for(Part* part: Inputs){
-        part->onUse();
+    for(Component* comp: Inputs){
+        comp->part->onUse();
     }
     
     drawGui();

@@ -74,7 +74,8 @@
         "__nullptr": "cpp",
         "__string": "cpp",
         "chrono": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "*.tcc": "cpp"
     },
     "makefile.launchConfigurations": [
         {

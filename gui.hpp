@@ -2,10 +2,9 @@
 #define RAYGUI_IMPLEMENTATION
 #include "include/raygui.h"
 
+#include "component.hpp"
 
-
-
-int drawGui(void){
+int drawGui(){
 
 
     const int screenWidth = 800;
@@ -27,6 +26,9 @@ int drawGui(void){
 
         DrawCircle(400, 200, 10, col2);
 
+        for(Component* comp: components){
+            comp->draw();
+        }
         
 
         EndDrawing();
