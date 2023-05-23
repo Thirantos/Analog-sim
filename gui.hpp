@@ -4,37 +4,41 @@
 
 #include "component.hpp"
 
-int drawGui(){
+    int DrawGui(){
+
+        const int screenWidth = 800;
+        const int screenHeight = 450;
+
+        // GuiLoadStyleDefault();
+        SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+        InitWindow(screenWidth, screenHeight, "AnalogSim");
+
+        SetTargetFPS(20);
+
+        while (!WindowShouldClose()){
+            BeginDrawing();
+
+            Color BackGroundColour = GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR));
+            Color colour = GetColor(GuiGetStyle(DEFAULT, BASE_COLOR_NORMAL));
 
 
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+            ClearBackground(BackGroundColour);
 
-    // GuiLoadStyleDefault();
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
-    InitWindow(screenWidth, screenHeight, "AnalogSim");
-
-    SetTargetFPS(20);
-
-    while (!WindowShouldClose()){
-        BeginDrawing();
-
-        Color BackGroundColour = GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR));
-        Color col2 = {255, 0, 255, 255};
-
-        ClearBackground(BackGroundColour);
-
-        DrawCircle(400, 200, 10, col2);
-
-        for(Component* comp: components){
-            comp->draw();
+        
+            for(Part* part: parts){
+                //part->onUse();
+                part->draw();
+            }
+            for(Part* part: partsInput){
+                //part->onUse();
+                part->onUse();
+            }
+            
+            EndDrawing();
+            
         }
+
         
 
-        EndDrawing();
+
     }
-
-    return 0;
-
-
-}
