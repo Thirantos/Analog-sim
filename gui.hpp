@@ -13,10 +13,13 @@
         SetConfigFlags(FLAG_WINDOW_RESIZABLE);
         InitWindow(screenWidth, screenHeight, "AnalogSim");
 
-        SetTargetFPS(20);
+        SetTargetFPS(5);
 
         while (!WindowShouldClose()){
+            Vector2 MousePos = GetMousePosition();
             BeginDrawing();
+            MousePos.x += GetMouseDelta().x;
+            MousePos.y += GetMouseDelta().y;
 
             Color BackGroundColour = GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR));
             Color colour = GetColor(GuiGetStyle(DEFAULT, BASE_COLOR_NORMAL));

@@ -8,10 +8,10 @@ class Part;
 class Port;
 std::vector<Part*> parts;
 std::vector<Part*> partsInput;
-std::vector<Port*> ports;
+std::vector<Port> ports;
 
 class Port{
-public:
+public:  
     Part* next;
     int port;
     Part* prev;
@@ -20,7 +20,11 @@ public:
         this->next = next;
         this->port = port;
         this->prev = prev;
-        ports.push_back(this);
+    }
+    void kill(){
+
+        delete this;
+       
     }
 };
 
@@ -52,17 +56,17 @@ public:
     }
 
     void next(Part* part, int port){
-        new Port(part, port, this);
+        ports.push_back(Port(part, port, this));
     }
 
     void Output(Part* self, float value){
         
-        for (Port* port : ports){
-            if(port->prev != self){continue;}
+        for (Port port : ports){
+            if(port.prev != self){continue;}
             
-            port->next->input.insert(port->next->input.begin() + port->port, value);
-            std::cout << port->prev->name << "-->" << value << "-->" << port->next->name << port->next->input[0] << std::endl;
-            port->next->onUse();
+            port.next->input.insert(port.next->input.begin() + port.port, value);
+            std::cout << port.prev->name << "-->" << value << "-->" << port.next->name << port.next->input[0] << std::endl;
+            port.next->onUse();
         }
         
     }
@@ -196,12 +200,18 @@ int Part::draw(){
 
     }
 
+    if(IsKeyDown(KEY_A)){
+            for(Part* part : parts){
+                next(this, 0);
+            }
+    }
+
     if (isDraggingNext){
         DrawLine(bounds.x + bounds.width, bounds.y + bounds.height/2, GetMouseX(), GetMouseY(), BLACK);
         if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
         {
         
-            for(Part* part : parts){
+            for(Part*& part : parts){
                  if(CheckCollisionPointRec(GetMousePosition(), part->inBounds)){
                     next(part, 0);
                  }
@@ -213,23 +223,25 @@ int Part::draw(){
     if (isDraggingPrev){
         if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
         {
-        
-            for(Port* port : ports){
-                if(port->next != this){continue;}
-                 if(CheckCollisionPointRec(GetMousePosition(), port->prev->outBounds)){
-                    delete port;
+            for(Port& port : ports){
+                if(port.next != this){continue;}
+                 if(CheckCollisionPointRec(GetMousePosition(), port.prev->outBounds)){
+                    
+                    port.next = nullptr;
+                    port.prev = nullptr;
                  }
             }
             isDraggingPrev = false;
         }
     }
 
-    for (Port* port : ports){
-            if(port->prev != this){continue;}
-            DrawLine(bounds.x + bounds.width, bounds.y + bounds.height/2, port->next->bounds.x, port->next->bounds.y + bounds.height/2, BLACK);
+    for (Port port : ports){
+            if(port.prev != this){continue;}
+            DrawLine(bounds.x + bounds.width, bounds.y + bounds.height/2, port.next->bounds.x, port.next->bounds.y + bounds.height/2, BLACK);
         }
 
     GuiPanel(bounds, name);
+    
     if(name == "Sensor"){
         if (input.empty()){input.push_back(0.0f);}
         std::string str = std::to_string(input[0]);
