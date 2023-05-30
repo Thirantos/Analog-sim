@@ -10,23 +10,6 @@ std::vector<Part*> parts;
 std::vector<Part*> partsInput;
 std::vector<Port> ports;
 
-class Port{
-public:  
-    Part* next;
-    int port;
-    Part* prev;
-
-    Port(Part* next, int port, Part* prev){
-        this->next = next;
-        this->port = port;
-        this->prev = prev;
-    }
-    void kill(){
-
-        delete this;
-       
-    }
-};
 
 
 class Part{
@@ -37,6 +20,8 @@ public:
     Vector2 position;
     Vector2 mousepos;
     int _ports;
+    std::vector<Port*> portsIN;
+    std::vector<Port*> portsOUT;
 
     Rectangle bounds;
     Rectangle inBounds = bounds;
@@ -55,25 +40,32 @@ public:
         
     }
 
-    void next(Part* part, int port){
-        ports.push_back(Port(part, port, this));
-    }
+    void next(Part* part, int port);
 
-    void Output(Part* self, float value){
-        
-        for (Port port : ports){
-            if(port.prev != self){continue;}
-            
-            port.next->input.insert(port.next->input.begin() + port.port, value);
-            std::cout << port.prev->name << "-->" << value << "-->" << port.next->name << port.next->input[0] << std::endl;
-            port.next->onUse();
-        }
-        
-    }
+    void Output(Part* self, float value);
     int draw();
 
 };
 
+class Port{
+public:  
+    Part* next;
+    int port;
+    Part* prev;
+
+    Port(Part* next, int port, Part* prev){
+        this->next = next;
+        this->port = port;
+        this->prev = prev;
+        prev->portsOUT.push_back(this);
+        next->portsIN.push_back(this);
+    }
+    void kill(){
+
+        delete this;
+       
+    }
+};
 
 class Dial : public Part{
 public:
@@ -164,96 +156,116 @@ public:
 };
 
 
+void Part::next(Part* part, int port){
+    ports.push_back(Port(part, port, this));
+}
+    
 
-int Part::draw(){
-    //std::cout << "Drawing";
+        
+void Part::Output(Part* self, float value) {
+    std::vector<Port*> portsToProcess;  // New vector to store ports to process
+
+    // Find the ports that need to be processed
+    for (Port port : ports) {
+        if (port.prev == self) {
+            portsToProcess.push_back(&port);
+        }
+    }
+
+    // Process the ports
+    for (Port* port : portsToProcess) {
+        port->next->input.insert(port->next->input.begin() + port->port, value);
+        std::cout << port->prev->name << "-->" << value << "-->" << port->next->name << port->next->input[0] << std::endl;
+        port->next->onUse();
+    }
+}
+        
+
+int Part::draw() {
     Rectangle inBounds = bounds;
     Rectangle outBounds = bounds;
     Rectangle dragBounds = bounds;
-
     dragBounds.height = 25;
-    inBounds.width, outBounds.width = bounds.width/2;
-    inBounds.height, outBounds.height = bounds.height;
+    inBounds.width = outBounds.width = bounds.width / 2;
+    inBounds.height = outBounds.height = bounds.height;
     outBounds.x = bounds.x + outBounds.width;
-    
-    if (!isDragging && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
 
-        if(CheckCollisionPointRec(GetMousePosition(), dragBounds)){
+    if (!isDragging && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        if (CheckCollisionPointRec(GetMousePosition(), dragBounds)) {
             isDragging = true;
         }
-        if(CheckCollisionPointRec(GetMousePosition(), outBounds)){
+        if (CheckCollisionPointRec(GetMousePosition(), outBounds)) {
             isDraggingNext = true;
         }
-        if(CheckCollisionPointRec(GetMousePosition(), inBounds)){
+        if (CheckCollisionPointRec(GetMousePosition(), inBounds)) {
             isDraggingPrev = true;
         }
     }
 
-    if (isDragging){
+    if (isDraggingPrev && !isDragging) {
+        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
+            for (Port* port : portsIN) {
+                
+                if (port->next != this) {
+                if(port->prev != nullptr) {
+                if (CheckCollisionPointRec(GetMousePosition(), port->prev->outBounds)) {    //HERE IS AN ERROR
+                    
+                    port->kill();
 
+                }
+            }}}
+            isDraggingPrev = false;
+        }
+    }
+
+    if (isDragging) {
         bounds.x += GetMouseDelta().x;
         bounds.y += GetMouseDelta().y;
-        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
-        {
+        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
             isDragging = false;
         }
-
     }
 
-    if(IsKeyDown(KEY_A)){
-            for(Part* part : parts){
-                next(this, 0);
-            }
+    if (IsKeyDown(KEY_A)) {
+        for (Part* part : parts) {
+            next(this, 0);
+        }
     }
 
-    if (isDraggingNext){
-        DrawLine(bounds.x + bounds.width, bounds.y + bounds.height/2, GetMouseX(), GetMouseY(), BLACK);
-        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
-        {
-        
-            for(Part*& part : parts){
-                 if(CheckCollisionPointRec(GetMousePosition(), part->inBounds)){
+    if (isDraggingNext) {
+        DrawLine(bounds.x + bounds.width, bounds.y + bounds.height / 2, GetMouseX(), GetMouseY(), BLACK);
+        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON)) {
+            for (Part* part : parts) {
+                if (part != this && CheckCollisionPointRec(GetMousePosition(), part->inBounds)) {
                     next(part, 0);
-                 }
+                }
             }
             isDraggingNext = false;
         }
     }
 
-    if (isDraggingPrev){
-        if (IsMouseButtonReleased(MOUSE_LEFT_BUTTON))
-        {
-            for(Port& port : ports){
-                if(port.next != this){continue;}
-                 if(CheckCollisionPointRec(GetMousePosition(), port.prev->outBounds)){
-                    
-                    port.next = nullptr;
-                    port.prev = nullptr;
-                 }
-            }
-            isDraggingPrev = false;
+    
+
+    for (Port port : ports) {
+        if (port.prev != this) {
+            continue;
         }
+        DrawLine(bounds.x + bounds.width, bounds.y + bounds.height / 2, port.next->bounds.x, port.next->bounds.y + bounds.height / 2, BLACK);
     }
 
-    for (Port port : ports){
-            if(port.prev != this){continue;}
-            DrawLine(bounds.x + bounds.width, bounds.y + bounds.height/2, port.next->bounds.x, port.next->bounds.y + bounds.height/2, BLACK);
-        }
-
     GuiPanel(bounds, name);
-    
-    if(name == "Sensor"){
-        if (input.empty()){input.push_back(0.0f);}
+
+    if (name == "Sensor") {
+        if (input.empty()) {
+            input.push_back(0.0f);
+        }
         std::string str = std::to_string(input[0]);
         std::cout << str << std::endl;
         char* value = const_cast<char*>(str.c_str());
         std::cout << value << std::endl;
-        GuiDrawText( value, bounds, 1, BLACK);
+        GuiDrawText(value, bounds, 1, BLACK);
         input.clear();
     }
-    
 
-    //GuiPanel(bounds, name);
     return 1;
 }
-

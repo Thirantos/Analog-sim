@@ -6,4 +6,4 @@ LIBSMAC = -L. -lraylib -framework OpenGL -framework Cocoa -framework IOKit -fram
 build:
 	g++ main.cpp ${LIBS} -o main.exe -g -w
 mac:
-	g++ main.cpp ${LIBSMAC} -o main.exe -std=c++11 -mcpu=apple-m1 -Wall -Wextra
+	g++ main.cpp ${LIBSMAC} -o main.exe -std=c++11 -mcpu=apple-m1 -Wall -Wextra -g

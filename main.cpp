@@ -5,12 +5,12 @@
 //#include "component.hpp"
 
 int main(){
-    Dial dial1(0, 5, 0);
-    Dial dial2(50, 10, 0);
-    Plus plus1(200, 300, 2);
-    Sensor sensor1(106, 4, 1);
-    Sensor sensor2(70, 29, 1);
-    Sensor sensor3(64, 705, 1);
+    Dial dial1(0, 0, 0);
+    Dial dial2(100, 0, 0);
+    Plus plus1(200, 0, 2);
+    Sensor sensor1(0, 100, 1);
+    Sensor sensor2(100, 100, 1);
+    Sensor sensor3(200, 100, 1);
 
     for (Part* part : partsInput){
         std::cout << part->name << std::endl;

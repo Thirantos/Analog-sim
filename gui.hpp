@@ -12,8 +12,7 @@
         // GuiLoadStyleDefault();
         SetConfigFlags(FLAG_WINDOW_RESIZABLE);
         InitWindow(screenWidth, screenHeight, "AnalogSim");
-
-        SetTargetFPS(5);
+        SetTargetFPS(24);
 
         while (!WindowShouldClose()){
             Vector2 MousePos = GetMousePosition();
