@@ -30,6 +30,7 @@
             for(Part* part: parts){
                 //part->onUse();
                 part->draw();
+                part->drag();
             }
             for(Part* part: partsInput){
                 //part->onUse();

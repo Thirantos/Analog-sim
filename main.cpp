@@ -1,8 +1,11 @@
+bool debug = false;
+
 #include <iostream>
 #include <vector>
 #include "gui.hpp"
 //#include "parts.hpp"
 //#include "component.hpp"
+
 
 int main(){
     Dial dial1(0, 0, 0);
