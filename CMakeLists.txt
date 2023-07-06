@@ -18,8 +18,8 @@ if (NOT raylib_FOUND)
 endif()
 
 include_directories(include)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 
-add_executable(Analogsim main.cpp component.cpp component.h)
+add_executable(Analogsim main.cpp component.cpp component.h gui.h gui.cpp)
 
-target_link_libraries(Analogsim raylib)
+target_link_libraries(Analogsim raylib opengl32 gdi32)

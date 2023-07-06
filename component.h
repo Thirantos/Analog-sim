@@ -9,25 +9,32 @@
 
 
 
+
 class Part;
 class Port;
 
 extern std::vector<Part*> partsList;
 extern std::vector<Part*> partsInput;
 extern std::vector<Port> portsList;
+extern bool mouseDragging;
+//extern int identifierX;
 
 
 class Part{
+
 public:
     char* name;
-    std::vector<float> input;
+    int id;
 
     Vector2 position;
     Vector2 mousepos;
     int _ports;
-    std::vector<Port*> portsIN;
-    std::vector<Port*> portsOUT;
 
+
+    //std::vector<Port*> portsIN;
+    /*
+    std::vector<Port*> portsOUT;
+*/
     Rectangle bounds;
     Rectangle inBounds = bounds;
     Rectangle outBounds = bounds;
@@ -37,33 +44,58 @@ public:
     bool isDraggingNext = false;
     bool isDraggingPrev = false;
 
-    virtual void onUse(){}
+    virtual void  onUse(){}
+    bool drag();
+    int kill();
 
     Part() = default;
+    int updateBounds();
 
-    Part(int x, int y, int ports){
-        
+    ~Part(){
+        delete this;
+    }
+
+    Part(int x, int y, int ports) {
+
     }
 
     void next(Part* part, int port);
 
-    void Output(Part* self, float value);
+    void Output(float value);
+    int drawPorts();
     int draw();
 
 };
 
 class Port{
-public:  
-    Part* next;
-    int port;
-    Part* prev;
+private:
+    float _value;
+public:
+    int id;
+
+    Part* nextPart;
+    Part* prevPart;
+    float value() const { return _value; }
+    bool operator==(const Port& other) const {
+        // Define your own equality comparison logic here
+        // Return true if the objects are considered equal, false otherwise
+        // Example: Compare relevant members of the objects
+        return this->id == other.id;
+    }
+
+    bool operator!=(const Port& other) const {
+        // Define your own inequality comparison logic here
+        // Return true if the objects are considered not equal, false otherwise
+        // Example: Use the negation of the equality operator
+        return this->id != other.id;
+    }
 
     Port(Part* next, int port, Part* prev);
-    void kill(){
 
-        delete this;
-       
-    }
+    void setValue(float x);
+    void kill();
+
+
 };
 
 class Dial : public Part{
