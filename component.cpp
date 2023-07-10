@@ -8,6 +8,7 @@
 
 
 #include "include/raylib.h"
+#include <nlohmann/json.hpp>
 #define RAYLIB_H
 #include "include/raygui.h"
 #include "gui.h"
@@ -18,10 +19,12 @@
 #include <random>
 #include <sstream>
 #include <iomanip>
+using json = nlohmann::json;
+json savefile;
 
 std::vector<Part*> partsList;
 std::vector<Part*> partsInput;
-std::vector<Port> portsList;
+std::vector<Port*> portsList;
 bool mouseDragging;
 int identifierPART = 0;
 int identifierPORT = 0;
@@ -34,11 +37,11 @@ bool insideRect(Rectangle rect, Vector2 point){
 
 
 int Part::drawPorts(){
-    for (Port port : portsList) {
-        if (port.prevPart != this) {
+    for (Port* port : portsList) {
+        if (port->prevPart != this) {
             continue;
         }
-        DrawLine(bounds.x + bounds.width, bounds.y + bounds.height / 2, port.nextPart->bounds.x, port.nextPart->bounds.y + bounds.height / 2, BLACK);
+        DrawLine(bounds.x + bounds.width, bounds.y + bounds.height / 2, port->nextPart->bounds.x, port->nextPart->bounds.y + bounds.height / 2, BLACK);
     }
     return 1;
 }
@@ -75,20 +78,22 @@ int Part::draw() {
 
     }
 
-    if (name == "Sensor") {
+    if (dynamic_cast<Sensor*>(this) != nullptr) {
 
         std::string str = "DISCONNECTED";
-        for (Port port : portsList) {
-            if(port.nextPart != this) continue;
-            str = std::to_string(port.value());
+        for (Port* port : portsList) {
+            if(port->nextPart != this) continue;
+            str = std::to_string(port->value());
         }
 
         //std::cout << str << std::endl;
         char* value = const_cast<char*>(str.c_str());
         //std::cout << value << std::endl;
-        DrawText(value, bounds.x + bounds.width / 2, bounds.y + bounds.height / 2,FONTSIZE, RED);
 
+        DrawText(str.c_str(), dragBounds.x + (bounds.width - MeasureText(str.c_str(), FONTSIZE*0.7))/2,
+                 dragBounds.y + dragBounds.height,  FONTSIZE*0.7, RED);
     }
+
 
 
 
@@ -119,9 +124,9 @@ bool Part::drag(){
                 if (insideRect(part->bounds, GetMousePosition()) && !skip) {
                     std::cout << "connecting to " << part->name << std::endl;
 
-                    Port p(part, 0, this);
+                    new Port(part, 0, this);
 
-                    portsList.push_back(p);
+
 
 
                 }
@@ -131,12 +136,12 @@ bool Part::drag(){
         }
         if (isDraggingPrev) {
             bool skip = false;
-            for (Port port: portsList) {
-                if(port.nextPart != this)continue;
-                std::cout << "Checking " << port.prevPart->id << std::endl;
-                if (insideRect(port.prevPart->bounds, GetMousePosition())) {
+            for (Port* port: portsList) {
+                if(port->nextPart != this)continue;
+                std::cout << "Checking " << port->prevPart->id << std::endl;
+                if (insideRect(port->prevPart->bounds, GetMousePosition())) {
 
-                    std::cout << "disconecting from " << port.prevPart->name << std::endl;
+                    std::cout << "disconecting from " << port->prevPart->name << std::endl;
 
                     auto it = std::find(portsList.begin(), portsList.end(), port);
 
@@ -145,7 +150,7 @@ bool Part::drag(){
                         portsList.erase(it);
                     }
 
-                    port.kill();
+                    port->kill();
 
 
                 }
@@ -223,17 +228,15 @@ int Part::updateBounds(){
 void Part::Output(float value) {
     //std::vector<Port*> portsToProcess;
 
-
-
-    for (Port port : portsList) {
-        if(port.prevPart != this) continue;
-        port.setValue(value);
+    for (Port* port : portsList) {
+        if(port->prevPart != this) continue;
+        port->setValue(value);
         /*
         if(port->prevPart == nullptr || port->nextPart == nullptr) { continue; }
         if(port->prevPart->id > identifierPART || port->nextPart->id > identifierPART) { continue; }*/
 
-        std::cout << port.prevPart->name << "(id: " << port.prevPart->id << ") --> " << value << " --> " << port.nextPart->name << "(id: " << port.nextPart->id << ")" << std::endl;
-        port.nextPart->onUse();
+        std::cout << port->prevPart->name << "(id: " << port->prevPart->id << ") --> " << value << " --> " << port->nextPart->name << "(id: " << port->nextPart->id << ")" << std::endl;
+        port->nextPart->onUse();
     }
 }
 
@@ -251,6 +254,7 @@ Dial::Dial(int x, int y, int ports) {
 
     id = identifierPART;
     identifierPART++;
+    val = 0;
 
 
     partsList.push_back(this);
@@ -266,13 +270,34 @@ Dial::Dial(int x, int y, int ports) {
 }
 
 void Dial::onUse() {
-    Output(voltage);
+    int v = val;
+    Output(float(v));
 }
 
-void Dial::set(float volt) {
+void Dial::set(int volt) {
 
 
-    voltage = volt;
+    val = volt;
+}
+
+int Dial::draw() {
+    Part::draw();
+    Rectangle Spinner = bounds;
+    Spinner.height *= 0.5;
+    Spinner.width *= 0.7;
+
+    Spinner.y += Spinner.height * 0.6;
+    Spinner.x += bounds.width * 0.15;
+    GuiSpinner(Spinner, "", &val, 0, INFINITY, false);
+    return 0;
+}
+
+void Dial::serialize() {
+    savefile["parts"][id]["position"]["x"] = position.x;
+    savefile["parts"][id]["position"]["y"] = position.y;
+    savefile["parts"][id]["type"] = PART_PLUS;
+    savefile["parts"][id]["value"] = val;
+
 }
 
 Sensor::Sensor(int x, int y, int ports) {
@@ -336,9 +361,9 @@ void Plus::onUse() {
 
     float sum = 0;
 
-    for (Port port : portsList) {
-        if(port.nextPart != this) continue;
-        sum += port.value();
+    for (Port* port : portsList) {
+        if(port->nextPart != this) continue;
+        sum += port->value();
     }
 
 
@@ -348,27 +373,45 @@ void Plus::onUse() {
 
 }
 
-
-
-Port::Port(Part *next, int port, Part *prev) {
-    nextPart = next;
-    prevPart = prev;
-    //prev->portsOUT.push_back(this);
-    //next->portsIN.push_back(this);
-    portsList.emplace_back(*this);
-    id = identifierPORT;
-    identifierPORT++;
+void Plus::serialize() {
+    savefile["parts"][id]["position"]["x"] = position.x;
+    savefile["parts"][id]["position"]["y"] = position.y;
+    savefile["parts"][id]["type"] = PART_PLUS;
 }
 
-void Port::kill(){
-    auto it = std::find(portsList.begin(), portsList.end(), *this);
 
+Port::Port(Part* next, int port, Part* prev) {
+    nextPart = next;
+    prevPart = prev;
+    id = identifierPORT;
+    identifierPORT++;
+    portsList.push_back(this); // Store the pointer to the Port object
+}
+
+
+void Port::kill() {
+    auto it = std::find(portsList.begin(), portsList.end(), this);
     if (it != portsList.end()) {
-        // Erase the object from the vector
         portsList.erase(it);
     }
 }
 
-void Port::setValue(float x) {
-    _value = x;
+void Port::setValue(float value) {
+    _value = value;
+}
+Part::~Part() {
+    // Delete the ports associated with this part
+    for (Port* port : portsList) {
+        if (port->prevPart == this || port->nextPart == this) {
+            delete port;
+        }
+    }
+}
+
+Port::~Port() {
+    // Remove the port from the portsList vector when deleted
+    auto it = std::find(portsList.begin(), portsList.end(), this);
+    if (it != portsList.end()) {
+        portsList.erase(it);
+    }
 }

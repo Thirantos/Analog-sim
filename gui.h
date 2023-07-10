@@ -18,13 +18,26 @@ class gui {
 };
 
 class rightClickMenu{
+
+    Part* partSelected;
+    Rectangle rect{};
+    Rectangle newRect{};
+    Rectangle delRect{};
+public:
+    Vector2 position{};
+    rightClickMenu();
+    int draw();
+
+};
+
+class partSelector{
     Vector2 position{};
     Part* partSelected;
     Rectangle rect{};
     Rectangle newRect{};
     Rectangle delRect{};
 public:
-    rightClickMenu();
+    partSelector();
     int draw();
 
 };

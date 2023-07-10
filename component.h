@@ -1,6 +1,9 @@
 
 #ifndef ANALOGSIM_COMPONENT_H
 #define ANALOGSIM_COMPONENT_H
+#define PART_DIAL 1
+#define PART_PLUS 2
+#define PART_SENSOR 3
 
 #include <vector>
 #include <string>
@@ -15,7 +18,7 @@ class Port;
 
 extern std::vector<Part*> partsList;
 extern std::vector<Part*> partsInput;
-extern std::vector<Port> portsList;
+extern std::vector<Port*> portsList;
 extern bool mouseDragging;
 //extern int identifierX;
 
@@ -23,19 +26,19 @@ extern bool mouseDragging;
 class Part{
 
 public:
-    char* name;
-    int id;
+    char* name{};
+    int id{};
 
-    Vector2 position;
-    Vector2 mousepos;
-    int _ports;
+    Vector2 position{};
+    Vector2 mousepos{};
+    int _ports{};
 
 
     //std::vector<Port*> portsIN;
     /*
     std::vector<Port*> portsOUT;
 */
-    Rectangle bounds;
+    Rectangle bounds{};
     Rectangle inBounds = bounds;
     Rectangle outBounds = bounds;
     Rectangle dragBounds = bounds;
@@ -51,9 +54,7 @@ public:
     Part() = default;
     int updateBounds();
 
-    ~Part(){
-        delete this;
-    }
+    virtual ~Part();
 
     Part(int x, int y, int ports) {
 
@@ -63,14 +64,15 @@ public:
 
     void Output(float value);
     int drawPorts();
-    int draw();
+    virtual int draw();
 
 };
 
 class Port{
 private:
-    float _value;
+    float _value = 0.0f;
 public:
+
     int id;
 
     Part* nextPart;
@@ -92,22 +94,28 @@ public:
 
     Port(Part* next, int port, Part* prev);
 
-    void setValue(float x);
+    ~Port();
+
+    void setValue(float value);
     void kill();
+    void serialize();
 
 
 };
 
 class Dial : public Part{
 public:
-    float voltage;
+    int val;
     using Part::Part;
 
     Dial(int x, int y, int ports);
 
     void onUse() override;
 
-    void set(float voltage);
+    void set(int voltage);
+
+    int draw() override;
+    void serialize();
 };
 
 class Sensor : public Part{
@@ -118,6 +126,7 @@ public:
 
 
     void onUse() override;
+    void serialize();
 };
 
 class Plus : public Part{
@@ -126,6 +135,7 @@ public:
     Plus(int x, int y, int ports);
 
     void onUse() override;
+    void serialize();
 };
 
 #endif //

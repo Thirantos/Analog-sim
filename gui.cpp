@@ -10,8 +10,11 @@
 #include <ranges>
 #include <iostream>
 #include "include/raygui.h"
+#include "component.h"
+
 
 rightClickMenu* RCM;
+partSelector* PSEL;
 
 int gui::DrawGui() {
 
@@ -81,6 +84,10 @@ int gui::DrawGui() {
             RCM->draw();
         }
 
+        if(PSEL != nullptr) {
+            PSEL->draw();
+        }
+
         EndDrawing();
 
     }
@@ -113,14 +120,79 @@ rightClickMenu::rightClickMenu(){
 
 }
 
-int rightClickMenu::draw() {
-    if (GuiButton(newRect,"new")){
+partSelector::partSelector(){
+    position = RCM->position;
+    position.x += 75;
+
+    partSelected == nullptr;
+    for(Part* part: std::ranges::views::reverse(partsList)){
+
+        if(CheckCollisionPointRec( GetMousePosition(),part->bounds)){
+            partSelected = part;
+
+        }
+
+    }
+    rect.x = position.x;
+    rect.y = position.y;
+    rect.width = 75;
+    rect.height = 70;
+
+
+
+    newRect = delRect = rect;
+    newRect.height = delRect.height = 35;
+    delRect.y += newRect.height;
+
+}
+
+int partSelector::draw() {
+
+    Rectangle dialRect;
+    Rectangle plusRect;
+    Rectangle sensorRect;
+
+    dialRect = plusRect = sensorRect = newRect;
+
+    plusRect.y += newRect.height;
+    sensorRect.y += 2*newRect.height;
+
+
+    rect.height = plusRect.height + dialRect.height + sensorRect.height;
+
+    if (GuiButton(dialRect,"Dial")){
         new Dial(GetMouseX(), GetMouseY(), 0);
-        RCM = nullptr;
+        PSEL = nullptr;
+        delete this;
+    }
+    if (GuiButton(plusRect,"Plus")){
+        new Plus(GetMouseX(), GetMouseY(), 2);
+        PSEL = nullptr;
+        delete this;
+    }
+    if (GuiButton(sensorRect,"Sensor")){
+        new Sensor(GetMouseX(), GetMouseY(), 1);
+        PSEL = nullptr;
         delete this;
     }
 
-    if (GuiButton(delRect,"delete")){
+    if(!CheckCollisionPointRec(GetMousePosition(), rect)&& IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
+        PSEL = nullptr;
+        delete this;
+    }
+    return 0;
+}
+
+
+int rightClickMenu::draw() {
+    if (GuiButton(newRect,"new")){
+        PSEL = new partSelector();
+        RCM = nullptr;
+        delete this;
+
+    }
+
+    if (GuiButton(delRect,"Crash (delete)")){
         partSelected->kill();
         partSelected = nullptr;
         RCM = nullptr;
