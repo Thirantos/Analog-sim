@@ -11,6 +11,6 @@ public:
     rapidjson::Document serialized;
     void serialize();
 };
-
+//a
 
 #endif //ANALOGSIM_SERIALIZER_H
