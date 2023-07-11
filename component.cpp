@@ -8,7 +8,7 @@
 
 
 #include "include/raylib.h"
-#include <nlohmann/json.hpp>
+
 #define RAYLIB_H
 #include "include/raygui.h"
 #include "gui.h"
@@ -19,16 +19,17 @@
 #include <random>
 #include <sstream>
 #include <iomanip>
-using json = nlohmann::json;
-json savefile;
+#include "serializer.h"
 
 std::vector<Part*> partsList;
 std::vector<Part*> partsInput;
 std::vector<Port*> portsList;
+std::vector<Part*> partsProcess;
+std::vector<Part*> tempPartsProcess;
+
 bool mouseDragging;
 int identifierPART = 0;
 int identifierPORT = 0;
-
 
 bool insideRect(Rectangle rect, Vector2 point){
     return point.x > rect.x && point.y > rect.y && point.x < rect.x + rect.width && point.y < rect.y + rect.height;
@@ -116,22 +117,25 @@ bool Part::drag(){
     if(IsMouseButtonUp(MOUSE_BUTTON_LEFT)) {
         mouseDragging = false;
         if (isDraggingNext) {
+            isDraggingNext = false;
             bool skip = false;
             for (Part *part: partsList) {
                 if (part == this) { continue; }
+                bool skip = false;
+                for (Port* p : portsList) {
+                    if(p->prevPart == this && p->nextPart == part){
+                        skip = true;
+                    }
+                }
+                if(!skip) {
+                    if (insideRect(part->bounds, GetMousePosition()) && !skip) {
+                        std::cout << "connecting to " << part->name << std::endl;
 
-
-                if (insideRect(part->bounds, GetMousePosition()) && !skip) {
-                    std::cout << "connecting to " << part->name << std::endl;
-
-                    new Port(part, 0, this);
-
-
-
-
+                        new Port(part, 0, this);
+                    }
                 }
             }
-            isDraggingNext = false;
+
 
         }
         if (isDraggingPrev) {
@@ -228,6 +232,7 @@ int Part::updateBounds(){
 void Part::Output(float value) {
     //std::vector<Port*> portsToProcess;
 
+
     for (Port* port : portsList) {
         if(port->prevPart != this) continue;
         port->setValue(value);
@@ -236,7 +241,7 @@ void Part::Output(float value) {
         if(port->prevPart->id > identifierPART || port->nextPart->id > identifierPART) { continue; }*/
 
         std::cout << port->prevPart->name << "(id: " << port->prevPart->id << ") --> " << value << " --> " << port->nextPart->name << "(id: " << port->nextPart->id << ")" << std::endl;
-        port->nextPart->onUse();
+        tempPartsProcess.push_back(port->nextPart);
     }
 }
 
@@ -245,8 +250,10 @@ void Part::next(Part* part, int port){
 }
 
 int Part::kill() {
-    delete this;
-    return 0;
+    auto it = std::find(partsList.begin(), partsList.end(), this);
+    if (it != partsList.end()) {
+        partsList.erase(it);
+    }
 }
 
 Dial::Dial(int x, int y, int ports) {
@@ -292,11 +299,9 @@ int Dial::draw() {
     return 0;
 }
 
-void Dial::serialize() {
-    savefile["parts"][id]["position"]["x"] = position.x;
-    savefile["parts"][id]["position"]["y"] = position.y;
-    savefile["parts"][id]["type"] = PART_PLUS;
-    savefile["parts"][id]["value"] = val;
+void Dial::serialize(serializer* Serializer) {
+    Serializer->serialized["parts"][id]["type"] = PART_PLUS;
+    Serializer->serialized["parts"][id]["value"] = val;
 
 }
 
@@ -339,6 +344,10 @@ void Sensor::onUse() {
     return;
 }
 
+void Sensor::serialize(serializer* Serializer) {
+    Serializer->serialized["parts"][id]["type"] = PART_SENSOR;
+}
+
 Plus::Plus(int x, int y, int ports) {
     name = "Plus";
 
@@ -373,10 +382,8 @@ void Plus::onUse() {
 
 }
 
-void Plus::serialize() {
-    savefile["parts"][id]["position"]["x"] = position.x;
-    savefile["parts"][id]["position"]["y"] = position.y;
-    savefile["parts"][id]["type"] = PART_PLUS;
+void Plus::serialize(serializer* Serializer) {
+    Serializer->serialized["parts"][id]["type"] = PART_PLUS;
 }
 
 
@@ -394,7 +401,10 @@ void Port::kill() {
     if (it != portsList.end()) {
         portsList.erase(it);
     }
+    delete this;
 }
+
+
 
 void Port::setValue(float value) {
     _value = value;
@@ -403,10 +413,17 @@ Part::~Part() {
     // Delete the ports associated with this part
     for (Port* port : portsList) {
         if (port->prevPart == this || port->nextPart == this) {
-            delete port;
+            port->kill();
         }
     }
+    delete this;
 }
+
+void Part::serialize(serializer* Serializer) {
+    Serializer->serialized["parts"][id]["position"]["x"] = position.x;
+    Serializer->serialized["parts"][id]["position"]["y"] = position.y;
+}
+
 
 Port::~Port() {
     // Remove the port from the portsList vector when deleted
@@ -414,4 +431,10 @@ Port::~Port() {
     if (it != portsList.end()) {
         portsList.erase(it);
     }
+}
+
+void Port::serialize(serializer* Serializer) {
+    Serializer->serialized["ports"][id]["prevPartId"] = prevPart->id;
+    Serializer->serialized["ports"][id]["nextPartId"] = nextPart->id;
+    Serializer->serialized["ports"][id]["value"] = value();
 }

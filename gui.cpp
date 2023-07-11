@@ -13,6 +13,7 @@
 #include "component.h"
 
 
+
 rightClickMenu* RCM;
 partSelector* PSEL;
 
@@ -48,10 +49,15 @@ int gui::DrawGui() {
             RCM = new class rightClickMenu();
         }
 
+
+
         BeginDrawing();
 
 
+        if(GuiButton( Rectangle{0,0,200,100}, "save" )){
+            serializer->serialize();
 
+        }
 
 
 
@@ -76,7 +82,11 @@ int gui::DrawGui() {
 
         }
 
-        for(Part* part: partsInput){
+        partsProcess.clear();
+        partsProcess = partsInput;
+        partsProcess.insert(partsProcess.end(), tempPartsProcess.begin(), tempPartsProcess.end());
+        tempPartsProcess.clear();
+        for(Part* part: partsProcess){
             //part->onUse();
             part->onUse();
         }
@@ -192,7 +202,7 @@ int rightClickMenu::draw() {
 
     }
 
-    if (GuiButton(delRect,"Crash (delete)")){
+    if (GuiButton(delRect,"delete")){
         partSelected->kill();
         partSelected = nullptr;
         RCM = nullptr;

@@ -9,7 +9,7 @@
 #include <string>
 #include "include/raylib.h"
 #include "include/raygui.h"
-
+#include "serializer.h"
 
 
 
@@ -18,6 +18,8 @@ class Port;
 
 extern std::vector<Part*> partsList;
 extern std::vector<Part*> partsInput;
+extern std::vector<Part*> partsProcess;
+extern std::vector<Part*> tempPartsProcess;
 extern std::vector<Port*> portsList;
 extern bool mouseDragging;
 //extern int identifierX;
@@ -51,6 +53,7 @@ public:
     bool drag();
     int kill();
 
+
     Part() = default;
     int updateBounds();
 
@@ -65,6 +68,7 @@ public:
     void Output(float value);
     int drawPorts();
     virtual int draw();
+    virtual void serialize(serializer* Serializer);
 
 };
 
@@ -98,7 +102,7 @@ public:
 
     void setValue(float value);
     void kill();
-    void serialize();
+    void serialize(serializer* Serializer);
 
 
 };
@@ -115,7 +119,7 @@ public:
     void set(int voltage);
 
     int draw() override;
-    void serialize();
+    void serialize(serializer* Serializer);
 };
 
 class Sensor : public Part{
@@ -126,7 +130,7 @@ public:
 
 
     void onUse() override;
-    void serialize();
+    void serialize(serializer* Serializer);
 };
 
 class Plus : public Part{
@@ -135,7 +139,7 @@ public:
     Plus(int x, int y, int ports);
 
     void onUse() override;
-    void serialize();
+    void serialize(serializer* Serializer);
 };
 
 #endif //

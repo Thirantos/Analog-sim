@@ -8,13 +8,14 @@
 
 #include "raylib.h"
 #include "component.h"
-
+#include "serializer.h"
 
 class gui {
     public:
     int DrawGui();
     const int screenWidth = 800;
     const int screenHeight = 450;
+    serializer* serializer;
 };
 
 class rightClickMenu{
