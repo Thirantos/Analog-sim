@@ -3,21 +3,34 @@
 //
 
 #include "gui.h"
+#include "component.h"
+#include <ranges>
 #include "include/raylib.h"
 #define RAYLIB_H
 #define RAYGUI_IMPLEMENTATION
-#include "component.h"
-#include <ranges>
-#include <iostream>
 #include "include/raygui.h"
-#include "component.h"
+
+#include "parts/dial.h"
+#include "parts/sensor.h"
+#include "parts/plus.h"
+
+#define BUTTON(part) \
+Rectangle button_##part = buttonRect; \
+if (GuiButton(button_##part,#part)){  \
+    new part(GetMouseX(), GetMouseY(), 1);\
+    PSEL = nullptr;  \
+    delete this;     \
+}                    \
+buttonRect.y += buttonRect.height;
+#warning "ID NOT IMPLEMENTED"
+
 
 
 
 rightClickMenu* RCM;
 partSelector* PSEL;
 
-int gui::DrawGui() {
+int gui::DrawGui() const {
 
 
 
@@ -27,7 +40,7 @@ int gui::DrawGui() {
     InitWindow(screenWidth, screenHeight, "AnalogSim");
     SetTargetFPS(60);
 
-    for(Part* part: partsList){
+    for(part* part: partsList){
         part->updateBounds();
 
     }
@@ -38,7 +51,7 @@ int gui::DrawGui() {
         Vector2 MousePos = GetMousePosition();
         mouseDragging = false;
 
-        for(Part* part: std::ranges::views::reverse(partsList)){
+        for(part* part: std::ranges::views::reverse(partsList)){
             //part->onUse();
 
             part->drag();
@@ -70,13 +83,13 @@ int gui::DrawGui() {
 
         ClearBackground(RAYWHITE);
 
-        for(Part* part: partsList){
+        for(part* part: partsList){
 
             part->drawPorts();
 
         }
 
-        for(Part* part: partsList){
+        for(part* part: partsList){
             //part->onUse();
             part->draw();
 
@@ -86,7 +99,7 @@ int gui::DrawGui() {
         partsProcess = partsInput;
         partsProcess.insert(partsProcess.end(), tempPartsProcess.begin(), tempPartsProcess.end());
         tempPartsProcess.clear();
-        for(Part* part: partsProcess){
+        for(part* part: partsProcess){
             //part->onUse();
             part->onUse();
         }
@@ -110,8 +123,7 @@ int gui::DrawGui() {
 
 rightClickMenu::rightClickMenu(){
     position = GetMousePosition();
-    partSelected == nullptr;
-    for(Part* part: std::ranges::views::reverse(partsList)){
+    for(part* part: std::ranges::views::reverse(partsList)){
 
         if(CheckCollisionPointRec( GetMousePosition(),part->bounds)){
             partSelected = part;
@@ -134,8 +146,7 @@ partSelector::partSelector(){
     position = RCM->position;
     position.x += 75;
 
-    partSelected == nullptr;
-    for(Part* part: std::ranges::views::reverse(partsList)){
+    for(part* part: std::ranges::views::reverse(partsList)){
 
         if(CheckCollisionPointRec( GetMousePosition(),part->bounds)){
             partSelected = part;
@@ -153,38 +164,26 @@ partSelector::partSelector(){
     newRect = delRect = rect;
     newRect.height = delRect.height = 35;
     delRect.y += newRect.height;
-
 }
+
+
 
 int partSelector::draw() {
 
-    Rectangle dialRect;
-    Rectangle plusRect;
-    Rectangle sensorRect;
+    Rectangle buttonRect;
 
-    dialRect = plusRect = sensorRect = newRect;
-
-    plusRect.y += newRect.height;
-    sensorRect.y += 2*newRect.height;
+    buttonRect = newRect;
 
 
-    rect.height = plusRect.height + dialRect.height + sensorRect.height;
+    BUTTON(dial);
+    BUTTON(plus)
+    BUTTON(sensor)
 
-    if (GuiButton(dialRect,"Dial")){
-        new Dial(GetMouseX(), GetMouseY(), 0);
-        PSEL = nullptr;
-        delete this;
-    }
-    if (GuiButton(plusRect,"Plus")){
-        new Plus(GetMouseX(), GetMouseY(), 2);
-        PSEL = nullptr;
-        delete this;
-    }
-    if (GuiButton(sensorRect,"Sensor")){
-        new Sensor(GetMouseX(), GetMouseY(), 1);
-        PSEL = nullptr;
-        delete this;
-    }
+
+    rect.height = buttonRect.y - rect.y;
+
+
+
 
     if(!CheckCollisionPointRec(GetMousePosition(), rect)&& IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
         PSEL = nullptr;

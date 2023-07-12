@@ -1,0 +1,36 @@
+//
+// Created by Thijme van Son on 12/07/2023.
+//
+
+#include "dial.h"
+
+
+dial::dial(int x, int y, int id) : part(x,y,id) {
+    name = "dial";
+
+    val = 0;
+
+    partsInput.push_back(this);
+
+    this->_ports = 0;
+
+}
+
+void dial::onUse() {
+    int v = val;
+    Output(float(v));
+}
+
+
+void dial::draw() {
+    part::draw();
+    Rectangle _spinner = bounds;
+    _spinner.height *= 0.5f;
+    _spinner.width *= 0.7f;
+
+    _spinner.y += _spinner.height * 0.6f;
+    _spinner.x += bounds.width * 0.15f;
+    GuiSpinner(_spinner, "", &val, 0, INFINITY, false);
+}
+
+

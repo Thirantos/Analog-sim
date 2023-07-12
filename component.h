@@ -13,22 +13,22 @@
 
 
 
-class Part;
+class part;
 class Port;
 
-extern std::vector<Part*> partsList;
-extern std::vector<Part*> partsInput;
-extern std::vector<Part*> partsProcess;
-extern std::vector<Part*> tempPartsProcess;
+extern std::vector<part*> partsList;
+extern std::vector<part*> partsInput;
+extern std::vector<part*> partsProcess;
+extern std::vector<part*> tempPartsProcess;
 extern std::vector<Port*> portsList;
 extern bool mouseDragging;
 //extern int identifierX;
 
 
-class Part{
+class part{
 
 public:
-    char* name{};
+    const char* name{};
     int id{};
 
     Vector2 position{};
@@ -51,24 +51,21 @@ public:
 
     virtual void  onUse(){}
     bool drag();
-    int kill();
+    void kill();
 
 
-    Part() = default;
-    int updateBounds();
+    void updateBounds();
 
-    virtual ~Part();
+    virtual ~part();
 
-    Part(int x, int y, int ports) {
+    part(int x, int y, int id);
 
-    }
-
-    void next(Part* part, int port);
+    void next(part* part, int port);
 
     void Output(float value);
-    int drawPorts();
-    virtual int draw();
-    virtual void serialize(serializer* Serializer);
+    void drawPorts();
+    virtual void draw();
+
 
 };
 
@@ -79,9 +76,11 @@ public:
 
     int id;
 
-    Part* nextPart;
-    Part* prevPart;
-    float value() const { return _value; }
+    part* nextPart;
+    part* prevPart;
+
+    int nextPort;
+    [[nodiscard]] float value() const { return _value; }
     bool operator==(const Port& other) const {
         // Define your own equality comparison logic here
         // Return true if the objects are considered equal, false otherwise
@@ -96,50 +95,17 @@ public:
         return this->id != other.id;
     }
 
-    Port(Part* next, int port, Part* prev);
+    Port(part* next, int port, part* prev, int id);
 
     ~Port();
 
     void setValue(float value);
     void kill();
-    void serialize(serializer* Serializer);
 
 
 };
 
-class Dial : public Part{
-public:
-    int val;
-    using Part::Part;
-
-    Dial(int x, int y, int ports);
-
-    void onUse() override;
-
-    void set(int voltage);
-
-    int draw() override;
-    void serialize(serializer* Serializer);
-};
-
-class Sensor : public Part{
-public:
-    using Part::Part;
-
-    Sensor(int x, int y, int ports);
 
 
-    void onUse() override;
-    void serialize(serializer* Serializer);
-};
 
-class Plus : public Part{
-public:
-    using Part::Part;
-    Plus(int x, int y, int ports);
-
-    void onUse() override;
-    void serialize(serializer* Serializer);
-};
-
-#endif //
+#endif //ANALOGSIM_COMPONENT_H

@@ -22,6 +22,6 @@ endif()
 include_directories(include)
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(Analogsim main.cpp component.cpp component.h gui.h gui.cpp serializer.cpp serializer.h)
+add_executable(Analogsim main.cpp component.cpp component.h gui.h gui.cpp serializer.cpp serializer.h parts/sensor.cpp parts/sensor.h settings.h parts/plus.cpp parts/plus.h parts/dial.cpp parts/dial.h)
 
 target_link_libraries(Analogsim raylib)

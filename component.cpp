@@ -4,28 +4,25 @@
 
 #include "component.h"
 
-#define FONTSIZE 20
+#include "settings.h"
 
 
 #include "include/raylib.h"
 
 #define RAYLIB_H
 #include "include/raygui.h"
-#include "gui.h"
+
 
 #include <iostream>
 #include <vector>
-#include <string>
-#include <random>
-#include <sstream>
-#include <iomanip>
-#include "serializer.h"
 
-std::vector<Part*> partsList;
-std::vector<Part*> partsInput;
+
+
+std::vector<part*> partsList;
+std::vector<part*> partsInput;
 std::vector<Port*> portsList;
-std::vector<Part*> partsProcess;
-std::vector<Part*> tempPartsProcess;
+std::vector<part*> partsProcess;
+std::vector<part*> tempPartsProcess;
 
 bool mouseDragging;
 int identifierPART = 0;
@@ -36,23 +33,31 @@ bool insideRect(Rectangle rect, Vector2 point){
 
 }
 
+part::part(int x, int y, int id){
+    partsList.push_back(this);
+    this->position.x = x;
+    this->position.y = y;
+    this->id = id;
 
-int Part::drawPorts(){
+    bounds.x = position.x;
+    bounds.y = position.y;
+    bounds.width = 200;
+    bounds.height = 75;
+    updateBounds();
+}
+
+
+void part::drawPorts(){
     for (Port* port : portsList) {
         if (port->prevPart != this) {
             continue;
         }
         DrawLine(bounds.x + bounds.width, bounds.y + bounds.height / 2, port->nextPart->bounds.x, port->nextPart->bounds.y + bounds.height / 2, BLACK);
     }
-    return 1;
 }
-int Part::draw() {
-
-
+void part::draw() {
 
     //GuiPanel(bounds, name);
-
-
 
     DrawRectangleRec(bounds, WHITE );
     DrawText(name, dragBounds.x + (bounds.width - MeasureText(name, FONTSIZE))/2,
@@ -79,29 +84,9 @@ int Part::draw() {
 
     }
 
-    if (dynamic_cast<Sensor*>(this) != nullptr) {
-
-        std::string str = "DISCONNECTED";
-        for (Port* port : portsList) {
-            if(port->nextPart != this) continue;
-            str = std::to_string(port->value());
-        }
-
-        //std::cout << str << std::endl;
-        char* value = const_cast<char*>(str.c_str());
-        //std::cout << value << std::endl;
-
-        DrawText(str.c_str(), dragBounds.x + (bounds.width - MeasureText(str.c_str(), FONTSIZE*0.7))/2,
-                 dragBounds.y + dragBounds.height,  FONTSIZE*0.7, RED);
-    }
-
-
-
-
-    return 1;
 }
 
-bool Part::drag(){
+bool part::drag(){
 
 
     #ifdef ANASIMDEBUG
@@ -111,15 +96,13 @@ bool Part::drag(){
         DrawRectangleRec(inBounds, CLITERAL(Color){0,0,255,128});
 
     #endif
-        if(this == nullptr){return false;}
 
 
     if(IsMouseButtonUp(MOUSE_BUTTON_LEFT)) {
         mouseDragging = false;
         if (isDraggingNext) {
             isDraggingNext = false;
-            bool skip = false;
-            for (Part *part: partsList) {
+            for (part *part: partsList) {
                 if (part == this) { continue; }
                 bool skip = false;
                 for (Port* p : portsList) {
@@ -128,10 +111,11 @@ bool Part::drag(){
                     }
                 }
                 if(!skip) {
-                    if (insideRect(part->bounds, GetMousePosition()) && !skip) {
+                    if (insideRect(part->bounds, GetMousePosition())) {
                         std::cout << "connecting to " << part->name << std::endl;
 
-                        new Port(part, 0, this);
+                        new Port(part, 0, this, 0);
+#warning "ID NOT IMPLEMENTED"
                     }
                 }
             }
@@ -139,7 +123,6 @@ bool Part::drag(){
 
         }
         if (isDraggingPrev) {
-            bool skip = false;
             for (Port* port: portsList) {
                 if(port->nextPart != this)continue;
                 std::cout << "Checking " << port->prevPart->id << std::endl;
@@ -210,7 +193,7 @@ bool Part::drag(){
 
 }
 
-int Part::updateBounds(){
+void part::updateBounds(){
     bounds.x = position.x;
     bounds.y = position.y;
     bounds.width = 200;
@@ -229,7 +212,7 @@ int Part::updateBounds(){
     outBounds.x = bounds.x + outBounds.width;
 }
 
-void Part::Output(float value) {
+void part::Output(float value) {
     //std::vector<Port*> portsToProcess;
 
 
@@ -245,153 +228,26 @@ void Part::Output(float value) {
     }
 }
 
-void Part::next(Part* part, int port){
-    Port* _p = new Port(part, port, this);
+void part::next(part* part, int port){
+    Port* _p = new Port(part, port, this, 0);
+#warning "ID NOT IMPLEMENTED"
+
 }
 
-int Part::kill() {
+void part::kill() {
     auto it = std::find(partsList.begin(), partsList.end(), this);
     if (it != partsList.end()) {
         partsList.erase(it);
     }
 }
 
-Dial::Dial(int x, int y, int ports) {
-    name = "Dial";
 
-    id = identifierPART;
-    identifierPART++;
-    val = 0;
-
-
-    partsList.push_back(this);
-    partsInput.push_back(this);
-    this->position.x = x;
-    this->position.y = y;
-    this->_ports = ports;
-    bounds.x = position.x;
-    bounds.y = position.y;
-    bounds.width = 200;
-    bounds.height = 75;
-    updateBounds();
-}
-
-void Dial::onUse() {
-    int v = val;
-    Output(float(v));
-}
-
-void Dial::set(int volt) {
-
-
-    val = volt;
-}
-
-int Dial::draw() {
-    Part::draw();
-    Rectangle Spinner = bounds;
-    Spinner.height *= 0.5;
-    Spinner.width *= 0.7;
-
-    Spinner.y += Spinner.height * 0.6;
-    Spinner.x += bounds.width * 0.15;
-    GuiSpinner(Spinner, "", &val, 0, INFINITY, false);
-    return 0;
-}
-
-void Dial::serialize(serializer* Serializer) {
-    Serializer->serialized["parts"][id]["type"] = PART_PLUS;
-    Serializer->serialized["parts"][id]["value"] = val;
-
-}
-
-Sensor::Sensor(int x, int y, int ports) {
-
-    name = "Sensor";
-
-    id = identifierPART;
-    identifierPART++;
-
-    partsList.push_back(this);
-    this->position.x = x;
-    this->position.y = y;
-    this->_ports = ports;
-    bounds.x = position.x;
-    bounds.y = position.y;
-    bounds.width = 200;
-    bounds.height = 75;
-    updateBounds();
-}
-
-void Sensor::onUse() {
-/*
-    for (Port port : portsList) {
-        if(port.nextPart != this) continue;
-        std::cout << port.value() << std::endl;
-    }
-*/
-
-
-    /*
-    std::string str = "";
-    for (float val : input) {
-        str += std::to_string(val) + " ";
-    }
-
-    str = "sensor: "+ str;
-    name = const_cast<char*>(str.c_str());
-    */
-    return;
-}
-
-void Sensor::serialize(serializer* Serializer) {
-    Serializer->serialized["parts"][id]["type"] = PART_SENSOR;
-}
-
-Plus::Plus(int x, int y, int ports) {
-    name = "Plus";
-
-
-    id = identifierPART;
-    identifierPART++;
-
-    partsList.push_back(this);
-    this->position.x = x;
-    this->position.y = y;
-    this->_ports = ports;
-    bounds.x = position.x;
-    bounds.y = position.y;
-    bounds.width = 200;
-    bounds.height = 75;
-    updateBounds();
-}
-
-void Plus::onUse() {
-
-    float sum = 0;
-
-    for (Port* port : portsList) {
-        if(port->nextPart != this) continue;
-        sum += port->value();
-    }
-
-
-    float voltage = sum;
-    Output( voltage);
-
-
-}
-
-void Plus::serialize(serializer* Serializer) {
-    Serializer->serialized["parts"][id]["type"] = PART_PLUS;
-}
-
-
-Port::Port(Part* next, int port, Part* prev) {
+Port::Port(part* next, int port, part* prev, int id) {
+    Port::id = id;
     nextPart = next;
     prevPart = prev;
-    id = identifierPORT;
-    identifierPORT++;
+    nextPort = port;
+
     portsList.push_back(this); // Store the pointer to the Port object
 }
 
@@ -409,7 +265,7 @@ void Port::kill() {
 void Port::setValue(float value) {
     _value = value;
 }
-Part::~Part() {
+part::~part() {
     // Delete the ports associated with this part
     for (Port* port : portsList) {
         if (port->prevPart == this || port->nextPart == this) {
@@ -419,11 +275,6 @@ Part::~Part() {
     delete this;
 }
 
-void Part::serialize(serializer* Serializer) {
-    Serializer->serialized["parts"][id]["position"]["x"] = position.x;
-    Serializer->serialized["parts"][id]["position"]["y"] = position.y;
-}
-
 
 Port::~Port() {
     // Remove the port from the portsList vector when deleted
@@ -431,10 +282,4 @@ Port::~Port() {
     if (it != portsList.end()) {
         portsList.erase(it);
     }
-}
-
-void Port::serialize(serializer* Serializer) {
-    Serializer->serialized["ports"][id]["prevPartId"] = prevPart->id;
-    Serializer->serialized["ports"][id]["nextPartId"] = nextPart->id;
-    Serializer->serialized["ports"][id]["value"] = value();
 }

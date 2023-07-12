@@ -12,7 +12,7 @@
 
 class gui {
     public:
-    int DrawGui();
+    int DrawGui() const;
     const int screenWidth = 800;
     const int screenHeight = 450;
     serializer* serializer;
@@ -20,7 +20,7 @@ class gui {
 
 class rightClickMenu{
 
-    Part* partSelected;
+    part* partSelected;
     Rectangle rect{};
     Rectangle newRect{};
     Rectangle delRect{};
@@ -33,7 +33,7 @@ public:
 
 class partSelector{
     Vector2 position{};
-    Part* partSelected;
+    part* partSelected;
     Rectangle rect{};
     Rectangle newRect{};
     Rectangle delRect{};

@@ -4,11 +4,9 @@
 
 #ifndef ANALOGSIM_SERIALIZER_H
 #define ANALOGSIM_SERIALIZER_H
-#include "rapidjson/document.h"
 
 class serializer {
 public:
-    rapidjson::Document serialized;
     void serialize();
 };
 
