@@ -1,4 +1,8 @@
 *.out
 *.exe
+<<<<<<< HEAD
 .DS_Store
 .idea
+=======
+.DS_Store
+>>>>>>> main
