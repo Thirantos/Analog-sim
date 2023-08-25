@@ -5,6 +5,7 @@
 #include "gui.h"
 #include "component.h"
 #include <ranges>
+#include <iostream>
 #include "include/raylib.h"
 #define RAYLIB_H
 #define RAYGUI_IMPLEMENTATION
@@ -13,24 +14,25 @@
 #include "parts/dial.h"
 #include "parts/sensor.h"
 #include "parts/plus.h"
+#include "raymath.h"
 
 #define BUTTON(part) \
-Rectangle button_##part = buttonRect; \
-if (GuiButton(button_##part,#part)){  \
-    new part(GetMouseX(), GetMouseY(), 1);\
-    PSEL = nullptr;  \
-    delete this;     \
-}                    \
-buttonRect.y += buttonRect.height;
-#warning "ID NOT IMPLEMENTED"
+    Rectangle button_##part = buttonRect; \
+    if (GuiButton(button_##part,#part)){  \
+        Vector2 pos = GetScreenToWorld2D(GetMousePosition(), camera);             \
+        new part(pos.x, pos.y);\
+        PSEL = nullptr;  \
+        delete this;     \
+    }                    \
+    buttonRect.y += buttonRect.height;
 
 
 
 
 rightClickMenu* RCM;
-partSelector* PSEL;
+partSelector* PSEL = nullptr;
 
-int gui::DrawGui() const {
+int gui::DrawGui() {
 
 
 
@@ -38,13 +40,17 @@ int gui::DrawGui() const {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     SetConfigFlags(FLAG_MSAA_4X_HINT);
     InitWindow(screenWidth, screenHeight, "AnalogSim");
-    SetTargetFPS(60);
+    SetTargetFPS(GetMonitorRefreshRate(GetCurrentMonitor()));
 
     for(part* part: partsList){
         part->updateBounds();
 
     }
 
+    camera.target = (Vector2){0,0};
+    camera.offset = (Vector2){0,0};
+    camera.zoom = 1.0f;
+    camera.rotation = 0;
 
 
     while (!WindowShouldClose()){
@@ -54,24 +60,22 @@ int gui::DrawGui() const {
         for(part* part: std::ranges::views::reverse(partsList)){
             //part->onUse();
 
-            part->drag();
+            part->drag(camera);
 
         }
 
         if(IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
-            RCM = new class rightClickMenu();
+            RCM = new rightClickMenu();
         }
 
 
 
         BeginDrawing();
 
+        mouseMove();
 
-        if(GuiButton( Rectangle{0,0,200,100}, "save" )){
-            serializer->serialize();
 
-        }
-
+        BeginMode2D(camera);
 
 
         MousePos.x += GetMouseDelta().x;
@@ -85,13 +89,13 @@ int gui::DrawGui() const {
 
         for(part* part: partsList){
 
-            part->drawPorts();
+            part->drawPorts(camera);
 
         }
 
         for(part* part: partsList){
             //part->onUse();
-            part->draw();
+            part->draw(camera);
 
         }
 
@@ -103,15 +107,34 @@ int gui::DrawGui() const {
             //part->onUse();
             part->onUse();
         }
+
+        EndMode2D();
+
+        for(part* part: partsList){
+
+            part->drawIgnoreCam(camera);
+
+        }
+
+
+
         if(RCM != nullptr) {
-            RCM->draw();
+            RCM->draw(camera);
         }
 
         if(PSEL != nullptr) {
-            PSEL->draw();
+            PSEL->draw(camera);
         }
 
+
+        if(GuiButton( Rectangle{0,0,200,100}, "save" )){
+            serializer->serialize();
+
+        }
+
+
         EndDrawing();
+
 
     }
     return 1;
@@ -166,16 +189,14 @@ partSelector::partSelector(){
     delRect.y += newRect.height;
 }
 
-
-
-int partSelector::draw() {
+int partSelector::draw(Camera2D camera) {
 
     Rectangle buttonRect;
 
     buttonRect = newRect;
 
 
-    BUTTON(dial);
+    BUTTON(dial)
     BUTTON(plus)
     BUTTON(sensor)
 
@@ -192,20 +213,20 @@ int partSelector::draw() {
     return 0;
 }
 
-
-int rightClickMenu::draw() {
+int rightClickMenu::draw(Camera2D camera) {
     if (GuiButton(newRect,"new")){
         PSEL = new partSelector();
         RCM = nullptr;
         delete this;
 
     }
-
-    if (GuiButton(delRect,"delete")){
-        partSelected->kill();
-        partSelected = nullptr;
-        RCM = nullptr;
-        delete this;
+    if(partSelected != nullptr) {
+        if (GuiButton(delRect, "delete")) {
+            delete partSelected;
+            partSelected = nullptr;
+            RCM = nullptr;
+            delete this;
+        }
     }
 
     if(!CheckCollisionPointRec(GetMousePosition(), rect)&& IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
@@ -214,3 +235,30 @@ int rightClickMenu::draw() {
     }
     return 0;
 }
+
+void gui::mouseMove(){ // adapted from https://github.com/raylib-extras/examples-c/blob/main/mouse_zoom/mouse_zoom.c
+    if(IsMouseButtonDown(MOUSE_BUTTON_MIDDLE)){
+        Vector2 delta = GetMouseDelta();
+        delta = Vector2Scale(delta, -1.0f / camera.zoom);
+
+        camera.target = Vector2Add(camera.target, delta);
+    }
+
+
+    float wheel = GetMouseWheelMove();
+    if(wheel != 0) {
+        Vector2 mouseWorldPos = GetScreenToWorld2D(GetMousePosition(), camera);
+
+        // set the offset to where the mouse is
+        camera.offset = GetMousePosition();
+
+        // set the target to match, so that the camera maps the world space point under the cursor to the screen space point under the cursor at any zoom
+        camera.target = mouseWorldPos;
+
+        // zoom
+        camera.zoom += wheel*0.125f;
+        if (camera.zoom < 0.125f)
+            camera.zoom = 0.125f;
+    }
+}
+

@@ -6,6 +6,7 @@
 #define ANALOGSIM_SETTINGS_H
 
 #define FONTSIZE 20
+#define LINEBEND 20
 #undef SERIALIZE
 
 

@@ -11,10 +11,10 @@
 class sensor : public part{
 public:
     using part::part;
-    sensor(int x, int y, int ports);
+    sensor(int x, int y);
     void onUse() override;
 
-    void draw() override;
+    void draw(Camera2D camera) override;
 };
 
 

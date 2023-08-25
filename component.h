@@ -22,49 +22,48 @@ extern std::vector<part*> partsProcess;
 extern std::vector<part*> tempPartsProcess;
 extern std::vector<Port*> portsList;
 extern bool mouseDragging;
-//extern int identifierX;
+extern int identifierPart;
+extern int identifierPort;
 
+Rectangle cameraDisplace(Rectangle rect, Camera2D camera);
 
 class part{
 
 public:
     const char* name{};
     int id{};
-
     Vector2 position{};
-    Vector2 mousepos{};
-    int _ports{};
 
-
-    //std::vector<Port*> portsIN;
-    /*
-    std::vector<Port*> portsOUT;
-*/
     Rectangle bounds{};
-    Rectangle inBounds = bounds;
+    std::vector<Rectangle> inBounds;
     Rectangle outBounds = bounds;
     Rectangle dragBounds = bounds;
+    int maxPorts;
+    int currentPorts;
 
+
+    bool dragOut;
     bool isDragging = false;
     bool isDraggingNext = false;
     bool isDraggingPrev = false;
 
     virtual void  onUse(){}
-    bool drag();
-    void kill();
+    bool drag(Camera2D camera);
 
 
     void updateBounds();
 
     virtual ~part();
 
-    part(int x, int y, int id);
+    part(int x, int y);
 
     void next(part* part, int port);
 
     void Output(float value);
-    void drawPorts();
-    virtual void draw();
+    void drawPorts(Camera2D camera);
+    virtual void draw(Camera2D camera);
+    virtual void drawIgnoreCam(Camera2D camera){};
+    virtual void serialize();
 
 
 };
@@ -78,6 +77,7 @@ public:
 
     part* nextPart;
     part* prevPart;
+    int _port;
 
     int nextPort;
     [[nodiscard]] float value() const { return _value; }
@@ -95,12 +95,11 @@ public:
         return this->id != other.id;
     }
 
-    Port(part* next, int port, part* prev, int id);
+    Port(part *next, int port, part *prev);
 
     ~Port();
 
     void setValue(float value);
-    void kill();
 
 
 };

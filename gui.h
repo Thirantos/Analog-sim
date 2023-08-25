@@ -5,17 +5,18 @@
 #ifndef ANALOGSIM_GUI_H
 #define ANALOGSIM_GUI_H
 
-
 #include "raylib.h"
 #include "component.h"
 #include "serializer.h"
 
 class gui {
     public:
-    int DrawGui() const;
+    int DrawGui();
     const int screenWidth = 800;
     const int screenHeight = 450;
     serializer* serializer;
+    Camera2D camera;
+    void mouseMove();
 };
 
 class rightClickMenu{
@@ -27,7 +28,9 @@ class rightClickMenu{
 public:
     Vector2 position{};
     rightClickMenu();
-    int draw();
+
+    int draw(Camera2D camera);
+
 
 };
 
@@ -39,7 +42,7 @@ class partSelector{
     Rectangle delRect{};
 public:
     partSelector();
-    int draw();
+    int draw(Camera2D camera);
 
 };
 

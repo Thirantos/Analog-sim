@@ -13,12 +13,13 @@ public:
     int val;
     using part::part;
 
-    dial(int x, int y, int id);
+    dial(int x, int y);
 
     void onUse() override;
 
 
-    void draw() override;
+    void draw(Camera2D camera) override;
+    void drawIgnoreCam(Camera2D camera) override;
 
 };
 

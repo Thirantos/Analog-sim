@@ -1,0 +1,46 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/daw_json_link-subbuild/CMakeFiles/daw_json_link-populate"
+		},
+		{
+			"file" : "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/daw_json_link-subbuild/CMakeFiles/daw_json_link-populate.rule"
+		},
+		{
+			"file" : "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/daw_json_link-subbuild/CMakeFiles/daw_json_link-populate-complete.rule"
+		},
+		{
+			"file" : "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/daw_json_link-subbuild/daw_json_link-populate-prefix/src/daw_json_link-populate-stamp/daw_json_link-populate-build.rule"
+		},
+		{
+			"file" : "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/daw_json_link-subbuild/daw_json_link-populate-prefix/src/daw_json_link-populate-stamp/daw_json_link-populate-configure.rule"
+		},
+		{
+			"file" : "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/daw_json_link-subbuild/daw_json_link-populate-prefix/src/daw_json_link-populate-stamp/daw_json_link-populate-download.rule"
+		},
+		{
+			"file" : "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/daw_json_link-subbuild/daw_json_link-populate-prefix/src/daw_json_link-populate-stamp/daw_json_link-populate-install.rule"
+		},
+		{
+			"file" : "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/daw_json_link-subbuild/daw_json_link-populate-prefix/src/daw_json_link-populate-stamp/daw_json_link-populate-mkdir.rule"
+		},
+		{
+			"file" : "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/daw_json_link-subbuild/daw_json_link-populate-prefix/src/daw_json_link-populate-stamp/daw_json_link-populate-patch.rule"
+		},
+		{
+			"file" : "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/daw_json_link-subbuild/daw_json_link-populate-prefix/src/daw_json_link-populate-stamp/daw_json_link-populate-test.rule"
+		},
+		{
+			"file" : "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/daw_json_link-subbuild/daw_json_link-populate-prefix/src/daw_json_link-populate-stamp/daw_json_link-populate-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"daw_json_link-populate"
+		],
+		"name" : "daw_json_link-populate"
+	}
+}

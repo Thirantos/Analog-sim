@@ -4,11 +4,12 @@
 
 #include "plus.h"
 
-plus::plus(int x, int y, int id) : part(x,y,id) {
+plus::plus(int x, int y) : part(x, y) {
     name = "Plus";
+    dragOut = true;
 
-
-    this->_ports = -1;
+    this->maxPorts = -1;
+    updateBounds();
 
 }
 

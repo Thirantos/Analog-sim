@@ -5,19 +5,20 @@
 #include "sensor.h"
 #include "../settings.h"
 
-sensor::sensor(int x, int y, int id) : part(x, y, id) {
+sensor::sensor(int x, int y) : part(x, y) {
     name = "sensor";
 
-    this->_ports = 1;
+    this->maxPorts = 1;
 
+    updateBounds();
 }
 
 void sensor::onUse() {
 
 }
 
-void sensor::draw(){
-    part::draw();
+void sensor::draw(Camera2D camera){
+    part::draw(camera);
 
     std::string str = "DISCONNECTED";
     for (Port* port : portsList) {
@@ -28,7 +29,7 @@ void sensor::draw(){
     //std::cout << str << std::endl;
     //std::cout << value << std::endl;
 
-    DrawText(str.c_str(), dragBounds.x + (bounds.width - MeasureText(str.c_str(), FONTSIZE*0.7))/2,
-             dragBounds.y + dragBounds.height,  FONTSIZE*0.7, RED);
+    DrawText(str.c_str(), bounds.x + (bounds.width - MeasureText(str.c_str(), FONTSIZE*0.7))/2,
+             inBounds[0].y + inBounds[0].height/2 - FONTSIZE*0.7,  FONTSIZE*0.7, RED);
 }
 

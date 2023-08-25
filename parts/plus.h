@@ -13,7 +13,7 @@ class plus : public part {
 public:
     using part::part;
 
-    plus(int x, int y, int id);
+    plus(int x, int y);
 
     void onUse() override;
 

@@ -5,7 +5,8 @@
 #include "serializer.h"
 #include "component.h"
 #include <fstream>
-
+#include "include/json.hpp"
+using json = nlohmann::json;
 
 void serializer::serialize() {
 
@@ -15,3 +16,6 @@ void serializer::serialize() {
         outputFile.close();
 
 }
+
+serializer::serializer() = default;
+
