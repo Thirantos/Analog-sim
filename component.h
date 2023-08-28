@@ -27,6 +27,11 @@ extern int identifierPort;
 
 Rectangle cameraDisplace(Rectangle rect, Camera2D camera);
 
+struct Signal{
+    float voltage;
+    float amperage;
+};
+
 class part{
 
 public:
@@ -59,7 +64,7 @@ public:
 
     void next(part* part, int port);
 
-    void Output(float value);
+    void Output(Signal signal);
     void drawPorts(Camera2D camera);
     virtual void draw(Camera2D camera);
     virtual void drawIgnoreCam(Camera2D camera){};
@@ -77,10 +82,10 @@ public:
 
     part* nextPart;
     part* prevPart;
-    int _port;
+    Signal _signal;
 
     int nextPort;
-    [[nodiscard]] float value() const { return _value; }
+    [[nodiscard]] Signal value() const { return _signal; }
     bool operator==(const Port& other) const {
         // Define your own equality comparison logic here
         // Return true if the objects are considered equal, false otherwise
@@ -99,7 +104,7 @@ public:
 
     ~Port();
 
-    void setValue(float value);
+    void setValue(Signal signal);
 
 
 };

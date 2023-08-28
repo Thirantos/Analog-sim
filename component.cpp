@@ -303,18 +303,18 @@ void part::updateBounds(){
     outBounds.x = bounds.x + bounds.width - outBounds.width;
 }
 
-void part::Output(float value) {
+void part::Output(Signal signal) {
     //std::vector<Port*> portsToProcess;
 
 
     for (Port* port : portsList) {
         if(port->prevPart != this) continue;
-        port->setValue(value);
+        port->setValue(signal);
         /*
         if(port->prevPart == nullptr || port->nextPart == nullptr) { continue; }
         if(port->prevPart->id > identifierPART || port->nextPart->id > identifierPART) { continue; }*/
 
-        std::cout << port->prevPart->name << "(id: " << port->prevPart->id << ") --> " << value << " --> " << port->nextPart->name << "(id: " << port->nextPart->id << ")" << std::endl;
+        std::cout << port->prevPart->name << "(id: " << port->prevPart->id << ") --> " << port->nextPart->name <<  " (id: " << port->nextPart->id << ")" << std::endl;
         tempPartsProcess.push_back(port->nextPart);
     }
 }
@@ -322,7 +322,7 @@ void part::Output(float value) {
 void part::next(part* part, int port){
 
     for (Port* p : portsList) {
-        if (p->nextPart == part && p->_port == port) return;
+        if (p->nextPart == part && p->nextPort == port) return;
     }
 
     if (part->currentPorts >= part->maxPorts && part->maxPorts != -1) return;
@@ -347,8 +347,8 @@ Port::Port(part *next, int port, part *prev) {
 
 
 
-void Port::setValue(float value) {
-    _value = value;
+void Port::setValue(Signal signal) {
+    _signal = signal;
 }
 part::~part() {
     auto it = std::find(partsList.begin(), partsList.end(), this);

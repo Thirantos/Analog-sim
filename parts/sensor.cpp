@@ -23,7 +23,7 @@ void sensor::draw(Camera2D camera){
     std::string str = "DISCONNECTED";
     for (Port* port : portsList) {
         if(port->nextPart != this) continue;
-        str = std::to_string(port->value());
+        str = std::to_string(port->value().voltage) +" "+ std::to_string(port->value().amperage);
     }
 
     //std::cout << str << std::endl;

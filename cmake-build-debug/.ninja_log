@@ -64,3 +64,11 @@
 2330	2681	7146783332722548	Analogsim.exe	41abb5922f91125d
 4	2350	7146784027838003	CMakeFiles/Analogsim.dir/gui.cpp.obj	e5af5cb660a84153
 2354	2709	7146784031393905	Analogsim.exe	41abb5922f91125d
+4	4379	7149412704773643	CMakeFiles/Analogsim.dir/main.cpp.obj	f6b87b95193dceae
+31	4388	7149412704868815	CMakeFiles/Analogsim.dir/parts/plus.cpp.obj	2d4aa7add451bdaa
+27	4396	7149412704954927	CMakeFiles/Analogsim.dir/parts/sensor.cpp.obj	e9cbc538b8d6d9f6
+23	4490	7149412705911152	CMakeFiles/Analogsim.dir/parts/dial.cpp.obj	3541bea7ec7fbe9e
+12	4529	7149412706276683	CMakeFiles/Analogsim.dir/serializer.cpp.obj	b39708d89723e08a
+15	4612	7149412707108929	CMakeFiles/Analogsim.dir/component.cpp.obj	8c72f865046d09f3
+20	4802	7149412709009747	CMakeFiles/Analogsim.dir/gui.cpp.obj	e5af5cb660a84153
+4805	5398	7149412714937258	Analogsim.exe	41abb5922f91125d

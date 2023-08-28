@@ -21,7 +21,7 @@ dial::dial(int x, int y) : part(x, y) {
 
 void dial::onUse() {
     int v = val;
-    Output(float(v));
+    Output(Signal{float(v), 1/float(v)});
 }
 
 

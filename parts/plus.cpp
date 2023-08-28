@@ -15,16 +15,18 @@ plus::plus(int x, int y) : part(x, y) {
 
 void plus::onUse() {
 
-    float sum = 0;
+    float sumA = 0;
+    float sumV = 0;
 
     for (Port* port : portsList) {
         if(port->nextPart != this) continue;
-        sum += port->value();
+        sumA += port->value().amperage;
+        sumV += port->value().voltage;
+
     }
 
 
-    float voltage = sum;
-    Output( voltage);
+    Output( Signal{sumA, sumV});
 
 
 }
