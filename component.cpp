@@ -106,8 +106,6 @@ void part::draw(Camera2D camera) {
     }
     if(maxPorts == -1) {
 
-
-
         Rectangle inRectangle;
         inRectangle.x = inBounds[0].x - 6;
         inRectangle.y = inBounds[0].y + inBounds[0].height/2 - 12;
@@ -172,6 +170,7 @@ bool part::drag(Camera2D camera){
                         skip = true;
                     }
                 }
+
                 if (skip || !insideRect(part->bounds, GetScreenToWorld2D(GetMousePosition(), camera))) continue;
                 int i = 0;
                 for (Rectangle bound: part->inBounds) {
@@ -303,18 +302,18 @@ void part::updateBounds(){
     outBounds.x = bounds.x + bounds.width - outBounds.width;
 }
 
-void part::Output(Signal signal) {
+void part::Output(float value) {
     //std::vector<Port*> portsToProcess;
 
 
     for (Port* port : portsList) {
         if(port->prevPart != this) continue;
-        port->setValue(signal);
+        port->setValue(value);
         /*
         if(port->prevPart == nullptr || port->nextPart == nullptr) { continue; }
         if(port->prevPart->id > identifierPART || port->nextPart->id > identifierPART) { continue; }*/
 
-        std::cout << port->prevPart->name << "(id: " << port->prevPart->id << ") --> " << port->nextPart->name <<  " (id: " << port->nextPart->id << ")" << std::endl;
+        std::cout << port->prevPart->name << "(id: " << port->prevPart->id << ") --> " << value << " --> " << port->nextPart->name << "(id: " << port->nextPart->id << ")" << std::endl;
         tempPartsProcess.push_back(port->nextPart);
     }
 }
@@ -322,7 +321,7 @@ void part::Output(Signal signal) {
 void part::next(part* part, int port){
 
     for (Port* p : portsList) {
-        if (p->nextPart == part && p->nextPort == port) return;
+        if (p->nextPart == part && p->_port == port && p->prevPart == this) return;
     }
 
     if (part->currentPorts >= part->maxPorts && part->maxPorts != -1) return;
@@ -347,20 +346,31 @@ Port::Port(part *next, int port, part *prev) {
 
 
 
-void Port::setValue(Signal signal) {
-    _signal = signal;
+void Port::setValue(float value) {
+    _value = value;
 }
 part::~part() {
     auto it = std::find(partsList.begin(), partsList.end(), this);
     if (it != partsList.end()) {
         partsList.erase(it);
     }
+    auto it2 = std::find(partsProcess.begin(), partsProcess.end(), this);
+    if (it2 != partsProcess.end()) {
+        partsProcess.erase(it2);
+    }
     for (Port* port : portsList) {
         if (port->prevPart == this || port->nextPart == this) delete port;
     }
 }
 
-void part::serialize() {
+void part::serialize(json* Data, json properties) {
+    json partj;
+    partj["id"] = id;
+    partj["x"]  = position.x;
+    partj["y"]  = position.y;
+    partj["type"]  = name;
+    partj["data"]  = properties;
+    Data->push_back(partj);
 
 }
 
@@ -374,4 +384,13 @@ Port::~Port() {
     if (it != portsList.end()) {
         portsList.erase(it);
     }
+}
+
+void Port::serialize(json *Data) {
+    json portj;
+    portj["id"] = id;
+    portj["prev"]  = prevPart->id;
+    portj["next"]  = nextPart->id;
+    portj["value"]  = value();
+    Data->push_back(portj);
 }

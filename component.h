@@ -68,7 +68,7 @@ public:
     void drawPorts(Camera2D camera);
     virtual void draw(Camera2D camera);
     virtual void drawIgnoreCam(Camera2D camera){};
-    virtual void serialize();
+    virtual void serialize(json* Data, json properties = NULL);
 
 
 };
@@ -106,7 +106,7 @@ public:
 
     void setValue(Signal signal);
 
-
+    void serialize(json* Data);
 };
 
 

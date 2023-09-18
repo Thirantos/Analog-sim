@@ -24,11 +24,11 @@ void dial::onUse() {
     Output(Signal{float(v), 1/float(v)});
 }
 
-
 void dial::draw(Camera2D camera) {
     part::draw(camera);
 
 }
+
 
 void dial::drawIgnoreCam(Camera2D camera) {
     part::drawIgnoreCam(camera);
@@ -41,7 +41,13 @@ void dial::drawIgnoreCam(Camera2D camera) {
     _spinner.x += bounds.width * 0.15f;
     _spinner = cameraDisplace(_spinner, camera);
 
-    GuiSpinner(_spinner, "", &val, 0, INFINITY, false);
+    GuiSpinner(_spinner, "", &val, 0, 500, false);
+}
+
+void dial::serialize(json *Data) {
+    json properties;
+    properties["value"]  = val;
+    part::serialize(Data, properties);
 }
 
 
