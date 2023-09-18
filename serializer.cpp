@@ -10,10 +10,25 @@ using json = nlohmann::json;
 
 void serializer::serialize() {
 
+    json parts;
+    json ports;
+    json Json;
 
-        // Write the JSON string to a file or use as desired
-        std::ofstream outputFile("SAVE.json");
-        outputFile.close();
+    for (part* part : partsList) {
+        part->serialize(&parts);
+    }
+    for (Port* port : portsList) {
+        port->serialize(&ports);
+    }
+    Json["parts"] = parts;
+    Json["ports"] = ports;
+
+    // Write the JSON string to a file or use as desired
+    std::ofstream outputFile("SAVE.json");
+
+    outputFile << Json;
+
+    outputFile.close();
 
 }
 

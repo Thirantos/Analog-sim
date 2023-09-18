@@ -104,7 +104,7 @@ int gui::DrawGui() {
         partsProcess.insert(partsProcess.end(), tempPartsProcess.begin(), tempPartsProcess.end());
         tempPartsProcess.clear();
         for(part* part: partsProcess){
-            //part->onUse();
+            if(partsProcess.empty()) break;
             part->onUse();
         }
 

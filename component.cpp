@@ -106,8 +106,6 @@ void part::draw(Camera2D camera) {
     }
     if(maxPorts == -1) {
 
-
-
         Rectangle inRectangle;
         inRectangle.x = inBounds[0].x - 6;
         inRectangle.y = inBounds[0].y + inBounds[0].height/2 - 12;
@@ -172,6 +170,7 @@ bool part::drag(Camera2D camera){
                         skip = true;
                     }
                 }
+
                 if (skip || !insideRect(part->bounds, GetScreenToWorld2D(GetMousePosition(), camera))) continue;
                 int i = 0;
                 for (Rectangle bound: part->inBounds) {
@@ -322,7 +321,7 @@ void part::Output(float value) {
 void part::next(part* part, int port){
 
     for (Port* p : portsList) {
-        if (p->nextPart == part && p->_port == port) return;
+        if (p->nextPart == part && p->_port == port && p->prevPart == this) return;
     }
 
     if (part->currentPorts >= part->maxPorts && part->maxPorts != -1) return;
@@ -355,12 +354,23 @@ part::~part() {
     if (it != partsList.end()) {
         partsList.erase(it);
     }
+    auto it2 = std::find(partsProcess.begin(), partsProcess.end(), this);
+    if (it2 != partsProcess.end()) {
+        partsProcess.erase(it2);
+    }
     for (Port* port : portsList) {
         if (port->prevPart == this || port->nextPart == this) delete port;
     }
 }
 
-void part::serialize() {
+void part::serialize(json* Data, json properties) {
+    json partj;
+    partj["id"] = id;
+    partj["x"]  = position.x;
+    partj["y"]  = position.y;
+    partj["type"]  = name;
+    partj["data"]  = properties;
+    Data->push_back(partj);
 
 }
 
@@ -374,4 +384,13 @@ Port::~Port() {
     if (it != portsList.end()) {
         portsList.erase(it);
     }
+}
+
+void Port::serialize(json *Data) {
+    json portj;
+    portj["id"] = id;
+    portj["prev"]  = prevPart->id;
+    portj["next"]  = nextPart->id;
+    portj["value"]  = value();
+    Data->push_back(portj);
 }
