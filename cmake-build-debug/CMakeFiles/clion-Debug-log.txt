@@ -1,36 +1,25 @@
-C:\Users\thijm\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\232.8660.186\bin\cmake\win\x64\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=C:/Users/thijm/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/232.8660.186/bin/ninja/win/x64/ninja.exe -G Ninja -S C:\Users\thijm\git\Analog-sim -B C:\Users\thijm\git\Analog-sim\cmake-build-debug
--- The C compiler identification is GNU 13.1.0
--- The CXX compiler identification is GNU 13.1.0
+"/Users/thijme/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/232.9921.42/CLion.app/Contents/bin/cmake/mac/bin/cmake" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=/Users/thijme/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/232.9921.42/CLion.app/Contents/bin/ninja/mac/ninja" -G Ninja -S /Users/thijme/CLionProjects/Analog-sim -B /Users/thijme/CLionProjects/Analog-sim/cmake-build-debug
+-- The C compiler identification is AppleClang 14.0.3.14030022
+-- The CXX compiler identification is AppleClang 14.0.3.14030022
 -- Detecting C compiler ABI info
 -- Detecting C compiler ABI info - done
--- Check for working C compiler: C:/Users/thijm/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/232.8660.186/bin/mingw/bin/gcc.exe - skipped
+-- Check for working C compiler: /Library/Developer/CommandLineTools/usr/bin/cc - skipped
 -- Detecting C compile features
 -- Detecting C compile features - done
 -- Detecting CXX compiler ABI info
 -- Detecting CXX compiler ABI info - done
--- Check for working CXX compiler: C:/Users/thijm/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/232.8660.186/bin/mingw/bin/g++.exe - skipped
+-- Check for working CXX compiler: /Library/Developer/CommandLineTools/usr/bin/c++ - skipped
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
--- Performing Test COMPILER_HAS_THOSE_TOGGLES
--- Performing Test COMPILER_HAS_THOSE_TOGGLES - Success
--- Testing if -Werror=pointer-arith can be used -- compiles
--- Testing if -Werror=implicit-function-declaration can be used -- compiles
--- Testing if -fno-strict-aliasing can be used -- compiles
--- Using raylib's GLFW
--- Performing Test CMAKE_HAVE_LIBC_PTHREAD
--- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
--- Found Threads: TRUE  
--- Including Win32 support
--- Looking for dinput.h
--- Looking for dinput.h - found
--- Looking for xinput.h
--- Looking for xinput.h - found
--- Audio Backend: miniaudio
--- Building raylib static library
--- Generated build type: Debug
--- Compiling with the flags:
---   PLATFORM=PLATFORM_DESKTOP
---   GRAPHICS=GRAPHICS_API_OPENGL_33
--- Configuring done (4.7s)
--- Generating done (0.0s)
--- Build files have been written to: C:/Users/thijm/git/Analog-sim/cmake-build-debug
+CMake Error: The current CMakeCache.txt directory /Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/CMakeCache.txt is different than the directory c:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/raylib-subbuild where CMakeCache.txt was created. This may result in binaries being created in the wrong place. If you are not sure, reedit the CMakeCache.txt
+
+CMake Error at /Users/thijme/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/232.9921.42/CLion.app/Contents/bin/cmake/mac/share/cmake-3.26/Modules/FetchContent.cmake:1610 (message):
+  CMake step for raylib failed: 1
+Call Stack (most recent call first):
+  /Users/thijme/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/232.9921.42/CLion.app/Contents/bin/cmake/mac/share/cmake-3.26/Modules/FetchContent.cmake:1762:EVAL:2 (__FetchContent_directPopulate)
+  /Users/thijme/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/232.9921.42/CLion.app/Contents/bin/cmake/mac/share/cmake-3.26/Modules/FetchContent.cmake:1762 (cmake_language)
+  /Users/thijme/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/232.9921.42/CLion.app/Contents/bin/cmake/mac/share/cmake-3.26/Modules/FetchContent.cmake:1976 (FetchContent_Populate)
+  CMakeLists.txt:21 (FetchContent_MakeAvailable)
+
+
+-- Configuring incomplete, errors occurred!

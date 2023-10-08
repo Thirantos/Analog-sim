@@ -11,9 +11,10 @@
 #define RAYGUI_IMPLEMENTATION
 #include "include/raygui.h"
 
-#include "parts/dial.h"
-#include "parts/sensor.h"
-#include "parts/plus.h"
+#include "parts.h"
+
+#warning "here are more classes added"
+
 #include "raymath.h"
 
 #define BUTTON(part) \
@@ -64,8 +65,16 @@ int gui::DrawGui() {
 
         }
 
+        partsProcess = partsInput;
+        tempPartsProcess.clear();
+        for(part* part: partsProcess){
+            if(partsProcess.empty()) break;
+            part->onUse();
+        }
+        partsProcess.clear();
+
         if(IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
-            RCM = new rightClickMenu();
+            RCM = new rightClickMenu(camera);
         }
 
 
@@ -99,14 +108,7 @@ int gui::DrawGui() {
 
         }
 
-        partsProcess.clear();
-        partsProcess = partsInput;
-        partsProcess.insert(partsProcess.end(), tempPartsProcess.begin(), tempPartsProcess.end());
-        tempPartsProcess.clear();
-        for(part* part: partsProcess){
-            if(partsProcess.empty()) break;
-            part->onUse();
-        }
+
 
         EndMode2D();
 
@@ -128,7 +130,11 @@ int gui::DrawGui() {
 
 
         if(GuiButton( Rectangle{0,0,200,100}, "save" )){
-            serializer->serialize();
+            serializer->serialize("./save.json");
+
+        }
+        if(GuiButton( Rectangle{200,0,200,100}, "load" )){
+            serializer->deserialize("./save.json");
 
         }
 
@@ -144,11 +150,11 @@ int gui::DrawGui() {
 
 }
 
-rightClickMenu::rightClickMenu(){
+rightClickMenu::rightClickMenu(Camera2D camera){
     position = GetMousePosition();
     for(part* part: std::ranges::views::reverse(partsList)){
 
-        if(CheckCollisionPointRec( GetMousePosition(),part->bounds)){
+        if(CheckCollisionPointRec( GetScreenToWorld2D(GetMousePosition(), camera),part->bounds)){
             partSelected = part;
 
         }
@@ -199,7 +205,8 @@ int partSelector::draw(Camera2D camera) {
     BUTTON(dial)
     BUTTON(plus)
     BUTTON(sensor)
-
+    BUTTON(average)
+#warning "here are more classes added"
 
     rect.height = buttonRect.y - rect.y;
 

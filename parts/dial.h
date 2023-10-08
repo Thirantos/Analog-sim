@@ -13,7 +13,7 @@ public:
     int val;
     using part::part;
 
-    dial(int x, int y);
+    dial(int x, int y, int id = identifierPART, float value = 0);
 
     void onUse() override;
 

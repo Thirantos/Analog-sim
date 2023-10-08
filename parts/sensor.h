@@ -11,7 +11,7 @@
 class sensor : public part{
 public:
     using part::part;
-    sensor(int x, int y);
+    sensor(int x, int y, int id = identifierPART);
     void onUse() override;
 
     void draw(Camera2D camera) override;
