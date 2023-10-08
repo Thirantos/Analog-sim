@@ -16,6 +16,7 @@
 #warning "here are more classes added"
 
 #include "raymath.h"
+#include "parts/normalizePolygonA.h"
 
 #define BUTTON(part) \
     Rectangle button_##part = buttonRect; \
@@ -65,13 +66,14 @@ int gui::DrawGui() {
 
         }
 
-        partsProcess = partsInput;
-        tempPartsProcess.clear();
+        tempPartsProcess = partsInput;
         for(part* part: partsProcess){
             if(partsProcess.empty()) break;
             part->onUse();
         }
         partsProcess.clear();
+        partsProcess = tempPartsProcess;
+        tempPartsProcess.clear();
 
         if(IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
             RCM = new rightClickMenu(camera);
@@ -206,6 +208,7 @@ int partSelector::draw(Camera2D camera) {
     BUTTON(plus)
     BUTTON(sensor)
     BUTTON(average)
+    BUTTON(normalizePolygonA)
 #warning "here are more classes added"
 
     rect.height = buttonRect.y - rect.y;

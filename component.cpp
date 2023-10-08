@@ -99,14 +99,18 @@ void part::draw(Camera2D camera) {
 
     DrawRectangleLinesEx(bounds, 1 / camera.zoom, DARKGRAY);
 
-    if (maxPorts > 0) {
-        for (Rectangle inRect: inBounds) {
+    if (Ports.size() > 0) {
+
+        for (int i = 0; i < Ports.size(); ++i) {
+
+            Rectangle inRect = inBounds[i];
 
             DrawCircle(
                     inRect.x,
                     inRect.y + inRect.height / 2,
                     6 + 1 / camera.zoom, DARKGRAY
             );
+            DrawText(Ports[i].c_str(), inRect.x + 10, inRect.y + inRect.height / 4, 20, DARKGRAY);
             DrawCircle(
                     inRect.x,
                     inRect.y + inRect.height / 2,
@@ -114,7 +118,7 @@ void part::draw(Camera2D camera) {
             );
         }
     }
-    if (maxPorts == -1) {
+    if (noMaxPorts) {
 
         Rectangle inRectangle;
         inRectangle.x = inBounds[0].x - 6;
@@ -180,11 +184,11 @@ bool part::drag(Camera2D camera) {
                         skip = true;
                     }
                 }
-
-                if (skip || !insideRect(part->bounds, GetScreenToWorld2D(GetMousePosition(), camera))) continue;
+                Vector2 worldmouse = GetScreenToWorld2D(GetMousePosition(), camera);
+                if (skip || !insideRect(part->bounds,worldmouse)) continue;
                 int i = 0;
                 for (Rectangle bound: part->inBounds) {
-                    if (insideRect(bound, GetScreenToWorld2D(GetMousePosition(), camera))) {
+                    if (insideRect(bound, worldmouse)) {
                         this->next(part, i);
                         return true;
                     } else {
@@ -250,8 +254,8 @@ bool part::drag(Camera2D camera) {
             isDraggingNext = true;
 
         }
-        if (maxPorts > 0) {
-            for (int i = 0; i <= maxPorts; i++) {
+        if (Ports.size() > 0) {
+            for (int i = 0; i <= Ports.size(); i++) {
                 if (insideRect(inBounds[i], GetScreenToWorld2D(GetMousePosition(), camera)) &&
                     IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                     isDraggingPrev = true;
@@ -259,7 +263,7 @@ bool part::drag(Camera2D camera) {
                 }
 
             }
-        } else if (maxPorts < 0) {
+        } else if (noMaxPorts) {
             if (insideRect(inBounds[0], GetScreenToWorld2D(GetMousePosition(), camera)) &&
                 IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                 isDraggingPrev = true;
@@ -284,16 +288,16 @@ void part::updateBounds() {
 
     inBounds.clear();
 
-    if (maxPorts > 0) {
-        float step = (bounds.height - dragBounds.height) / (maxPorts);
+    if (Ports.size() > 0) {
+        float step = (bounds.height - dragBounds.height) / (Ports.size());
 
 
-        for (int i = 1; i <= maxPorts; ++i) {
+        for (int i = 1; i <= Ports.size(); ++i) {
             Rectangle P{bounds.x, bounds.y + (i - 1) * step + dragBounds.height, bounds.width / 8, step};
             inBounds.push_back(P);
         }
 
-    } else if (maxPorts < 0) {
+    } else if (noMaxPorts) {
         Rectangle P{bounds.x, bounds.y + dragBounds.height, bounds.width / 8, bounds.height - dragBounds.height};
         inBounds.push_back(P);
     }
@@ -331,8 +335,8 @@ void part::next(part *part, int port) {
         if (p->nextPart == part && p->_port == port && p->prevPart == this) return;
     }
 
-    if (part->currentPorts >= part->maxPorts && part->maxPorts != -1) return;
-    Port *_p = new Port(part, port, this);
+    if (part->currentPorts >= part->Ports.size() && !part->noMaxPorts) return;
+    new Port(part, port, this);
     part->currentPorts++;
 }
 
