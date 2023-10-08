@@ -4,7 +4,7 @@
 
 #include "plus.h"
 
-plus::plus(int x, int y) : part(x, y) {
+plus::plus(int x, int y, int id) : part(x, y, id) {
     name = "Plus";
     dragOut = true;
 
@@ -15,16 +15,15 @@ plus::plus(int x, int y) : part(x, y) {
 
 void plus::onUse() {
 
-    float sum = 0;
+    packet sum = {0,0};
 
     for (Port* port : portsList) {
         if(port->nextPart != this) continue;
-        sum += port->value();
+        sum.voltage += port->value().voltage;
+        sum.amperage += port->value().amperage;
     }
 
-
-    float voltage = sum;
-    Output( voltage);
+    Output( sum);
 
 
 }

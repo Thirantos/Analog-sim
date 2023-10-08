@@ -7,21 +7,23 @@
 #include "raymath.h"
 
 
-dial::dial(int x, int y) : part(x, y) {
+dial::dial(int x, int y, int id, float value) : part(x, y, id) {
     name = "dial";
     dragOut = true;
 
-    val = 0;
+    val = value;
 
     partsInput.push_back(this);
 
     this->maxPorts = 0;
-
+    updateBounds();
 }
 
 void dial::onUse() {
-    int v = val;
-    Output(float(v));
+    float v = float(val);
+
+    packet p = {v, 1/v};
+    Output(p);
 }
 
 void dial::draw(Camera2D camera) {

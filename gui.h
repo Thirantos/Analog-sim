@@ -27,7 +27,7 @@ class rightClickMenu{
     Rectangle delRect{};
 public:
     Vector2 position{};
-    rightClickMenu();
+    rightClickMenu(Camera2D camera);
 
     int draw(Camera2D camera);
 

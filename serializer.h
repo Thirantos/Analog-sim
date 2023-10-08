@@ -9,10 +9,11 @@ using json = nlohmann::json;
 
 class serializer {
 public:
-    static void serialize();
+    static void serialize(std::string filePath);
     json data;
 
     serializer();
+    static void deserialize(std::string filePath);
 };
 
 

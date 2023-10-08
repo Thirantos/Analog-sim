@@ -22,10 +22,15 @@ extern std::vector<part*> partsProcess;
 extern std::vector<part*> tempPartsProcess;
 extern std::vector<Port*> portsList;
 extern bool mouseDragging;
-extern int identifierPart;
-extern int identifierPort;
+extern int identifierPART;
+extern int identifierPORT;
 
 Rectangle cameraDisplace(Rectangle rect, Camera2D camera);
+
+struct packet{
+    float voltage;
+    float amperage;
+};
 
 class part{
 
@@ -38,11 +43,11 @@ public:
     std::vector<Rectangle> inBounds;
     Rectangle outBounds = bounds;
     Rectangle dragBounds = bounds;
-    int maxPorts;
-    int currentPorts;
+    int maxPorts{};
+    int currentPorts{};
 
 
-    bool dragOut;
+    bool dragOut{};
     bool isDragging = false;
     bool isDraggingNext = false;
     bool isDraggingPrev = false;
@@ -55,11 +60,11 @@ public:
 
     virtual ~part();
 
-    part(int x, int y);
+    part(int x, int y, int id = identifierPART);
 
     void next(part* part, int port);
 
-    void Output(float value);
+    void Output(packet packet);
     void drawPorts(Camera2D camera);
     virtual void draw(Camera2D camera);
     virtual void drawIgnoreCam(Camera2D camera){};
@@ -70,7 +75,10 @@ public:
 
 class Port{
 private:
-    float _value = 0.0f;
+    packet _packet = packet{
+        .voltage = 0,
+        .amperage = 0
+    };
 public:
 
     int id;
@@ -80,7 +88,7 @@ public:
     int _port;
 
     int nextPort;
-    [[nodiscard]] float value() const { return _value; }
+    [[nodiscard]] packet value() const { return _packet; }
     bool operator==(const Port& other) const {
         // Define your own equality comparison logic here
         // Return true if the objects are considered equal, false otherwise
@@ -95,16 +103,16 @@ public:
         return this->id != other.id;
     }
 
-    Port(part *next, int port, part *prev);
+    Port(part *next, int port, part *prev, int id = identifierPORT);
 
     ~Port();
 
-    void setValue(float value);
+    void setValue(packet packet);
 
     void serialize(json* Data);
 };
 
-
-
+part* constructorFromName(const std::string& className, int x, int y, int id = identifierPART);
+part* partFromId(int id);
 
 #endif //ANALOGSIM_COMPONENT_H
