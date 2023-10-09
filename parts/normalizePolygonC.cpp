@@ -35,17 +35,17 @@ void normalizePolygonC::onUse() {
 
     std::map<std::string, packet> input = getInputs();
 
-    double numeratorA = (input["Za"].voltage - input["Zc"].voltage) *
-                      (input["Za"].voltage * input["Yb"].voltage - input["Ya"].voltage * input["Zb"].voltage) -
-                      (input["Za"].voltage - input["Zb"].voltage) *
-                      (input["Za"].voltage * input["Yc"].voltage - input["Ya"].voltage * input["Zc"].voltage);
-    double denominatorA = (input["Za"].voltage * input["Yb"].voltage - input["Ya"].voltage * input["Zb"].voltage) *
-                        (input["Za"].voltage * input["Xc"].voltage - input["Xa"].voltage * input["Zc"].voltage) -
-                        (input["Za"].voltage * input["Xb"].voltage - input["Xa"].voltage * input["Zb"].voltage) *
-                        (input["Za"].voltage * input["Yc"].voltage - input["Zc"].voltage * input["Ya"].voltage);
+    double numeratorC = (input["Xa"].voltage - input["Xc"].voltage) *
+                      (input["Xa"].voltage * input["Yb"].voltage - input["Ya"].voltage * input["Xc"].voltage) -
+                      (input["Xa"].voltage - input["Xb"].voltage) *
+                      (input["Xa"].voltage * input["Yc"].voltage - input["Ya"].voltage * input["Xc"].voltage);
+    double denominatorC = (input["Xa"].voltage * input["Yb"].voltage - input["Ya"].voltage * input["Xb"].voltage) *
+                        (input["Xa"].voltage * input["Zc"].voltage - input["Za"].voltage * input["Xc"].voltage) -
+                        (input["Xa"].voltage * input["Zb"].voltage - input["Za"].voltage * input["Xb"].voltage) *
+                        (input["Xa"].voltage * input["Yc"].voltage - input["Xc"].voltage * input["Ya"].voltage);
 
-    if (denominatorA != 0) {
-        output.voltage = numeratorA / denominatorA;
+    if (denominatorC != 0) {
+        output.voltage = numeratorC / denominatorC;
     }
 
     Output(output);

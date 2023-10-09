@@ -89,10 +89,7 @@ std::map<std::string, packet> part::getInputs(){
 
 
 void part::drawPorts(Camera2D camera) {
-    for (Port *port: portsList) {
-        if (port->prevPart != this) {
-            continue;
-        }
+    for (Port *port: portsOut) {
         DrawLineBezierCubic(Vector2{outBounds.x + outBounds.width, outBounds.y + outBounds.height / 2},
                             Vector2{port->nextPart->inBounds[port->nextPort].x,
                                     port->nextPart->inBounds[port->nextPort].y +
@@ -129,7 +126,7 @@ void part::draw(Camera2D camera) {
                     inRect.y + inRect.height / 2,
                     6 + 1 / camera.zoom, DARKGRAY
             );
-            DrawText(Ports[i].c_str(), inRect.x + 10, inRect.y + inRect.height / 4, 20, DARKGRAY);
+            DrawText(Ports[i].c_str(), inRect.x + 10, inRect.y + inRect.height / 6, 20, DARKGRAY);
             DrawCircle(
                     inRect.x,
                     inRect.y + inRect.height / 2,
@@ -198,8 +195,8 @@ bool part::drag(Camera2D camera) {
             for (part *part: partsList) {
                 if (part == this) { continue; }
                 bool skip = false;
-                for (Port *p: portsList) {
-                    if (p->prevPart == this && p->nextPart == part) {
+                for (Port *p: portsOut) {
+                    if (p->nextPart == part) {
                         skip = true;
                     }
                 }
@@ -221,8 +218,7 @@ bool part::drag(Camera2D camera) {
 
         }
         if (isDraggingPrev) {
-            for (Port *port: portsList) {
-                if (port->nextPart != this) continue;
+            for (Port *port: portsIn) {
                 if (!insideRect(port->prevPart->bounds, GetScreenToWorld2D(GetMousePosition(), camera))) continue;
 
 
@@ -340,8 +336,7 @@ void part::Output(packet packet) {
     //std::vector<Port*> portsToProcess;
 
 
-    for (Port *port: portsList) {
-        if (port->prevPart != this) continue;
+    for (Port *port: portsOut) {
         port->setValue(packet);
         /*
         if(port->prevPart == nullptr || port->nextPart == nullptr) { continue; }
@@ -356,8 +351,8 @@ void part::Output(packet packet) {
 
 void part::next(part *part, int port) {
 
-    for (Port *p: portsList) {
-        if (p->nextPart == part && p->_port == port && p->prevPart == this) return;
+    for (Port *p: portsOut) {
+        if (p->nextPart == part && p->_port == port) return;
     }
 
     if (part->currentPorts >= part->Ports.size() && !part->noMaxPorts) return;
@@ -375,7 +370,7 @@ Port::Port(part *next, int port, part *prev, int id) {
     identifierPART = max(id, identifierPART) + 1;
 
     next->portsIn[port] = this;
-    prev->portsIn.push_back(this);
+    prev->portsOut.push_back(this);
 
     portsList.push_back(this); // Store the pointer to the Port object
 }
@@ -395,12 +390,14 @@ part::~part() {
         partsInput.erase(it2);
     }
 
-
-
-
-    for (Port *port: portsList) {
-        if (port->prevPart == this || port->nextPart == this) delete port;
+    for (Port *port: portsOut){
+        delete port;
     }
+    for (Port *port: portsIn){
+        delete port;
+    }
+
+
 }
 
 void part::serialize(json *Data, json properties) {
