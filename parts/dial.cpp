@@ -16,7 +16,7 @@ dial::dial(int x, int y, int id, float value) : part(x, y, id) {
     partsInput.push_back(this);
 
     this->Ports.clear();
-    updateBounds();
+    postInitialize();
 }
 
 void dial::onUse() {

@@ -9,7 +9,7 @@ average::average(int x, int y, int id) : part(x, y, id) {
     dragOut = true;
 
     noMaxPorts = true;
-    updateBounds();
+    postInitialize();
 
 }
 

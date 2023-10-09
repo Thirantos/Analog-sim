@@ -5,34 +5,51 @@
 
 #include "normalizePolygonA.h"
 
+
 normalizePolygonA::normalizePolygonA(int x, int y, int id) : part(x, y, id) {
     name = "normalizePolygonA";
     dragOut = true;
 
-    this->Ports.push_back("a"); //todo: yes
-    updateBounds();
+
+    this->Ports = std::vector<std::string>{
+            "Xa",
+            "Ya",
+            "Za",
+            "Xb",
+            "Yb",
+            "Zb",
+            "Xc",
+            "Yc",
+            "Zc",
+    };
+
+
+    postInitialize();
 
 }
 
+
 void normalizePolygonA::onUse() {
-/*
-    packet sum = {0,0};
 
-    float za =
+    packet output = {.voltage=NAN, 0};
 
-    double numerator = (za - zc) * (za * yb - ya * zb) - (za - zb) * (za * ya - ya * zc);
-    double denominator = (za * yb - ya * zb) * (za * xc - xa * zc) - (za * xb - xa * zb) * (za * yc - zc * ya);
+    std::map<std::string, packet> input = getInputs();
 
-    if (denominator == 0) {
-        std::cerr << "Division by zero is not allowed." << std::endl;
-        return 0; // You can handle this case as needed
+    double numeratorA = (input["Za"].voltage - input["Zc"].voltage) *
+                      (input["Za"].voltage * input["Yb"].voltage - input["Ya"].voltage * input["Zb"].voltage) -
+                      (input["Za"].voltage - input["Zb"].voltage) *
+                      (input["Za"].voltage * input["Yc"].voltage - input["Ya"].voltage * input["Zc"].voltage);
+    double denominatorA = (input["Za"].voltage * input["Yb"].voltage - input["Ya"].voltage * input["Zb"].voltage) *
+                        (input["Za"].voltage * input["Xc"].voltage - input["Xa"].voltage * input["Zc"].voltage) -
+                        (input["Za"].voltage * input["Xb"].voltage - input["Xa"].voltage * input["Zb"].voltage) *
+                        (input["Za"].voltage * input["Yc"].voltage - input["Zc"].voltage * input["Ya"].voltage);
+
+    if (denominatorA != 0) {
+        output.voltage = numeratorA / denominatorA;
     }
 
-    return numerator / denominator;
+    Output(output);
 
-    Output( sum);
-
-*/
 
 }
 

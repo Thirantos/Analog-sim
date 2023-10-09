@@ -9,5 +9,9 @@
 #include "parts/plus.h"
 #include "parts/sensor.h"
 #include "parts/average.h"
+#include "parts/normalizePolygonA.h"
+#include "parts/normalizePolygonB.h"
+#include "parts/normalizePolygonC.h"
+
 
 #endif //ANALOGSIM_PARTS_H

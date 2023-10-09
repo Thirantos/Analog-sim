@@ -12,7 +12,6 @@
 #include "serializer.h"
 
 
-
 class part;
 class Port;
 
@@ -47,6 +46,11 @@ public:
     bool noMaxPorts = false;
     int currentPorts{};
 
+    std::vector<Port*> portsIn;
+    std::vector<Port*> portsOut;
+
+    std::map<std::string, packet> getInputs();
+
 
     bool dragOut{};
     bool isDragging = false;
@@ -57,7 +61,7 @@ public:
     bool drag(Camera2D camera);
 
 
-    void updateBounds();
+    void postInitialize();
 
     virtual ~part();
 

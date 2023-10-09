@@ -49,6 +49,24 @@
 },
 {
   "directory": "/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -I/Users/thijme/CLionProjects/Analog-sim/include -I/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-src/src -I/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-src/src/external/glfw/include -g -std=gnu++2b -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -mmacosx-version-min=13.2 -fcolor-diagnostics -o CMakeFiles/Analogsim.dir/parts/normalizePolygonA.cpp.o -c /Users/thijme/CLionProjects/Analog-sim/parts/normalizePolygonA.cpp",
+  "file": "/Users/thijme/CLionProjects/Analog-sim/parts/normalizePolygonA.cpp",
+  "output": "CMakeFiles/Analogsim.dir/parts/normalizePolygonA.cpp.o"
+},
+{
+  "directory": "/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -I/Users/thijme/CLionProjects/Analog-sim/include -I/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-src/src -I/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-src/src/external/glfw/include -g -std=gnu++2b -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -mmacosx-version-min=13.2 -fcolor-diagnostics -o CMakeFiles/Analogsim.dir/parts/normalizePolygonB.cpp.o -c /Users/thijme/CLionProjects/Analog-sim/parts/normalizePolygonB.cpp",
+  "file": "/Users/thijme/CLionProjects/Analog-sim/parts/normalizePolygonB.cpp",
+  "output": "CMakeFiles/Analogsim.dir/parts/normalizePolygonB.cpp.o"
+},
+{
+  "directory": "/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug",
+  "command": "/Library/Developer/CommandLineTools/usr/bin/c++ -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -I/Users/thijme/CLionProjects/Analog-sim/include -I/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-src/src -I/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-src/src/external/glfw/include -g -std=gnu++2b -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -mmacosx-version-min=13.2 -fcolor-diagnostics -o CMakeFiles/Analogsim.dir/parts/normalizePolygonC.cpp.o -c /Users/thijme/CLionProjects/Analog-sim/parts/normalizePolygonC.cpp",
+  "file": "/Users/thijme/CLionProjects/Analog-sim/parts/normalizePolygonC.cpp",
+  "output": "CMakeFiles/Analogsim.dir/parts/normalizePolygonC.cpp.o"
+},
+{
+  "directory": "/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug",
   "command": "/Library/Developer/CommandLineTools/usr/bin/cc -DGL_SILENCE_DEPRECATION -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -I/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-src/src -isystem /Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-src/src/external/glfw/include -fno-strict-aliasing -Werror=implicit-function-declaration -Werror=pointer-arith  -g -std=gnu99 -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX13.3.sdk -mmacosx-version-min=13.2 -fcolor-diagnostics -o _deps/raylib-build/raylib/CMakeFiles/raylib.dir/rcore.c.o -c /Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-src/src/rcore.c",
   "file": "/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-src/src/rcore.c",
   "output": "_deps/raylib-build/raylib/CMakeFiles/raylib.dir/rcore.c.o"

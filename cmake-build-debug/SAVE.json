@@ -2,33 +2,350 @@
   "parts": [
     {
       "data": 0,
-      "id": 0,
-      "type": "dial",
-      "x": 128.15234375,
-      "y": 224.8515625
+      "id": 25,
+      "type": "normalizePolygonA",
+      "x": 680.1640625,
+      "y": 173.75
     },
     {
       "data": 0,
-      "id": 1,
+      "id": 0,
+      "type": "normalizePolygonB",
+      "x": 674.3828125,
+      "y": 423.23828125
+    },
+    {
+      "data": 0,
+      "id": 3,
       "type": "sensor",
-      "x": 462.4609375,
-      "y": 205.02734375
+      "x": 964.2734375,
+      "y": 503.875
+    },
+    {
+      "data": 0,
+      "id": 35,
+      "type": "sensor",
+      "x": 968.75390625,
+      "y": 255.96484375
+    },
+    {
+      "data": 0,
+      "id": 62,
+      "type": "sensor",
+      "x": 970.85546875,
+      "y": 784.765625
+    },
+    {
+      "data": 0,
+      "id": 5,
+      "type": "dial",
+      "x": 242.0,
+      "y": 165.0
+    },
+    {
+      "data": 0,
+      "id": 6,
+      "type": "dial",
+      "x": 229.52734375,
+      "y": 270.203125
+    },
+    {
+      "data": 0,
+      "id": 7,
+      "type": "dial",
+      "x": 257.0,
+      "y": 408.0
+    },
+    {
+      "data": 0,
+      "id": 8,
+      "type": "dial",
+      "x": 256.0,
+      "y": 501.0
+    },
+    {
+      "data": 0,
+      "id": 9,
+      "type": "dial",
+      "x": 257.0,
+      "y": 592.0
+    },
+    {
+      "data": 0,
+      "id": 10,
+      "type": "dial",
+      "x": 277.0,
+      "y": 690.0
+    },
+    {
+      "data": 0,
+      "id": 11,
+      "type": "dial",
+      "x": 275.0,
+      "y": 775.0
+    },
+    {
+      "data": 0,
+      "id": 12,
+      "type": "dial",
+      "x": 270.0,
+      "y": 862.0
+    },
+    {
+      "data": 0,
+      "id": 13,
+      "type": "dial",
+      "x": 264.85546875,
+      "y": 942.7109375
+    },
+    {
+      "data": 0,
+      "id": 61,
+      "type": "normalizePolygonC",
+      "x": 669.71484375,
+      "y": 723.328125
     }
   ],
   "ports": [
     {
       "id": 0,
-      "next": 1,
+      "next": 3,
       "port": 0,
       "prev": 0,
-      "value": 0.0
+      "valueAMP": 0.0,
+      "valueVOLT": -0.5
     },
     {
       "id": 0,
-      "next": 1,
+      "next": 0,
       "port": 0,
-      "prev": 0,
-      "value": 0.0
+      "prev": 5,
+      "valueAMP": 0.5,
+      "valueVOLT": 2.0
+    },
+    {
+      "id": 0,
+      "next": 0,
+      "port": 1,
+      "prev": 6,
+      "valueAMP": 0.5,
+      "valueVOLT": 2.0
+    },
+    {
+      "id": 0,
+      "next": 0,
+      "port": 2,
+      "prev": 7,
+      "valueAMP": 1.0,
+      "valueVOLT": 1.0
+    },
+    {
+      "id": 0,
+      "next": 0,
+      "port": 3,
+      "prev": 8,
+      "valueAMP": 0.25,
+      "valueVOLT": 4.0
+    },
+    {
+      "id": 0,
+      "next": 0,
+      "port": 4,
+      "prev": 9,
+      "valueAMP": 0.3333333432674408,
+      "valueVOLT": 3.0
+    },
+    {
+      "id": 0,
+      "next": 0,
+      "port": 5,
+      "prev": 10,
+      "valueAMP": 0.25,
+      "valueVOLT": 4.0
+    },
+    {
+      "id": 0,
+      "next": 0,
+      "port": 6,
+      "prev": 11,
+      "valueAMP": 0.5,
+      "valueVOLT": 2.0
+    },
+    {
+      "id": 0,
+      "next": 0,
+      "port": 7,
+      "prev": 12,
+      "valueAMP": 0.5,
+      "valueVOLT": 2.0
+    },
+    {
+      "id": 0,
+      "next": 0,
+      "port": 8,
+      "prev": 13,
+      "valueAMP": 0.3333333432674408,
+      "valueVOLT": 3.0
+    },
+    {
+      "id": 0,
+      "next": 25,
+      "port": 0,
+      "prev": 5,
+      "valueAMP": 0.5,
+      "valueVOLT": 2.0
+    },
+    {
+      "id": 0,
+      "next": 25,
+      "port": 1,
+      "prev": 6,
+      "valueAMP": 0.5,
+      "valueVOLT": 2.0
+    },
+    {
+      "id": 0,
+      "next": 25,
+      "port": 2,
+      "prev": 7,
+      "valueAMP": 1.0,
+      "valueVOLT": 1.0
+    },
+    {
+      "id": 0,
+      "next": 25,
+      "port": 3,
+      "prev": 8,
+      "valueAMP": 0.25,
+      "valueVOLT": 4.0
+    },
+    {
+      "id": 0,
+      "next": 25,
+      "port": 4,
+      "prev": 9,
+      "valueAMP": 0.3333333432674408,
+      "valueVOLT": 3.0
+    },
+    {
+      "id": 0,
+      "next": 25,
+      "port": 5,
+      "prev": 10,
+      "valueAMP": 0.25,
+      "valueVOLT": 4.0
+    },
+    {
+      "id": 0,
+      "next": 25,
+      "port": 6,
+      "prev": 11,
+      "valueAMP": 0.5,
+      "valueVOLT": 2.0
+    },
+    {
+      "id": 0,
+      "next": 25,
+      "port": 7,
+      "prev": 12,
+      "valueAMP": 0.5,
+      "valueVOLT": 2.0
+    },
+    {
+      "id": 0,
+      "next": 25,
+      "port": 8,
+      "prev": 13,
+      "valueAMP": 0.3333333432674408,
+      "valueVOLT": 3.0
+    },
+    {
+      "id": 0,
+      "next": 35,
+      "port": 0,
+      "prev": 25,
+      "valueAMP": 0.0,
+      "valueVOLT": -0.5
+    },
+    {
+      "id": 0,
+      "next": 62,
+      "port": 0,
+      "prev": 61,
+      "valueAMP": 0.0,
+      "valueVOLT": -0.5
+    },
+    {
+      "id": 0,
+      "next": 61,
+      "port": 0,
+      "prev": 5,
+      "valueAMP": 0.5,
+      "valueVOLT": 2.0
+    },
+    {
+      "id": 0,
+      "next": 61,
+      "port": 1,
+      "prev": 6,
+      "valueAMP": 0.5,
+      "valueVOLT": 2.0
+    },
+    {
+      "id": 0,
+      "next": 61,
+      "port": 2,
+      "prev": 7,
+      "valueAMP": 1.0,
+      "valueVOLT": 1.0
+    },
+    {
+      "id": 0,
+      "next": 61,
+      "port": 3,
+      "prev": 8,
+      "valueAMP": 0.25,
+      "valueVOLT": 4.0
+    },
+    {
+      "id": 0,
+      "next": 61,
+      "port": 4,
+      "prev": 9,
+      "valueAMP": 0.3333333432674408,
+      "valueVOLT": 3.0
+    },
+    {
+      "id": 0,
+      "next": 61,
+      "port": 5,
+      "prev": 10,
+      "valueAMP": 0.25,
+      "valueVOLT": 4.0
+    },
+    {
+      "id": 0,
+      "next": 61,
+      "port": 6,
+      "prev": 11,
+      "valueAMP": 0.5,
+      "valueVOLT": 2.0
+    },
+    {
+      "id": 0,
+      "next": 61,
+      "port": 7,
+      "prev": 12,
+      "valueAMP": 0.5,
+      "valueVOLT": 2.0
+    },
+    {
+      "id": 0,
+      "next": 61,
+      "port": 8,
+      "prev": 13,
+      "valueAMP": 0.3333333432674408,
+      "valueVOLT": 3.0
     }
   ]
 }

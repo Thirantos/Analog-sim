@@ -65,7 +65,26 @@ part::part(int x, int y, int id) {
     this->position.x = x;
     this->position.y = y;
     this->id = id;
+
     identifierPART = max(id, identifierPART) + 1;
+}
+
+std::map<std::string, packet> part::getInputs(){
+
+    std::map<std::string, packet> dict;
+    if(noMaxPorts) throw "not implemented";
+
+    for (int i = 0; i < Ports.size(); ++i) {
+
+        if(portsIn[i] != nullptr){
+            dict[Ports[i]] = portsIn[i]->value();
+        }else {
+            dict[Ports[i]] = packet{0,0};
+        }
+    }
+
+    return dict;
+
 }
 
 
@@ -226,7 +245,7 @@ bool part::drag(Camera2D camera) {
 
 
     if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !isDraggingNext && !isDraggingPrev && !mouseDragging) {
-        updateBounds();
+        postInitialize();
 
 
         if (insideRect(bounds, GetScreenToWorld2D(GetMousePosition(), camera))) {
@@ -277,11 +296,17 @@ bool part::drag(Camera2D camera) {
 
 }
 
-void part::updateBounds() {
+void part::postInitialize() {
+
+    for (int i = 0; i < Ports.size(); ++i) {
+        portsIn.push_back(nullptr);
+    }
+
     bounds.x = position.x;
     bounds.y = position.y;
     bounds.width = 200;
-    bounds.height = 75;
+
+    bounds.height = max(75, Ports.size() * 25);
 
     dragBounds = bounds;
     dragBounds.height = 25;
@@ -349,6 +374,9 @@ Port::Port(part *next, int port, part *prev, int id) {
     this->id = id;
     identifierPART = max(id, identifierPART) + 1;
 
+    next->portsIn[port] = this;
+    prev->portsIn.push_back(this);
+
     portsList.push_back(this); // Store the pointer to the Port object
 }
 
@@ -366,6 +394,10 @@ part::~part() {
     if (it2 != partsInput.end()) {
         partsInput.erase(it2);
     }
+
+
+
+
     for (Port *port: portsList) {
         if (port->prevPart == this || port->nextPart == this) delete port;
     }
@@ -390,6 +422,17 @@ Port::~Port() {
     if (it != portsList.end()) {
         portsList.erase(it);
     }
+
+    auto next = std::find(nextPart->portsIn.begin(), nextPart->portsIn.end(), this);
+
+    if (next != nextPart->portsIn.end()) {
+        int idx = std::distance(nextPart->portsIn.begin(), next);
+        nextPart->portsIn[idx] = nullptr;
+    }
+    auto prev = std::find(prevPart->portsOut.begin(), prevPart->portsOut.end(), this);
+    if (prev != prevPart->portsOut.end()) {
+        prevPart->portsOut.erase(prev);
+    }
 }
 
 void Port::serialize(json *Data) {
@@ -410,6 +453,12 @@ part *constructorFromName(const std::string &className, int x, int y, int id) {
         return new dial(x, y, id);
     } else if (className == "sensor") {
         return new sensor(x, y, id);
+    } else if (className == "normalizePolygonA") {
+        return new normalizePolygonA(x, y, id);
+    } else if (className == "normalizePolygonB") {
+        return new normalizePolygonB(x, y, id);
+    } else if (className == "normalizePolygonC") {
+        return new normalizePolygonC(x, y, id);
     } else if (className == "plus") {
         return new plus(x, y, id);
     } else if (className == "average") {

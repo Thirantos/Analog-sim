@@ -16,7 +16,6 @@
 #warning "here are more classes added"
 
 #include "raymath.h"
-#include "parts/normalizePolygonA.h"
 
 #define BUTTON(part) \
     Rectangle button_##part = buttonRect; \
@@ -45,7 +44,7 @@ int gui::DrawGui() {
     SetTargetFPS(GetMonitorRefreshRate(GetCurrentMonitor()));
 
     for(part* part: partsList){
-        part->updateBounds();
+        part->postInitialize();
 
     }
 
@@ -209,6 +208,9 @@ int partSelector::draw(Camera2D camera) {
     BUTTON(sensor)
     BUTTON(average)
     BUTTON(normalizePolygonA)
+    BUTTON(normalizePolygonB)
+    BUTTON(normalizePolygonC)
+#
 #warning "here are more classes added"
 
     rect.height = buttonRect.y - rect.y;
