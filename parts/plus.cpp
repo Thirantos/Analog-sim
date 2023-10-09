@@ -8,7 +8,7 @@ plus::plus(int x, int y, int id) : part(x, y, id) {
     name = "Plus";
     dragOut = true;
 
-    this->maxPorts = -1;
+    noMaxPorts = true;
     updateBounds();
 
 }

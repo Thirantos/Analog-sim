@@ -1,8 +1,8 @@
-# Install script for directory: C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/raylib-subbuild
+# Install script for directory: /Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-subbuild
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/raylib-populate")
+  set(CMAKE_INSTALL_PREFIX "/usr/local")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

@@ -4,19 +4,19 @@
 cmake_minimum_required(VERSION 3.5)
 
 file(MAKE_DIRECTORY
-  "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/raylib-src"
-  "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/raylib-build"
-  "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix"
-  "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/tmp"
-  "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp"
-  "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src"
-  "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp"
+  "/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-src"
+  "/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-build"
+  "/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix"
+  "/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/tmp"
+  "/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp"
+  "/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src"
+  "/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp"
 )
 
 set(configSubDirs )
 foreach(subDir IN LISTS configSubDirs)
-    file(MAKE_DIRECTORY "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp/${subDir}")
+    file(MAKE_DIRECTORY "/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp/${subDir}")
 endforeach()
 if(cfgdir)
-  file(MAKE_DIRECTORY "C:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp${cfgdir}") # cfgdir has leading slash
+  file(MAKE_DIRECTORY "/Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/raylib-populate-prefix/src/raylib-populate-stamp${cfgdir}") # cfgdir has leading slash
 endif()

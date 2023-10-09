@@ -43,7 +43,8 @@ public:
     std::vector<Rectangle> inBounds;
     Rectangle outBounds = bounds;
     Rectangle dragBounds = bounds;
-    int maxPorts{};
+    std::vector<std::string> Ports{};
+    bool noMaxPorts = false;
     int currentPorts{};
 
 

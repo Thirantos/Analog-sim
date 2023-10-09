@@ -8,7 +8,7 @@ average::average(int x, int y, int id) : part(x, y, id) {
     name = "average";
     dragOut = true;
 
-    this->maxPorts = -1;
+    noMaxPorts = true;
     updateBounds();
 
 }
@@ -16,7 +16,6 @@ average::average(int x, int y, int id) : part(x, y, id) {
 void average::onUse() {
 
     packet p;
-    float a = 0;
     float i = 0;
 
     for(Port* port : portsList){

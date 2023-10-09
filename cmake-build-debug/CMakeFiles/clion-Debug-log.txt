@@ -11,15 +11,28 @@
 -- Check for working CXX compiler: /Library/Developer/CommandLineTools/usr/bin/c++ - skipped
 -- Detecting CXX compile features
 -- Detecting CXX compile features - done
-CMake Error: The current CMakeCache.txt directory /Users/thijme/CLionProjects/Analog-sim/cmake-build-debug/_deps/raylib-subbuild/CMakeCache.txt is different than the directory c:/Users/thijm/git/Analog-sim/cmake-build-debug/_deps/raylib-subbuild where CMakeCache.txt was created. This may result in binaries being created in the wrong place. If you are not sure, reedit the CMakeCache.txt
-
-CMake Error at /Users/thijme/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/232.9921.42/CLion.app/Contents/bin/cmake/mac/share/cmake-3.26/Modules/FetchContent.cmake:1610 (message):
-  CMake step for raylib failed: 1
+-- Performing Test COMPILER_HAS_THOSE_TOGGLES
+-- Performing Test COMPILER_HAS_THOSE_TOGGLES - Success
+-- Testing if -Werror=pointer-arith can be used -- compiles
+-- Testing if -Werror=implicit-function-declaration can be used -- compiles
+-- Testing if -fno-strict-aliasing can be used -- compiles
+-- Using raylib's GLFW
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE  
+-- Including Cocoa support
+CMake Warning (dev) at cmake-build-debug/_deps/raylib-src/cmake/LibraryConfigurations.cmake:22 (MESSAGE):
+  OpenGL is deprecated starting with macOS 10.14 (Mojave)!
 Call Stack (most recent call first):
-  /Users/thijme/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/232.9921.42/CLion.app/Contents/bin/cmake/mac/share/cmake-3.26/Modules/FetchContent.cmake:1762:EVAL:2 (__FetchContent_directPopulate)
-  /Users/thijme/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/232.9921.42/CLion.app/Contents/bin/cmake/mac/share/cmake-3.26/Modules/FetchContent.cmake:1762 (cmake_language)
-  /Users/thijme/Library/Application Support/JetBrains/Toolbox/apps/CLion/ch-0/232.9921.42/CLion.app/Contents/bin/cmake/mac/share/cmake-3.26/Modules/FetchContent.cmake:1976 (FetchContent_Populate)
-  CMakeLists.txt:21 (FetchContent_MakeAvailable)
+  cmake-build-debug/_deps/raylib-src/src/CMakeLists.txt:48 (include)
+This warning is for project developers.  Use -Wno-dev to suppress it.
 
-
--- Configuring incomplete, errors occurred!
+-- Audio Backend: miniaudio
+-- Building raylib static library
+-- Generated build type: Debug
+-- Compiling with the flags:
+--   PLATFORM=PLATFORM_DESKTOP
+--   GRAPHICS=GRAPHICS_API_OPENGL_33
+-- Configuring done (7.8s)
+-- Generating done (0.0s)
+-- Build files have been written to: /Users/thijme/CLionProjects/Analog-sim/cmake-build-debug
