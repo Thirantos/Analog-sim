@@ -70,7 +70,6 @@ int gui::DrawGui() {
         tempPartsProcess = partsInput;
         for(part* part: partsProcess){
             if(partsProcess.empty()) break;
-            if(part->bounds.height == 0) break;
             part->onUse();
         }
         partsProcess.clear();
@@ -141,7 +140,7 @@ int gui::DrawGui() {
             nfdchar_t *outPath;
 
             nfdfilteritem_t filterItem[1] = { { "Analogsim file", "analogsim" } };
-            nfdresult_t result = NFD_SaveDialog(&outPath, filterItem, 1, "./saves/", "save.analogsim");
+            nfdresult_t result = NFD_SaveDialog(&outPath, filterItem, 1, NULL, "save.analogsim");
             if (result == NFD_OKAY)
             {
                 serializer->serialize(outPath);
@@ -169,7 +168,7 @@ int gui::DrawGui() {
             nfdchar_t *outPath;
 
             nfdfilteritem_t filterItem[1] = { { "Analogsim file", "analogsim" } };
-            nfdresult_t result = NFD_OpenDialog(&outPath, filterItem, 1, "./saves/");
+            nfdresult_t result = NFD_OpenDialog(&outPath, filterItem, 1, NULL);
             if (result == NFD_OKAY)
             {
                 serializer->deserialize(outPath);

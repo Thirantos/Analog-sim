@@ -32,7 +32,7 @@ normalizePolygonA::normalizePolygonA(int x, int y, int id) : part(x, y, id) {
 
 void normalizePolygonA::onUse() {
 
-    packet output = {.voltage=NAN, 0};
+    packet output = {.voltage=NAN, .amperage =0};
 
     std::map<std::string, packet> input = getInputs();
 

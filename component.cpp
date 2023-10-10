@@ -357,7 +357,7 @@ void part::Output(packet packet) {
         std::cout << port->prevPart->name << "(id: " << port->prevPart->id << ") --> " << value << " --> "
                   << port->nextPart->name << "(id: " << port->nextPart->id << ")" << std::endl;
         */
-        if(port->nextPart->name != ""){return;}
+
         tempPartsProcess.push_back(port->nextPart);
     }
 }
