@@ -70,6 +70,7 @@ int gui::DrawGui() {
         tempPartsProcess = partsInput;
         for(part* part: partsProcess){
             if(partsProcess.empty()) break;
+            if(part->bounds.height == 0) break;
             part->onUse();
         }
         partsProcess.clear();
@@ -100,13 +101,14 @@ int gui::DrawGui() {
         ClearBackground(RAYWHITE);
 
         for(part* part: partsList){
-
+            if(part->bounds.height == 0) delete part;
             part->drawPorts(camera);
 
         }
 
         for(part* part: partsList){
             //part->onUse();
+            if(part->bounds.height == 0) delete part;
             part->draw(camera);
 
         }
@@ -116,7 +118,7 @@ int gui::DrawGui() {
         EndMode2D();
 
         for(part* part: partsList){
-
+            if(part->bounds.height == 0) delete part;
             part->drawIgnoreCam(camera);
 
         }
@@ -135,20 +137,18 @@ int gui::DrawGui() {
         if(GuiButton( Rectangle{0,0,100,25}, "save" )){
 
             NFD_Init();
-//todo: fix
+
             nfdchar_t *outPath;
-            nfdfilteritem_t filterItem[2] = { { "Analogsim file", "analogsim" }, { "Headers", "h,hpp" } };
-            nfdresult_t result = NFD_OpenDialog(&outPath, filterItem, 2, NULL);
+
+            nfdfilteritem_t filterItem[1] = { { "Analogsim file", "analogsim" } };
+            nfdresult_t result = NFD_SaveDialog(&outPath, filterItem, 1, "./saves/", "save.analogsim");
             if (result == NFD_OKAY)
             {
-                puts("Success!");
-                puts(outPath);
                 serializer->serialize(outPath);
                 NFD_FreePath(outPath);
             }
             else if (result == NFD_CANCEL)
             {
-                puts("User pressed cancel.");
             }
             else
             {
@@ -165,9 +165,26 @@ int gui::DrawGui() {
         }
         if(GuiButton( Rectangle{100,0,100,25}, "load" )){
 
+            NFD_Init();
+            nfdchar_t *outPath;
 
+            nfdfilteritem_t filterItem[1] = { { "Analogsim file", "analogsim" } };
+            nfdresult_t result = NFD_OpenDialog(&outPath, filterItem, 1, "./saves/");
+            if (result == NFD_OKAY)
+            {
+                serializer->deserialize(outPath);
+                NFD_FreePath(outPath);
+            }
+            else if (result == NFD_CANCEL)
+            {
+            }
+            else
+            {
+                printf("Error: %s\n", NFD_GetError());
+            }
 
-            serializer->deserialize("./save.analogsim");
+            NFD_Quit();
+
 
         }
 

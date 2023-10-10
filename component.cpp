@@ -70,7 +70,7 @@ part::part(int x, int y, int id) {
 }
 
 std::map<std::string, packet> part::getInputs(){
-
+ // for(port* port : portsIn)
     std::map<std::string, packet> dict;
     if(noMaxPorts) throw "not implemented";
 
@@ -100,6 +100,7 @@ std::map<std::string, packet> part::getInputs(){
 
 void part::drawPorts(Camera2D camera) {
     for (Port *port: portsOut) {
+        if(port->nextPart->bounds.height == 0) {delete port; return;};
         DrawLineBezierCubic(Vector2{outBounds.x + outBounds.width, outBounds.y + outBounds.height / 2},
                             Vector2{port->nextPart->inBounds[port->nextPort].x,
                                     port->nextPart->inBounds[port->nextPort].y +
@@ -229,6 +230,7 @@ bool part::drag(Camera2D camera) {
         }
         if (isDraggingPrev) {
             for (Port *port: portsIn) {
+                if (port == NULL) continue;
                 if (!insideRect(port->prevPart->bounds, GetScreenToWorld2D(GetMousePosition(), camera))) continue;
 
 
@@ -355,6 +357,7 @@ void part::Output(packet packet) {
         std::cout << port->prevPart->name << "(id: " << port->prevPart->id << ") --> " << value << " --> "
                   << port->nextPart->name << "(id: " << port->nextPart->id << ")" << std::endl;
         */
+        if(port->nextPart->name != ""){return;}
         tempPartsProcess.push_back(port->nextPart);
     }
 }
@@ -397,14 +400,6 @@ void Port::setValue(packet packet) {
 }
 
 part::~part() {
-    auto it = std::find(partsList.begin(), partsList.end(), this);
-    if (it != partsList.end()) {
-        partsList.erase(it);
-    }
-    auto it2 = std::find(partsInput.begin(), partsInput.end(), this);
-    if (it2 != partsInput.end()) {
-        partsInput.erase(it2);
-    }
 
     for (Port *port: portsOut){
         delete port;
@@ -412,6 +407,28 @@ part::~part() {
     for (Port *port: portsIn){
         delete port;
     }
+
+
+    auto it2 = std::find(partsInput.begin(), partsInput.end(), this);
+    if (it2 != partsInput.end()) {
+        partsInput.erase(it2);
+    }
+
+    auto it3 = std::find(partsProcess.begin(), partsProcess.end(), this);
+    if (it3 != partsProcess.end()) {
+        partsProcess.erase(it3);
+    }
+
+    auto it4 = std::find(tempPartsProcess.begin(), tempPartsProcess.end(), this);
+    if (it4 != tempPartsProcess.end()) {
+        tempPartsProcess.erase(it4);
+    }
+    auto it = std::find(partsList.begin(), partsList.end(), this);
+    if (it != partsList.end()) {
+        partsList.erase(it);
+    }
+
+
 
 
 }
@@ -439,13 +456,17 @@ Port::~Port() {
     auto next = std::find(nextPart->portsIn.begin(), nextPart->portsIn.end(), this);
 
     if (next != nextPart->portsIn.end()) {
-        int idx = std::distance(nextPart->portsIn.begin(), next);
+        long idx = std::distance(nextPart->portsIn.begin(), next);
         nextPart->portsIn[idx] = nullptr;
     }
     auto prev = std::find(prevPart->portsOut.begin(), prevPart->portsOut.end(), this);
     if (prev != prevPart->portsOut.end()) {
         prevPart->portsOut.erase(prev);
     }
+
+
+    this->nextPart = nullptr;
+    this->prevPart = nullptr;
 }
 
 void Port::serialize(json *Data) {
