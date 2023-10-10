@@ -5,7 +5,7 @@
 #include "plus.h"
 
 plus::plus(int x, int y, int id) : part(x, y, id) {
-    name = "Plus";
+    name = "plus";
     dragOut = true;
 
     noMaxPorts = true;

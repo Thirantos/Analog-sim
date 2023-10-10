@@ -12,6 +12,8 @@
 #include "include/raygui.h"
 
 #include "parts.h"
+#include <nfd.h>
+
 
 #warning "here are more classes added"
 
@@ -130,12 +132,42 @@ int gui::DrawGui() {
         }
 
 
-        if(GuiButton( Rectangle{0,0,200,100}, "save" )){
-            serializer->serialize("./save.json");
+        if(GuiButton( Rectangle{0,0,100,25}, "save" )){
+
+            NFD_Init();
+//todo: fix
+            nfdchar_t *outPath;
+            nfdfilteritem_t filterItem[2] = { { "Analogsim file", "analogsim" }, { "Headers", "h,hpp" } };
+            nfdresult_t result = NFD_OpenDialog(&outPath, filterItem, 2, NULL);
+            if (result == NFD_OKAY)
+            {
+                puts("Success!");
+                puts(outPath);
+                serializer->serialize(outPath);
+                NFD_FreePath(outPath);
+            }
+            else if (result == NFD_CANCEL)
+            {
+                puts("User pressed cancel.");
+            }
+            else
+            {
+                printf("Error: %s\n", NFD_GetError());
+            }
+
+            NFD_Quit();
+
+
+
+
+
 
         }
-        if(GuiButton( Rectangle{200,0,200,100}, "load" )){
-            serializer->deserialize("./save.json");
+        if(GuiButton( Rectangle{100,0,100,25}, "load" )){
+
+
+
+            serializer->deserialize("./save.analogsim");
 
         }
 

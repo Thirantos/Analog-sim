@@ -3,6 +3,7 @@
 //
 
 
+#include <iostream>
 #include "normalizePolygonA.h"
 
 
@@ -44,9 +45,12 @@ void normalizePolygonA::onUse() {
                         (input["Za"].voltage * input["Xb"].voltage - input["Xa"].voltage * input["Zb"].voltage) *
                         (input["Za"].voltage * input["Yc"].voltage - input["Zc"].voltage * input["Ya"].voltage);
 
+    double vol = NAN;
     if (denominatorA != 0) {
-        output.voltage = numeratorA / denominatorA;
+        vol = numeratorA / denominatorA;
+        output.voltage = vol;
     }
+    std::cout << "A: " << vol << std::endl;
 
     Output(output);
 

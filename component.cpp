@@ -77,9 +77,19 @@ std::map<std::string, packet> part::getInputs(){
     for (int i = 0; i < Ports.size(); ++i) {
 
         if(portsIn[i] != nullptr){
-            dict[Ports[i]] = portsIn[i]->value();
+
+
+            float volt = portsIn[i]->value().voltage == NAN? 0 : portsIn[i]->value().voltage;
+            float amp = portsIn[i]->value().amperage == NAN? 0 : portsIn[i]->value().amperage;
+
+
+            dict[Ports[i]] = packet{.voltage = volt,.amperage = amp};
+
+
         }else {
+
             dict[Ports[i]] = packet{0,0};
+
         }
     }
 
@@ -369,7 +379,13 @@ Port::Port(part *next, int port, part *prev, int id) {
     this->id = id;
     identifierPART = max(id, identifierPART) + 1;
 
-    next->portsIn[port] = this;
+    if(next->noMaxPorts){
+        prev->portsIn.push_back(this);
+
+    }else{
+        next->portsIn[port] = this;
+
+    }
     prev->portsOut.push_back(this);
 
     portsList.push_back(this); // Store the pointer to the Port object

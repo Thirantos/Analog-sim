@@ -20,8 +20,8 @@ if (NOT raylib_FOUND)
     FetchContent_MakeAvailable(raylib)
 endif ()
 
-
 include_directories(include)
+add_subdirectory(libs/nativefiledialog-extended)
 set(CMAKE_CXX_STANDARD 23)
 
 add_executable(Analogsim main.cpp main.h component.cpp component.h gui.h gui.cpp serializer.cpp serializer.h parts/sensor.cpp parts/sensor.h settings.h parts/plus.cpp parts/plus.h parts/dial.cpp parts/dial.h parts/plus.cpp parts/average.cpp parts/average.h parts.h
@@ -30,6 +30,8 @@ add_executable(Analogsim main.cpp main.h component.cpp component.h gui.h gui.cpp
         parts/normalizePolygonB.cpp
         parts/normalizePolygonB.h
         parts/normalizePolygonC.cpp
-        parts/normalizePolygonC.h)
+        parts/normalizePolygonC.h
+        include/nfd.h
+)
 #target_compile_options(Analogsim PRIVATE -Wall -Wextra -Wpedantic -Werror)
-target_link_libraries(Analogsim raylib)
+target_link_libraries(Analogsim PRIVATE raylib nfd)

@@ -59,11 +59,18 @@ void serializer::deserialize(std::string filePath) {
     for (json port: portsinjson) {
         Port *p = new Port(partFromId(port["next"].template get<int>()), port["port"].template get<int>(),
                            partFromId(port["prev"].template get<int>()), port["id"].template get<int>());
-        p->setValue( {.voltage = port["valueVOLT"].template get<float>(), .amperage = port["valueAMP"].template get<float>()});
+
+
+        float amp = port["valueAMP"].is_null() ? 0 : port["valueAMP"].template get<float>();
+        float volt = port["valueVOLT"].is_null() ? 0 : port["valueVOLT"].template get<float>();
+
+        p->setValue(
+                {.voltage = volt, .amperage = amp});
     }
-
-
 }
+
+
+
 
 serializer::serializer() = default;
 

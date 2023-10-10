@@ -3,6 +3,7 @@
 //
 
 
+#include <iostream>
 #include "normalizePolygonB.h"
 
 
@@ -33,23 +34,26 @@ void normalizePolygonB::onUse() {
 
     packet output = {.voltage=NAN, 0};
 
-    std::map<std::string, packet> input = getInputs();
+    std::map<std::string, packet> inputB = getInputs();
 
 
 //todo: this does the same as A somehow?
-    double numeratorB = (input["Ya"].voltage - input["Yc"].voltage) *
-                      (input["Ya"].voltage * input["Zb"].voltage - input["Za"].voltage * input["Yb"].voltage) -
-                      (input["Ya"].voltage - input["Yb"].voltage) *
-                      (input["Ya"].voltage * input["Zc"].voltage - input["Za"].voltage * input["Yc"].voltage);
-    double denominatorB = (input["Ya"].voltage * input["Zb"].voltage - input["Za"].voltage * input["Yb"].voltage) *
-                        (input["Ya"].voltage * input["Xc"].voltage - input["Xa"].voltage * input["Yc"].voltage) -
-                        (input["Ya"].voltage * input["Xb"].voltage - input["Xa"].voltage * input["Yb"].voltage) *
-                        (input["Ya"].voltage * input["Zc"].voltage - input["Za"].voltage * input["Yc"].voltage);
+    double numeratorB = (inputB["Ya"].voltage - inputB["Yc"].voltage) *
+                      (inputB["Ya"].voltage * inputB["Zb"].voltage - inputB["Za"].voltage * inputB["Yb"].voltage) -
+                      (inputB["Ya"].voltage - inputB["Yb"].voltage) *
+                      (inputB["Ya"].voltage * inputB["Zc"].voltage - inputB["Za"].voltage * inputB["Yc"].voltage);
+    double denominatorB = (inputB["Ya"].voltage * inputB["Zb"].voltage - inputB["Za"].voltage * inputB["Yb"].voltage) *
+                        (inputB["Ya"].voltage * inputB["Xc"].voltage - inputB["Xa"].voltage * inputB["Yc"].voltage) -
+                        (inputB["Ya"].voltage * inputB["Xb"].voltage - inputB["Xa"].voltage * inputB["Yb"].voltage) *
+                        (inputB["Ya"].voltage * inputB["Zc"].voltage - inputB["Za"].voltage * inputB["Yc"].voltage);
 
+
+    double vol = NAN;
     if (denominatorB != 0) {
-        output.voltage = numeratorB / denominatorB;
+        vol = numeratorB / denominatorB;
+        output.voltage = vol;
     }
-
+    std::cout << "B: " << vol << std::endl;
     Output(output);
 
 
