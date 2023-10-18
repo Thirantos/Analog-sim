@@ -12,10 +12,11 @@
 #define RAYLIB_H
 
 #include "include/raygui.h"
-#include "raymath.h"
+#include "include/raymath.h"
 
 
 #include <iostream>
+#include <utility>
 #include <vector>
 
 std::vector<part *> partsList;
@@ -240,7 +241,6 @@ bool part::drag(Camera2D camera) {
                     // Erase the object from the vector
                     portsList.erase(it);
                 }
-                port->nextPart->currentPorts--;
                 delete port;
 
 
@@ -306,9 +306,13 @@ bool part::drag(Camera2D camera) {
 
 void part::postInitialize() {
 
-    for (int i = 0; i < Ports.size(); ++i) {
-        portsIn.push_back(nullptr);
+
+    if(portsIn.size() < Ports.size()) {
+        for (int i = 0; i < Ports.size(); ++i) {
+            portsIn.push_back(nullptr);
+        }
     }
+
 
     bounds.x = position.x;
     bounds.y = position.y;
@@ -368,9 +372,9 @@ void part::next(part *part, int port) {
         if (p->nextPart == part && p->_port == port) return;
     }
 
-    if (part->currentPorts >= part->Ports.size() && !part->noMaxPorts) return;
+    if (!part->noMaxPorts) delete part->portsIn[port];
+
     new Port(part, port, this);
-    part->currentPorts++;
 }
 
 
@@ -383,7 +387,7 @@ Port::Port(part *next, int port, part *prev, int id) {
     identifierPART = max(id, identifierPART) + 1;
 
     if(next->noMaxPorts){
-        prev->portsIn.push_back(this);
+        next->portsIn.push_back(this);
 
     }else{
         next->portsIn[port] = this;
@@ -439,7 +443,7 @@ void part::serialize(json *Data, json properties) {
     partj["x"] = position.x;
     partj["y"] = position.y;
     partj["type"] = name;
-    partj["data"] = properties;
+    partj["data"] = std::move(properties);
     Data->push_back(partj);
 
 }
@@ -447,7 +451,6 @@ void part::serialize(json *Data, json properties) {
 
 Port::~Port() {
     // Remove the port from the portsList vector when deleted
-    nextPart->currentPorts--;
     auto it = std::find(portsList.begin(), portsList.end(), this);
     if (it != portsList.end()) {
         portsList.erase(it);
@@ -459,10 +462,20 @@ Port::~Port() {
         long idx = std::distance(nextPart->portsIn.begin(), next);
         nextPart->portsIn[idx] = nullptr;
     }
-    auto prev = std::find(prevPart->portsOut.begin(), prevPart->portsOut.end(), this);
-    if (prev != prevPart->portsOut.end()) {
-        prevPart->portsOut.erase(prev);
+
+
+    std::vector<Port*> tempPortsOut;
+    for (Port* port: prevPart->portsOut){
+        if (port != this){
+            tempPortsOut.push_back(port);
+        }
     }
+    prevPart->portsOut = tempPortsOut;
+    tempPortsOut.clear();
+
+
+    partsProcess.clear();
+    tempPartsProcess.clear();
 
 
     this->nextPart = nullptr;
@@ -482,9 +495,11 @@ void Port::serialize(json *Data) {
 
 #include "parts.h"
 
-part *constructorFromName(const std::string &className, int x, int y, int id) {
+part *constructorFromName(const std::string &className, int x, int y, int id, json prop) {
     if (className == "dial") {
-        return new dial(x, y, id);
+        dial* d = new dial(x, y, id);
+        d->val = prop["value"];
+        return d;
     } else if (className == "sensor") {
         return new sensor(x, y, id);
     } else if (className == "normalizePolygonA") {
@@ -497,6 +512,8 @@ part *constructorFromName(const std::string &className, int x, int y, int id) {
         return new plus(x, y, id);
     } else if (className == "average") {
         return new average(x, y, id);
+    } else if (className == "dotProduct") {
+        return new dotProduct(x, y, id);
     } else {
         // Handle unknown class names or return a default
         return new part(x, y, id);

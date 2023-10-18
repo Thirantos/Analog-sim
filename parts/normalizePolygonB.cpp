@@ -38,14 +38,14 @@ void normalizePolygonB::onUse() {
 
 
 //todo: this does the same as A somehow?
-    double numeratorB = (inputB["Ya"].voltage - inputB["Yc"].voltage) *
-                      (inputB["Ya"].voltage * inputB["Zb"].voltage - inputB["Za"].voltage * inputB["Yb"].voltage) -
-                      (inputB["Ya"].voltage - inputB["Yb"].voltage) *
-                      (inputB["Ya"].voltage * inputB["Zc"].voltage - inputB["Za"].voltage * inputB["Yc"].voltage);
-    double denominatorB = (inputB["Ya"].voltage * inputB["Zb"].voltage - inputB["Za"].voltage * inputB["Yb"].voltage) *
-                        (inputB["Ya"].voltage * inputB["Xc"].voltage - inputB["Xa"].voltage * inputB["Yc"].voltage) -
-                        (inputB["Ya"].voltage * inputB["Xb"].voltage - inputB["Xa"].voltage * inputB["Yb"].voltage) *
-                        (inputB["Ya"].voltage * inputB["Zc"].voltage - inputB["Za"].voltage * inputB["Yc"].voltage);
+    double numeratorB = (inputB["Za"].voltage - inputB["Zc"].voltage) *
+                      (inputB["Za"].voltage * inputB["Xb"].voltage - inputB["Xa"].voltage * inputB["Zb"].voltage) -
+                      (inputB["Za"].voltage - inputB["Zb"].voltage) *
+                      (inputB["Za"].voltage * inputB["Xc"].voltage - inputB["Xa"].voltage * inputB["Zc"].voltage);
+    double denominatorB = (inputB["Za"].voltage * inputB["Xb"].voltage - inputB["Xa"].voltage * inputB["Zb"].voltage) *
+                        (inputB["Za"].voltage * inputB["Yc"].voltage - inputB["Ya"].voltage * inputB["Zc"].voltage) -
+                        (inputB["Za"].voltage * inputB["Yb"].voltage - inputB["Ya"].voltage * inputB["Zb"].voltage) *
+                        (inputB["Za"].voltage * inputB["Xc"].voltage - inputB["Xa"].voltage * inputB["Zc"].voltage);
 
 
     double vol = NAN;
@@ -53,7 +53,6 @@ void normalizePolygonB::onUse() {
         vol = numeratorB / denominatorB;
         output.voltage = vol;
     }
-    std::cout << "B: " << vol << std::endl;
     Output(output);
 
 

@@ -67,6 +67,7 @@ int gui::DrawGui() {
 
         }
 
+
         tempPartsProcess = partsInput;
         for(part* part: partsProcess){
             if(partsProcess.empty()) break;
@@ -75,6 +76,8 @@ int gui::DrawGui() {
         partsProcess.clear();
         partsProcess = tempPartsProcess;
         tempPartsProcess.clear();
+
+
 
         if(IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)){
             RCM = new rightClickMenu(camera);
@@ -258,6 +261,7 @@ int partSelector::draw(Camera2D camera) {
     BUTTON(normalizePolygonA)
     BUTTON(normalizePolygonB)
     BUTTON(normalizePolygonC)
+    BUTTON(dotProduct)
 #
 #warning "here are more classes added"
 
@@ -303,6 +307,10 @@ void gui::mouseMove(){ // adapted from https://github.com/raylib-extras/examples
 
         camera.target = Vector2Add(camera.target, delta);
     }
+
+    auto x = float(IsKeyDown(KEY_RIGHT) - IsKeyDown(KEY_LEFT)) * 5;
+    auto y = float(IsKeyDown(KEY_DOWN) - IsKeyDown(KEY_UP)) * 5;
+    camera.target = Vector2Add(camera.target, {x,y});
 
 
     float wheel = GetMouseWheelMove();

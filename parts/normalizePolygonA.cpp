@@ -50,7 +50,6 @@ void normalizePolygonA::onUse() {
         vol = numeratorA / denominatorA;
         output.voltage = vol;
     }
-    std::cout << "A: " << vol << std::endl;
 
     Output(output);
 

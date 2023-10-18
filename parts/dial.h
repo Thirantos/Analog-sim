@@ -20,7 +20,7 @@ public:
 
     void draw(Camera2D camera) override;
     void drawIgnoreCam(Camera2D camera) override;
-    void serialize(json* Data);
+    void serialize(json* Data, json properties = nullptr) override;
 
 };
 

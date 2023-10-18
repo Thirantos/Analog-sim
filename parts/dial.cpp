@@ -46,7 +46,7 @@ void dial::drawIgnoreCam(Camera2D camera) {
     GuiSpinner(_spinner, "", &val, 0, 500, false);
 }
 
-void dial::serialize(json *Data) {
+void dial::serialize(json *Data, json prop){
     json properties;
     properties["value"]  = val;
     part::serialize(Data, properties);

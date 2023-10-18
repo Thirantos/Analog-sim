@@ -45,27 +45,31 @@ void serializer::deserialize(std::string filePath) {
 
     std::ifstream inputFile(filePath);
     json data = json::parse(inputFile);
-    std::vector<json> partsinjson = data["parts"].template get<std::vector<json>>();
+    if(!data["parts"].is_null()) {
+        std::vector<json> partsinjson = data["parts"].template get<std::vector<json>>();
+        for (json Part: partsinjson) {
 
-    for (json Part: partsinjson) {
-        part *p = constructorFromName(Part["type"].template get<std::string>(),
-                                      Part["x"].template get<float>(), Part["y"].template get<float>(),
-                                      Part["id"].template get<int>());
-        std::cout << Part["property"] << std::endl;
+            part *p = constructorFromName(Part["type"].template get<std::string>(),
+                                          Part["x"].template get<float>(), Part["y"].template get<float>(),
+                                          Part["id"].template get<int>(), Part["data"].is_null() ? nullptr : Part["data"]);
+            std::cout << Part["property"] << std::endl;
+        }
     }
 
-    std::vector<json> portsinjson = data["ports"].template get<std::vector<json>>();
+    if(!data["ports"].is_null()) {
+        std::vector<json> portsinjson = data["ports"].template get<std::vector<json>>();
 
-    for (json port: portsinjson) {
-        Port *p = new Port(partFromId(port["next"].template get<int>()), port["port"].template get<int>(),
-                           partFromId(port["prev"].template get<int>()), port["id"].template get<int>());
+        for (json port: portsinjson) {
+            Port *p = new Port(partFromId(port["next"].template get<int>()), port["port"].template get<int>(),
+                               partFromId(port["prev"].template get<int>()), port["id"].template get<int>());
 
 
-        float amp = port["valueAMP"].is_null() ? 0 : port["valueAMP"].template get<float>();
-        float volt = port["valueVOLT"].is_null() ? 0 : port["valueVOLT"].template get<float>();
+            float amp = port["valueAMP"].is_null() ? 0 : port["valueAMP"].template get<float>();
+            float volt = port["valueVOLT"].is_null() ? 0 : port["valueVOLT"].template get<float>();
 
-        p->setValue(
-                {.voltage = volt, .amperage = amp});
+            p->setValue(
+                    {.voltage = volt, .amperage = amp});
+        }
     }
 }
 

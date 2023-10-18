@@ -44,7 +44,6 @@ public:
     Rectangle dragBounds = bounds;
     std::vector<std::string> Ports{};
     bool noMaxPorts = false;
-    int currentPorts{};
 
     std::vector<Port*> portsIn;
     std::vector<Port*> portsOut;
@@ -117,7 +116,7 @@ public:
     void serialize(json* Data);
 };
 
-part* constructorFromName(const std::string& className, int x, int y, int id = identifierPART);
+part* constructorFromName(const std::string& className, int x, int y, int id = identifierPART, json data = nullptr);
 part* partFromId(int id);
 
 #endif //ANALOGSIM_COMPONENT_H

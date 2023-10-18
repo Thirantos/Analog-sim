@@ -32,6 +32,8 @@ add_executable(Analogsim main.cpp main.h component.cpp component.h gui.h gui.cpp
         parts/normalizePolygonC.cpp
         parts/normalizePolygonC.h
         include/nfd.h
+        parts/dotProduct.cpp
+        parts/dotProduct.h
 )
 #target_compile_options(Analogsim PRIVATE -Wall -Wextra -Wpedantic -Werror)
 target_link_libraries(Analogsim PRIVATE raylib nfd)

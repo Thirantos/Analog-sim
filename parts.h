@@ -12,6 +12,8 @@
 #include "parts/normalizePolygonA.h"
 #include "parts/normalizePolygonB.h"
 #include "parts/normalizePolygonC.h"
+#include "parts/dotProduct.h"
+
 
 
 #endif //ANALOGSIM_PARTS_H
