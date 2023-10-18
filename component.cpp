@@ -514,6 +514,8 @@ part *constructorFromName(const std::string &className, int x, int y, int id, js
         return new average(x, y, id);
     } else if (className == "dotProduct") {
         return new dotProduct(x, y, id);
+    } else if (className == "areaPolygon") {
+        return new areaPolygon(x, y, id);
     } else {
         // Handle unknown class names or return a default
         return new part(x, y, id);

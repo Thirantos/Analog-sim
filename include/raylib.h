@@ -205,6 +205,8 @@ typedef struct Vector3 {
     float z;                // Vector z component
 } Vector3;
 
+
+
 // Vector4, 4 components
 typedef struct Vector4 {
     float x;                // Vector x component

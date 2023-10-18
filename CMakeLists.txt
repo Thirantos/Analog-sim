@@ -34,6 +34,8 @@ add_executable(Analogsim main.cpp main.h component.cpp component.h gui.h gui.cpp
         include/nfd.h
         parts/dotProduct.cpp
         parts/dotProduct.h
+        parts/areaPolygon.cpp
+        parts/areaPolygon.h
 )
 #target_compile_options(Analogsim PRIVATE -Wall -Wextra -Wpedantic -Werror)
 target_link_libraries(Analogsim PRIVATE raylib nfd)

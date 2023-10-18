@@ -13,6 +13,8 @@
 #include "parts/normalizePolygonB.h"
 #include "parts/normalizePolygonC.h"
 #include "parts/dotProduct.h"
+#include "parts/areaPolygon.h"
+
 
 
 

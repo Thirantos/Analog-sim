@@ -7,8 +7,7 @@
 #include <ranges>
 #include <iostream>
 #include "include/raylib.h"
-#define RAYLIB_H
-#define RAYGUI_IMPLEMENTATION
+
 #include "include/raygui.h"
 
 #include "parts.h"
@@ -262,6 +261,8 @@ int partSelector::draw(Camera2D camera) {
     BUTTON(normalizePolygonB)
     BUTTON(normalizePolygonC)
     BUTTON(dotProduct)
+    BUTTON(areaPolygon)
+
 #
 #warning "here are more classes added"
 
