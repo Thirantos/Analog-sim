@@ -3,7 +3,8 @@
 //
 
 #include "dotProduct.h"
-#include "raymath.h"
+
+
 
 dotProduct::dotProduct(int x, int y, int id) : part(x, y, id) {
     name = "dotProduct";

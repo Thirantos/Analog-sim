@@ -18,8 +18,8 @@ public:
     void onUse() override;
 
 
-    void draw(Camera2D camera) override;
-    void drawIgnoreCam(Camera2D camera) override;
+    //void draw(camera camera) override;
+    void drawIgnoreCam(camera camera) override;
     void serialize(json* Data, json properties = nullptr) override;
 
 };

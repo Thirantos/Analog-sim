@@ -5,7 +5,7 @@
 
 #include <iostream>
 #include "areaPolygon.h"
-#include "raymath.h"
+#include <raymath.h>
 
 
 areaPolygon::areaPolygon(int x, int y, int id) : part(x, y, id) {

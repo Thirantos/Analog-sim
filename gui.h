@@ -5,18 +5,52 @@
 #ifndef ANALOGSIM_GUI_H
 #define ANALOGSIM_GUI_H
 
-#include "raylib.h"
+#include "include/raymath.h"
 #include "component.h"
 #include "serializer.h"
+
+#include <imgui.h>
+#include <imgui_impl_glfw.h>
+#include <GLFW/glfw3.h>
+
+#if _WIN32
+#include <imgui_impl_opengl3.h>
+#else
+#include <imgui_impl_metal.h>
+#endif
+#include "Rectangle.h"
+
+
+class input{
+
+
+public:
+    bool mouseButtons[8];
+
+    bool isMouseButtonDown(int i){
+        return mouseButtons[i];
+    }
+
+};
 
 class gui {
     public:
     int DrawGui();
+    Vector2 oldMousePos;
+    //static input Input;
+    GLFWwindow *window{};
     const int screenWidth = 800;
     const int screenHeight = 450;
-    serializer* serializer;
-    Camera2D camera;
-    void mouseMove();
+    serializer* serializer{};
+    camera camera;
+    void mouseMove(GLFWwindow *window) const;
+    static void save() ;
+    static void open() ;
+    static struct camera* getCamera() ;
+    void updateParts();
+
+
+    static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 };
 
 class rightClickMenu{
@@ -27,9 +61,9 @@ class rightClickMenu{
     Rectangle delRect{};
 public:
     Vector2 position{};
-    rightClickMenu(Camera2D camera);
+    rightClickMenu(GLFWwindow *window, camera camera);
 
-    int draw(Camera2D camera);
+    int draw(GLFWwindow *window, camera camera);
 
 
 };
@@ -41,8 +75,8 @@ class partSelector{
     Rectangle newRect{};
     Rectangle delRect{};
 public:
-    partSelector();
-    int draw(Camera2D camera);
+    partSelector(GLFWwindow *window);
+    int draw(GLFWwindow *window, camera camera);
 
 };
 

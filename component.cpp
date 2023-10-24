@@ -7,11 +7,9 @@
 #include "settings.h"
 
 
-#include "include/raylib.h"
 
 #define RAYLIB_H
 
-#include "include/raygui.h"
 #include "include/raymath.h"
 
 
@@ -43,13 +41,14 @@ bool insideRect(Rectangle rect, Vector2 point) {
 
 }
 
-Rectangle cameraDisplace(Rectangle rect, Camera2D camera) {
+Rectangle cameraDisplace(Rectangle rect, camera camera) {
 
 
     Vector2 topLeft = (Vector2) {rect.x, rect.y};
     Vector2 botRight = (Vector2) {rect.x + rect.width, rect.y + rect.height};
-    topLeft = Vector2Transform(topLeft, GetCameraMatrix2D(camera));
-    botRight = Vector2Transform(botRight, GetCameraMatrix2D(camera));
+
+    topLeft =  worldToCam(topLeft, camera);
+    botRight = worldToCam(botRight, camera);
 
     rect.x = topLeft.x;
     rect.y = topLeft.y;
@@ -98,211 +97,216 @@ std::map<std::string, packet> part::getInputs(){
 
 }
 
+//
+//void part::drawPorts(Camera2D camera) {
+//    for (Port *port: portsOut) {
+//        if(port->nextPart->bounds.height == 0) {delete port; return;};
+//        DrawLineBezierCubic(Vector2{outBounds.x + outBounds.width, outBounds.y + outBounds.height / 2},
+//                            Vector2{port->nextPart->inBounds[port->nextPort].x,
+//                                    port->nextPart->inBounds[port->nextPort].y +
+//                                    port->nextPart->inBounds[port->nextPort].height / 2},
+//                            Vector2{outBounds.x + outBounds.width + LINEBEND, outBounds.y + outBounds.height / 2},
+//                            Vector2{port->nextPart->inBounds[port->nextPort].x - LINEBEND,
+//                                    port->nextPart->inBounds[port->nextPort].y +
+//                                    port->nextPart->inBounds[port->nextPort].height / 2},
+//                            1, DARKGRAY);
+//
+//    }
+//}
+//
 
-void part::drawPorts(Camera2D camera) {
-    for (Port *port: portsOut) {
-        if(port->nextPart->bounds.height == 0) {delete port; return;};
-        DrawLineBezierCubic(Vector2{outBounds.x + outBounds.width, outBounds.y + outBounds.height / 2},
-                            Vector2{port->nextPart->inBounds[port->nextPort].x,
-                                    port->nextPart->inBounds[port->nextPort].y +
-                                    port->nextPart->inBounds[port->nextPort].height / 2},
-                            Vector2{outBounds.x + outBounds.width + LINEBEND, outBounds.y + outBounds.height / 2},
-                            Vector2{port->nextPart->inBounds[port->nextPort].x - LINEBEND,
-                                    port->nextPart->inBounds[port->nextPort].y +
-                                    port->nextPart->inBounds[port->nextPort].height / 2},
-                            1, DARKGRAY);
-
-    }
-}
-
-void part::draw(Camera2D camera) {
-
-    //GuiPanel(bounds, name);
-
-    DrawRectangleRec(bounds, WHITE);
-    DrawRectangleRec(dragBounds, LIGHTGRAY);
-    DrawText(name, dragBounds.x + (bounds.width - MeasureText(name, FONTSIZE)) / 2,
-             dragBounds.y, FONTSIZE, DARKBLUE);
-
-
-    DrawRectangleLinesEx(bounds, 1 / camera.zoom, DARKGRAY);
-
-    if (Ports.size() > 0) {
-
-        for (int i = 0; i < Ports.size(); ++i) {
-
-            Rectangle inRect = inBounds[i];
-
-            DrawCircle(
-                    inRect.x,
-                    inRect.y + inRect.height / 2,
-                    6 + 1 / camera.zoom, DARKGRAY
-            );
-            DrawText(Ports[i].c_str(), inRect.x + 10, inRect.y + inRect.height / 6, 20, DARKGRAY);
-            DrawCircle(
-                    inRect.x,
-                    inRect.y + inRect.height / 2,
-                    6, GOLD
-            );
-        }
-    }
-    if (noMaxPorts) {
-
-        Rectangle inRectangle;
-        inRectangle.x = inBounds[0].x - 6;
-        inRectangle.y = inBounds[0].y + inBounds[0].height / 2 - 12;
-        inRectangle.width = 12;
-        inRectangle.height = 24;
-
-        DrawRectangleRounded(inRectangle, 10, 10, GOLD);
-        DrawRectangleRoundedLines(inRectangle, 10, 10, 1 / camera.zoom, DARKGRAY);
-
-    }
-    if (dragOut) {
-        DrawCircle(
-                outBounds.x + outBounds.width,
-                outBounds.y + outBounds.height / 2,
-                6 + 1 / camera.zoom, DARKGRAY
-        );
-        DrawCircle(
-                outBounds.x + outBounds.width,
-                outBounds.y + outBounds.height / 2,
-                6, GOLD
-        );
-    }
-
-
-    if (isDraggingNext) {
-        Vector2 startPoint;
-        startPoint.x = outBounds.x + outBounds.width;
-        startPoint.y = outBounds.y + outBounds.height / 2;
-        DrawLineV(startPoint, GetScreenToWorld2D(GetMousePosition(), camera), DARKGRAY);
-
-    }
-    if (isDraggingPrev) {
-        Vector2 startPoint;
-        startPoint.x = bounds.x;
-        startPoint.y = bounds.y + bounds.height / 2;
-        DrawLineEx(startPoint, GetScreenToWorld2D(GetMousePosition(), camera), 4, CLITERAL(Color){255, 0, 0, 100});
-
-    }
-
-}
-
-bool part::drag(Camera2D camera) {
-
-#ifdef ANASIMDEBUG
-
-    DrawRectangleRec(dragBounds, CLITERAL(Color){255,0,0,128});
-    DrawRectangleRec(outBounds, CLITERAL(Color){0,255,0,128});
-    DrawRectangleRec(inBounds, CLITERAL(Color){0,0,255,128});
-
-#endif
+//todo: redo (ofcource rendering would be fucked)
+//void part::draw(Camera2D camera) {
+//
+//    //GuiPanel(bounds, name);
+//
+//    DrawRectangleRec(bounds, WHITE);
+//    DrawRectangleRec(dragBounds, LIGHTGRAY);
+//    DrawText(name, dragBounds.x + (bounds.width - MeasureText(name, FONTSIZE)) / 2,
+//             dragBounds.y, FONTSIZE, DARKBLUE);
+//
+//
+//    DrawRectangleLinesEx(bounds, 1 / camera.zoom, DARKGRAY);
+//
+//    if (Ports.size() > 0) {
+//
+//        for (int i = 0; i < Ports.size(); ++i) {
+//
+//            Rectangle inRect = inBounds[i];
+//
+//            DrawCircle(
+//                    inRect.x,
+//                    inRect.y + inRect.height / 2,
+//                    6 + 1 / camera.zoom, DARKGRAY
+//            );
+//            DrawText(Ports[i].c_str(), inRect.x + 10, inRect.y + inRect.height / 6, 20, DARKGRAY);
+//            DrawCircle(
+//                    inRect.x,
+//                    inRect.y + inRect.height / 2,
+//                    6, GOLD
+//            );
+//        }
+//    }
+//    if (noMaxPorts) {
+//
+//        Rectangle inRectangle;
+//        inRectangle.x = inBounds[0].x - 6;
+//        inRectangle.y = inBounds[0].y + inBounds[0].height / 2 - 12;
+//        inRectangle.width = 12;
+//        inRectangle.height = 24;
+//
+//        DrawRectangleRounded(inRectangle, 10, 10, GOLD);
+//        DrawRectangleRoundedLines(inRectangle, 10, 10, 1 / camera.zoom, DARKGRAY);
+//
+//    }
+//    if (dragOut) {
+//        DrawCircle(
+//                outBounds.x + outBounds.width,
+//                outBounds.y + outBounds.height / 2,
+//                6 + 1 / camera.zoom, DARKGRAY
+//        );
+//        DrawCircle(
+//                outBounds.x + outBounds.width,
+//                outBounds.y + outBounds.height / 2,
+//                6, GOLD
+//        );
+//    }
+//
+//
+//    if (isDraggingNext) {
+//        Vector2 startPoint;
+//        startPoint.x = outBounds.x + outBounds.width;
+//        startPoint.y = outBounds.y + outBounds.height / 2;
+//        DrawLineV(startPoint, GetScreenToWorld2D(GetMousePosition(), camera), DARKGRAY);
+//
+//    }
+//    if (isDraggingPrev) {
+//        Vector2 startPoint;
+//        startPoint.x = bounds.x;
+//        startPoint.y = bounds.y + bounds.height / 2;
+//        DrawLineEx(startPoint, GetScreenToWorld2D(GetMousePosition(), camera), 4, CLITERAL(Color){255, 0, 0, 100});
+//
+//    }
+//
+//}
 
 
-    if (IsMouseButtonUp(MOUSE_BUTTON_LEFT)) {
-        mouseDragging = false;
-        if (isDraggingNext) {
-            isDraggingNext = false;
-            for (part *part: partsList) {
-                if (part == this) { continue; }
-                bool skip = false;
-                for (Port *p: portsOut) {
-                    if (p->nextPart == part) {
-                        skip = true;
-                    }
-                }
-                Vector2 worldmouse = GetScreenToWorld2D(GetMousePosition(), camera);
-                if (skip || !insideRect(part->bounds,worldmouse)) continue;
-                int i = 0;
-                for (Rectangle bound: part->inBounds) {
-                    if (insideRect(bound, worldmouse)) {
-                        this->next(part, i);
-                        return true;
-                    } else {
-                        i++;
-                    }
-                }
 
-
-            }
-
-
-        }
-        if (isDraggingPrev) {
-            for (Port *port: portsIn) {
-                if (port == NULL) continue;
-                if (!insideRect(port->prevPart->bounds, GetScreenToWorld2D(GetMousePosition(), camera))) continue;
-
-
-                auto it = std::find(portsList.begin(), portsList.end(), port);
-
-                if (it != portsList.end()) {
-                    // Erase the object from the vector
-                    portsList.erase(it);
-                }
-                delete port;
-
-
-            }
-            isDraggingPrev = false;
-        }
-        return false;
-
-    }
-
-
-    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !isDraggingNext && !isDraggingPrev && !mouseDragging) {
-        postInitialize();
-
-
-        if (insideRect(bounds, GetScreenToWorld2D(GetMousePosition(), camera))) {
-            mouseDragging = true;
-
-            partsList.erase(std::remove(partsList.begin(), partsList.end(), this), partsList.end());
-            partsList.push_back(this);
-
-
-        }
-
-
-        Vector2 lastmousepos;
-        lastmousepos.x = GetScreenToWorld2D(GetMousePosition(), camera).x - GetMouseDelta().x;
-        lastmousepos.y = GetScreenToWorld2D(GetMousePosition(), camera).y - GetMouseDelta().y;
-
-        if (insideRect(dragBounds, lastmousepos)) {
-            position.x += GetMouseDelta().x;
-            position.y += GetMouseDelta().y;
-
-
-        }
-        if (insideRect(outBounds, GetScreenToWorld2D(GetMousePosition(), camera)) &&
-            IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            isDraggingNext = true;
-
-        }
-        if (Ports.size() > 0) {
-            for (int i = 0; i <= Ports.size(); i++) {
-                if (insideRect(inBounds[i], GetScreenToWorld2D(GetMousePosition(), camera)) &&
-                    IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                    isDraggingPrev = true;
-
-                }
-
-            }
-        } else if (noMaxPorts) {
-            if (insideRect(inBounds[0], GetScreenToWorld2D(GetMousePosition(), camera)) &&
-                IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                isDraggingPrev = true;
-
-            }
-        }
-
-        return true;
-    }
-    return false;
-
-}
+//todo: redo
+//bool part::drag(camera camera) {
+//
+//#ifdef ANASIMDEBUG
+//
+//    DrawRectangleRec(dragBounds, CLITERAL(Color){255,0,0,128});
+//    DrawRectangleRec(outBounds, CLITERAL(Color){0,255,0,128});
+//    DrawRectangleRec(inBounds, CLITERAL(Color){0,0,255,128});
+//
+//#endif
+//
+//
+//    if (IsMouseButtonUp(MOUSE_BUTTON_LEFT)) {
+//        mouseDragging = false;
+//        if (isDraggingNext) {
+//            isDraggingNext = false;
+//            for (part *part: partsList) {
+//                if (part == this) { continue; }
+//                bool skip = false;
+//                for (Port *p: portsOut) {
+//                    if (p->nextPart == part) {
+//                        skip = true;
+//                    }
+//                }
+//                Vector2 worldmouse = GetScreenToWorld2D(GetMousePosition(), camera);
+//                if (skip || !insideRect(part->bounds,worldmouse)) continue;
+//                int i = 0;
+//                for (Rectangle bound: part->inBounds) {
+//                    if (insideRect(bound, worldmouse)) {
+//                        this->next(part, i);
+//                        return true;
+//                    } else {
+//                        i++;
+//                    }
+//                }
+//
+//
+//            }
+//
+//
+//        }
+//        if (isDraggingPrev) {
+//            for (Port *port: portsIn) {
+//                if (port == NULL) continue;
+//                if (!insideRect(port->prevPart->bounds, GetScreenToWorld2D(GetMousePosition(), camera))) continue;
+//
+//
+//                auto it = std::find(portsList.begin(), portsList.end(), port);
+//
+//                if (it != portsList.end()) {
+//                    // Erase the object from the vector
+//                    portsList.erase(it);
+//                }
+//                delete port;
+//
+//
+//            }
+//            isDraggingPrev = false;
+//        }
+//        return false;
+//
+//    }
+//
+//
+//    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !isDraggingNext && !isDraggingPrev && !mouseDragging) {
+//        postInitialize();
+//
+//
+//        if (insideRect(bounds, GetScreenToWorld2D(GetMousePosition(), camera))) {
+//            mouseDragging = true;
+//
+//            partsList.erase(std::remove(partsList.begin(), partsList.end(), this), partsList.end());
+//            partsList.push_back(this);
+//
+//
+//        }
+//
+//
+//        Vector2 lastmousepos;
+//        lastmousepos.x = GetScreenToWorld2D(GetMousePosition(), camera).x - GetMouseDelta().x;
+//        lastmousepos.y = GetScreenToWorld2D(GetMousePosition(), camera).y - GetMouseDelta().y;
+//
+//        if (insideRect(dragBounds, lastmousepos)) {
+//            position.x += GetMouseDelta().x;
+//            position.y += GetMouseDelta().y;
+//
+//
+//        }
+//        if (insideRect(outBounds, GetScreenToWorld2D(GetMousePosition(), camera)) &&
+//            IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+//            isDraggingNext = true;
+//
+//        }
+//        if (Ports.size() > 0) {
+//            for (int i = 0; i <= Ports.size(); i++) {
+//                if (insideRect(inBounds[i], GetScreenToWorld2D(GetMousePosition(), camera)) &&
+//                    IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+//                    isDraggingPrev = true;
+//
+//                }
+//
+//            }
+//        } else if (noMaxPorts) {
+//            if (insideRect(inBounds[0], GetScreenToWorld2D(GetMousePosition(), camera)) &&
+//                IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
+//                isDraggingPrev = true;
+//
+//            }
+//        }
+//
+//        return true;
+//    }
+//    return false;
+//
+//}
 
 void part::postInitialize() {
 

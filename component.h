@@ -7,8 +7,7 @@
 
 #include <vector>
 #include <string>
-#include "include/raylib.h"
-#include "include/raygui.h"
+#include "Rectangle.h"
 #include "serializer.h"
 
 
@@ -24,7 +23,7 @@ extern bool mouseDragging;
 extern int identifierPART;
 extern int identifierPORT;
 
-Rectangle cameraDisplace(Rectangle rect, Camera2D camera);
+Rectangle cameraDisplace(Rectangle rect, camera camera);
 
 struct packet{
     float voltage;
@@ -57,7 +56,7 @@ public:
     bool isDraggingPrev = false;
 
     virtual void  onUse(){}
-    bool drag(Camera2D camera);
+    //bool drag(camera camera);
 
 
     void postInitialize();
@@ -69,9 +68,9 @@ public:
     void next(part* part, int port);
 
     void Output(packet packet);
-    void drawPorts(Camera2D camera);
-    virtual void draw(Camera2D camera);
-    virtual void drawIgnoreCam(Camera2D camera){};
+    //void drawPorts(camera camera);
+    //virtual void draw(camera camera);
+    virtual void drawIgnoreCam(camera camera){};
     virtual void serialize(json* Data, json properties = NULL);
 
 

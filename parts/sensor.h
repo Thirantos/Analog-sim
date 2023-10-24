@@ -14,7 +14,7 @@ public:
     sensor(int x, int y, int id = identifierPART);
     void onUse() override;
 
-    void draw(Camera2D camera) override;
+    //void draw(camera camera) override;
 };
 
 
