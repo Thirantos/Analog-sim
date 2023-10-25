@@ -71,12 +71,16 @@ int gui::DrawGui() {
     camera.zoom = 1.0f;
 
 
+    glClearColor(0.9f, 0.9f, 0.9f, 1.0f);
+
+
+
     while (!glfwWindowShouldClose(window)) {
         /* Render here */
         glClear(GL_COLOR_BUFFER_BIT);
 
         /* Swap front and back buffers */
-        glfwSwapBuffers(window);
+
 
         /* Poll for and process events */
         glfwPollEvents();
@@ -89,7 +93,14 @@ int gui::DrawGui() {
         ImGui::NewFrame();
         ImGui::ShowDemoWindow(); // Show demo window! :)
 
+        int width, height;
+        glfwGetFramebufferSize(window, &width, &height);
+        glViewport(0, 0, width, height);
 
+        glMatrixMode(GL_PROJECTION);
+        glLoadIdentity();
+        glOrtho(0.0, (GLdouble)width, (GLdouble)height, 0.0, -1.0, 1.0);
+        glMatrixMode(GL_MODELVIEW);
 
 
         mouseDragging = false;
@@ -98,13 +109,19 @@ int gui::DrawGui() {
         mouseMove(window);
 
 
+#include "colours.h"
+        drawRectangle({100,200,100,30}, gold);
 
+
+
+
+        updateParts();
 
         //Color BackGroundColour = GetColor(GuiGetStyle(DEFAULT, BACKGROUND_COLOR));
         //Color colour = GetColor(GuiGetStyle(DEFAULT, BASE_COLOR_NORMAL));
 
 
-
+        glfwSwapBuffers(window);
         // Rendering
         // (Your code clears your framebuffer, renders your other stuff etc.)
         ImGui::Render();

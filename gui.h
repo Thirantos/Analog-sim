@@ -5,6 +5,7 @@
 #ifndef ANALOGSIM_GUI_H
 #define ANALOGSIM_GUI_H
 
+#include "functions.h"
 #include "include/raymath.h"
 #include "component.h"
 #include "serializer.h"
@@ -19,7 +20,7 @@
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_metal.h>
 #endif
-#include "Rectangle.h"
+
 
 
 class input{

@@ -5,54 +5,58 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # Set IMGUI_DIR to the path of the ImGui source directory
 set(IMGUI_DIR libs/imgui)
 include(FetchContent)
+include(ExternalProject)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 # Include the ImGui CMakeLists.txt
 find_package(GLFW QUIET)
 find_package(imgui_glfw QUIET)
 
-include_directories(include)
-
-include_directories(libs/glfw/include)
 
 
+include_directories(include libs/glfw/include)
 
-add_subdirectory(libs/glfw)
 
-set(CMAKE_CXX_STANDARD 23)
+
+add_subdirectory(libs/glfw libs/glew)
+
+
+# Define the GLEW version and URL
+set(GLEW_VERSION "2.1.0")
+
+
 
 
 #IMGUI
 if(NOT imgui_glfw_FOUND)
     FetchContent_Populate(imgui
             GIT_REPOSITORY https://github.com/ocornut/imgui.git
-            SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/imgui
+            SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/libs/imgui
     )
 
-    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/imgui/backends)
+    include_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/imgui/backends)
 
     set(OpenGL_GL_PREFERENCE "LEGACY")
     find_package(OpenGL 3 REQUIRED)
 
     add_library(imgui_glfw STATIC
-            imgui/imgui.cpp
-            imgui/imgui_draw.cpp
-            imgui/imgui_demo.cpp
-            imgui/imgui_tables.cpp
-            imgui/imgui_widgets.cpp
-
-            imgui/backends/imgui_impl_glfw.cpp
-            imgui/backends/imgui_impl_opengl3.cpp
-            imgui/backends/imgui_impl_glfw.h
-            imgui/backends/imgui_impl_opengl3.h
+            libs/imgui/imgui.cpp
+            libs/imgui/imgui_draw.cpp
+            libs/imgui/imgui_demo.cpp
+            libs/imgui/imgui_tables.cpp
+            libs/imgui/imgui_widgets.cpp
+            libs/imgui/backends/imgui_impl_glfw.cpp
+            libs/imgui/backends/imgui_impl_opengl3.cpp
+            libs/imgui/backends/imgui_impl_glfw.h
+            libs/imgui/backends/imgui_impl_opengl3.h
     )
 
     target_link_libraries(imgui_glfw PUBLIC glfw ${OPENGL_LIBRARIES})
 
     target_include_directories(imgui_glfw
             PUBLIC
-            ${CMAKE_CURRENT_LIST_DIR}/imgui
-            ${CMAKE_CURRENT_LIST_DIR}/imgui/backends
+            ${CMAKE_CURRENT_LIST_DIR}/libs/imgui
+            ${CMAKE_CURRENT_LIST_DIR}/libs/imgui/backends
     )
 endif ()
 
@@ -89,14 +93,19 @@ add_executable(
         parts/normalizePolygonC.h
         include/nfd.h
         include/raymath.h
+        include/nanovg/nanovg_gl.h
+        include/nanovg/nanovg.h
+
         parts/dotProduct.cpp
         parts/dotProduct.h
         parts/areaPolygon.cpp
         parts/areaPolygon.h
-        Rectangle.h
-        Rectangle.h
-        Rectangle.cpp
+        functions.h
+        functions.h
+        functions.cpp
+        colours.h
+        include/nanovg/nanovg.c
 )
 
 # Include ImGui-related targets
-target_link_libraries(Analogsim PRIVATE imgui_glfw nfd glfw)
+target_link_libraries(Analogsim PRIVATE imgui_glfw nfd glfw GL glew)

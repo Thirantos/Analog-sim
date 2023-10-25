@@ -12,7 +12,9 @@
 
 #include "include/raymath.h"
 
-
+#ifndef ANALOGSIM_COLOURS_H
+#include "colours.h"
+#endif //ANALOGSIM_COLOURS_H
 #include <iostream>
 #include <utility>
 #include <vector>
@@ -115,80 +117,80 @@ std::map<std::string, packet> part::getInputs(){
 //}
 //
 
-//todo: redo (ofcource rendering would be fucked)
-//void part::draw(Camera2D camera) {
-//
-//    //GuiPanel(bounds, name);
-//
-//    DrawRectangleRec(bounds, WHITE);
-//    DrawRectangleRec(dragBounds, LIGHTGRAY);
-//    DrawText(name, dragBounds.x + (bounds.width - MeasureText(name, FONTSIZE)) / 2,
-//             dragBounds.y, FONTSIZE, DARKBLUE);
-//
-//
-//    DrawRectangleLinesEx(bounds, 1 / camera.zoom, DARKGRAY);
-//
-//    if (Ports.size() > 0) {
-//
-//        for (int i = 0; i < Ports.size(); ++i) {
-//
-//            Rectangle inRect = inBounds[i];
-//
-//            DrawCircle(
-//                    inRect.x,
-//                    inRect.y + inRect.height / 2,
-//                    6 + 1 / camera.zoom, DARKGRAY
-//            );
-//            DrawText(Ports[i].c_str(), inRect.x + 10, inRect.y + inRect.height / 6, 20, DARKGRAY);
-//            DrawCircle(
-//                    inRect.x,
-//                    inRect.y + inRect.height / 2,
-//                    6, GOLD
-//            );
-//        }
-//    }
-//    if (noMaxPorts) {
-//
-//        Rectangle inRectangle;
-//        inRectangle.x = inBounds[0].x - 6;
-//        inRectangle.y = inBounds[0].y + inBounds[0].height / 2 - 12;
-//        inRectangle.width = 12;
-//        inRectangle.height = 24;
-//
-//        DrawRectangleRounded(inRectangle, 10, 10, GOLD);
-//        DrawRectangleRoundedLines(inRectangle, 10, 10, 1 / camera.zoom, DARKGRAY);
-//
-//    }
-//    if (dragOut) {
-//        DrawCircle(
-//                outBounds.x + outBounds.width,
-//                outBounds.y + outBounds.height / 2,
-//                6 + 1 / camera.zoom, DARKGRAY
-//        );
-//        DrawCircle(
-//                outBounds.x + outBounds.width,
-//                outBounds.y + outBounds.height / 2,
-//                6, GOLD
-//        );
-//    }
-//
-//
-//    if (isDraggingNext) {
-//        Vector2 startPoint;
-//        startPoint.x = outBounds.x + outBounds.width;
-//        startPoint.y = outBounds.y + outBounds.height / 2;
-//        DrawLineV(startPoint, GetScreenToWorld2D(GetMousePosition(), camera), DARKGRAY);
-//
-//    }
-//    if (isDraggingPrev) {
-//        Vector2 startPoint;
-//        startPoint.x = bounds.x;
-//        startPoint.y = bounds.y + bounds.height / 2;
-//        DrawLineEx(startPoint, GetScreenToWorld2D(GetMousePosition(), camera), 4, CLITERAL(Color){255, 0, 0, 100});
-//
-//    }
-//
-//}
+
+void part::draw(camera camera) {
+
+    //GuiPanel(bounds, name);
+
+    drawRectangle(bounds, white);
+    drawRectangle(dragBounds, lightGrey);
+    //DrawText(name, dragBounds.x + (bounds.width - MeasureText(name, FONTSIZE)) / 2,
+    //         dragBounds.y, FONTSIZE, DARKBLUE);
+
+
+    drawRectangleLines(bounds, 1 / camera.zoom, darkGrey);
+
+    if (Ports.size() > 0) {
+
+        for (int i = 0; i < Ports.size(); ++i) {
+
+            Rectangle inRect = inBounds[i];
+
+            drawCircle(
+                    {inRect.x,
+                    inRect.y + inRect.height / 2},
+                    6 + 1 / camera.zoom, darkGrey
+            );
+            drawText(Ports[i].c_str(), {inRect.x + 10, inRect.y + inRect.height / 6}, 20, darkGrey);
+            drawCircle(
+                    {inRect.x,
+                    inRect.y + inRect.height / 2},
+                    6, gold
+            );
+        }
+    }
+   //if (noMaxPorts) {
+
+   //    Rectangle inRectangle;
+   //    inRectangle.x = inBounds[0].x - 6;
+   //    inRectangle.y = inBounds[0].y + inBounds[0].height / 2 - 12;
+   //    inRectangle.width = 12;
+   //    inRectangle.height = 24;
+
+   //    DrawRectangleRounded(inRectangle, 10, 10, GOLD);
+   //    DrawRectangleRoundedLines(inRectangle, 10, 10, 1 / camera.zoom, DARKGRAY);
+
+   //}
+    if (dragOut) {
+        drawCircle(
+                {outBounds.x + outBounds.width,
+                outBounds.y + outBounds.height / 2},
+                6 + 1 / camera.zoom, darkGrey
+        );
+        drawCircle(
+                {outBounds.x + outBounds.width,
+                outBounds.y + outBounds.height / 2},
+                6, darkGrey
+        );
+    }
+
+
+   //if (isDraggingNext) {
+   //    Vector2 startPoint;
+   //    startPoint.x = outBounds.x + outBounds.width;
+   //    startPoint.y = outBounds.y + outBounds.height / 2;
+   //    DrawLineV(startPoint, GetScreenToWorld2D(GetMousePosition(), camera), DARKGRAY);
+
+   //}
+   //if (isDraggingPrev) {
+   //    Vector2 startPoint;
+   //    startPoint.x = bounds.x;
+   //    startPoint.y = bounds.y + bounds.height / 2;
+   //    DrawLineEx(startPoint, GetScreenToWorld2D(GetMousePosition(), camera), 4, CLITERAL(Color){255, 0, 0, 100});
+
+   //}
+
+}
 
 
 

@@ -7,7 +7,7 @@
 
 #include <vector>
 #include <string>
-#include "Rectangle.h"
+#include "functions.h"
 #include "serializer.h"
 
 
@@ -69,7 +69,7 @@ public:
 
     void Output(packet packet);
     //void drawPorts(camera camera);
-    //virtual void draw(camera camera);
+    virtual void draw(camera camera);
     virtual void drawIgnoreCam(camera camera){};
     virtual void serialize(json* Data, json properties = NULL);
 
