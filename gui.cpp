@@ -11,11 +11,6 @@
 #include "parts.h"
 #include <nfd.h>
 
-
-#warning "here are more classes added"
-
-
-
 #define BUTTON(part)  // todo: redo
 //    Rectangle button_##part = buttonRect; \
 //    if (GuiButton(button_##part,#part)){  \
@@ -57,8 +52,11 @@ int gui::DrawGui() {
 
 // Setup Platform/Renderer backends
     ImGui_ImplGlfw_InitForOpenGL(window,
-                                 true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+                                 true);
+    // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+
     ImGui_ImplOpenGL3_Init();
+
 
 
     glfwSetMouseButtonCallback(window, mouse_button_callback);

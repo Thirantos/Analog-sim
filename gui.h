@@ -16,6 +16,7 @@
 #if _WIN32
 #include <imgui_impl_opengl3.h>
 #else
+#include <imgui_impl_opengl3.h>
 #include <imgui_impl_metal.h>
 #endif
 #include "Rectangle.h"

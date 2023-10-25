@@ -4,7 +4,6 @@
     <mapping directory="" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/imgui" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libs/glfw" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/libs/imgui" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/libs/nativefiledialog-extended" vcs="Git" />
   </component>
 </project>
