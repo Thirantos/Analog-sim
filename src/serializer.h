@@ -4,7 +4,7 @@
 
 #ifndef ANALOGSIM_SERIALIZER_H
 #define ANALOGSIM_SERIALIZER_H
-#include "include/json.hpp"
+#include "json.hpp"
 using json = nlohmann::json;
 
 class serializer {

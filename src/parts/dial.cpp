@@ -43,7 +43,7 @@ void dial::drawIgnoreCam(Camera2D camera) {
     _spinner.x += bounds.width * 0.15f;
     _spinner = cameraDisplace(_spinner, camera);
 
-    GuiSpinner(_spinner, "", &val, 0, 500, false);
+    //GuiSpinner(_spinner, "", &val, 0, 500, false);
 }
 
 void dial::serialize(json *Data, json prop){

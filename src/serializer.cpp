@@ -5,7 +5,7 @@
 #include "serializer.h"
 #include "component.h"
 #include <fstream>
-#include "include/json.hpp"
+#include "json.hpp"
 #include <iostream>
 
 using json = nlohmann::json;
@@ -52,7 +52,7 @@ void serializer::deserialize(std::string filePath) {
             part *p = constructorFromName(Part["type"].template get<std::string>(),
                                           Part["x"].template get<float>(), Part["y"].template get<float>(),
                                           Part["id"].template get<int>(), Part["data"].is_null() ? nullptr : Part["data"]);
-            std::cout << Part["property"] << std::endl;
+            //std::cout << Part["property"] << std::endl;
         }
     }
 

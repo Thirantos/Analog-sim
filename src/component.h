@@ -7,8 +7,7 @@
 
 #include <vector>
 #include <string>
-#include "include/raylib.h"
-#include "include/raygui.h"
+#include <raylib.h>
 #include "serializer.h"
 
 

@@ -7,12 +7,11 @@
 #include "settings.h"
 
 
-#include "include/raylib.h"
+#include "raylib.h"
 
 #define RAYLIB_H
 
-#include "include/raygui.h"
-#include "include/raymath.h"
+#include "raymath.h"
 
 
 #include <iostream>
@@ -271,8 +270,8 @@ bool part::drag(Camera2D camera) {
         lastmousepos.y = GetScreenToWorld2D(GetMousePosition(), camera).y - GetMouseDelta().y;
 
         if (insideRect(dragBounds, lastmousepos)) {
-            position.x += GetMouseDelta().x;
-            position.y += GetMouseDelta().y;
+            position.x += GetMouseDelta().x / camera.zoom;
+            position.y += GetMouseDelta().y / camera.zoom;
 
 
         }
@@ -495,10 +494,11 @@ void Port::serialize(json *Data) {
 
 #include "parts.h"
 
-part *constructorFromName(const std::string &className, int x, int y, int id, json prop) {
+part* constructorFromName(const std::string &className, int x, int y, int id, json data) {
     if (className == "dial") {
         dial* d = new dial(x, y, id);
-        d->val = prop["value"];
+        if(data.is_null()) return d;
+        d->val = data["value"];
         return d;
     } else if (className == "sensor") {
         return new sensor(x, y, id);
