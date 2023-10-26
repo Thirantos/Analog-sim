@@ -4,6 +4,7 @@ include(FetchContent)
 
 set(RAYLIB_VERSION 4.5.0)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_STANDARD 23)
 
 # Dependencies
 find_package(raylib ${RAYLIB_VERSION} QUIET)
@@ -55,7 +56,7 @@ endif ()
 
 include_directories(include include/rllmgui)
 add_subdirectory(libs/nativefiledialog-extended)
-set(CMAKE_CXX_STANDARD 23)
+
 
 add_executable(Analogsim src/main.cpp src/main.h src/component.cpp src/component.h src/gui.h src/gui.cpp src/serializer.cpp src/serializer.h src/parts/sensor.cpp src/parts/sensor.h src/settings.h src/parts/plus.cpp src/parts/plus.h src/parts/dial.cpp src/parts/dial.h src/parts/plus.cpp src/parts/average.cpp src/parts/average.h src/parts.h
         src/parts/normalizePolygonA.cpp

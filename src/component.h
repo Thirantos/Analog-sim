@@ -10,6 +10,8 @@
 #include <raylib.h>
 #include "serializer.h"
 
+enum mouseModeEnum {none, selectingMultiple, select, dragginPart};
+mouseModeEnum mouseMode;
 
 class part;
 class Port;

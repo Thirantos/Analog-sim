@@ -23,6 +23,7 @@ class gui {
     int load();
     void updateParts();
 
+    void dragSelection();
 };
 
 

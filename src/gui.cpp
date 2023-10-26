@@ -13,7 +13,6 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <rlImGui.h>
-#include <minwindef.h>
 #include <raymath.h>
 
 #warning "here are more classes added"
@@ -31,6 +30,7 @@ float min(float a, float b) {
 
 Rectangle selection;
 
+
 std::vector<part*> selectedParts;
 Vector2 selection1;
 Vector2 selection2;
@@ -44,39 +44,7 @@ int gui::DrawGui() {
     while (!WindowShouldClose()) {
         Vector2 MousePos = GetMousePosition();
 
-
-
-        if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            selection1.x = GetMouseX();
-            selection1.y = GetMouseY();
-        }
-        if(IsMouseButtonDown(MOUSE_BUTTON_LEFT)){
-            selection2.x = GetMouseX();
-            selection2.y = GetMouseY();
-
-            selection = {
-                    .x = min(selection1.x, selection2.x),.y= min(selection1.y, selection2.y),
-                    .width= abs(selection1.x- selection2.x),.height=  abs(selection1.y- selection2.y)
-            };
-
-
-            DrawRectangleRec(selection, {75,75,128,100});
-        }
-        if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT)){
-            selectedParts.clear();
-
-            for (part* p: partsList) {
-                if (CheckCollisionRecs(selection, p->bounds)) selectedParts.push_back(p);
-            }
-
-            //selection.x = 0.0;
-            //selection.y = 0.0;
-            //selection.width = 0.0;
-            //selection.height = 0.0;
-        }
-        mouseDragging = false;
-
-
+        dragSelection();
 
 
         if (IsKeyDown(KEY_LEFT_CONTROL)) {
@@ -100,6 +68,8 @@ int gui::DrawGui() {
         ClearBackground(RAYWHITE);
 
         updateParts();
+        dragSelection();
+
 
         imGuiMainMenu();
 
@@ -185,6 +155,41 @@ void gui::imGuiMainMenu() {
 
     ImGui::End();
 
+}
+
+void gui::dragSelection(){
+    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && mouseMode == none) {
+        mouseMode = selectingMultiple;
+
+
+        selection1.x = GetMouseX();
+        selection1.y = GetMouseY();
+    }
+    if(IsMouseButtonDown(MOUSE_BUTTON_LEFT) && mouseMode == selectingMultiple){
+        selection2.x = GetMouseX();
+        selection2.y = GetMouseY();
+
+        selection = {
+                .x = min(selection1.x, selection2.x),.y= min(selection1.y, selection2.y),
+                .width= abs(selection1.x- selection2.x),.height=  abs(selection1.y- selection2.y)
+        };
+
+
+        DrawRectangleRec(selection, {75,75,128,100});
+    }
+    if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && mouseMode == selectingMultiple){
+        mouseMode = none;
+        selectedParts.clear();
+
+        for (part* p: partsList) {
+            if (CheckCollisionRecs(selection, p->bounds)) selectedParts.push_back(p);
+        }
+
+        //selection.x = 0.0;
+        //selection.y = 0.0;
+        //selection.width = 0.0;
+        //selection.height = 0.0;
+    }
 }
 
 void gui::init() {
