@@ -17,6 +17,8 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <cstdlib>
+
 
 std::vector<part *> partsList;
 std::vector<part *> partsInput;
@@ -65,6 +67,7 @@ part::part(int x, int y, int id) {
     this->position.x = x;
     this->position.y = y;
     this->id = id;
+    portsOutName = {"this"};
 
     identifierPART = max(id, identifierPART) + 1;
 }
@@ -72,9 +75,18 @@ part::part(int x, int y, int id) {
 std::map<std::string, packet> part::getInputs(){
  // for(port* port : portsIn)
     std::map<std::string, packet> dict;
-    if(noMaxPorts) throw "not implemented";
+    if(noMaxPorts) {
+        for (int i = 0; i < portsIn.size(); ++i) {
+            float volt = portsIn[i]->value().voltage == NAN? 0 : portsIn[i]->value().voltage;
+            float amp = portsIn[i]->value().amperage == NAN? 0 : portsIn[i]->value().amperage;
 
-    for (int i = 0; i < Ports.size(); ++i) {
+            std::string s = std::to_string(i);
+
+            dict[s] = packet{.voltage = volt,.amperage = amp};
+        }
+    };
+
+    for (int i = 0; i < portsInName.size(); ++i) {
 
         if(portsIn[i] != nullptr){
 
@@ -83,12 +95,12 @@ std::map<std::string, packet> part::getInputs(){
             float amp = portsIn[i]->value().amperage == NAN? 0 : portsIn[i]->value().amperage;
 
 
-            dict[Ports[i]] = packet{.voltage = volt,.amperage = amp};
+            dict[portsInName[i]] = packet{.voltage = volt,.amperage = amp};
 
 
         }else {
 
-            dict[Ports[i]] = packet{0,0};
+            dict[portsInName[i]] = packet{0, 0};
 
         }
     }
@@ -101,11 +113,11 @@ std::map<std::string, packet> part::getInputs(){
 void part::drawPorts(Camera2D camera) {
     for (Port *port: portsOut) {
         if(port->nextPart->bounds.height == 0) {delete port; return;};
-        DrawLineBezierCubic(Vector2{outBounds.x + outBounds.width, outBounds.y + outBounds.height / 2},
+        DrawLineBezierCubic(Vector2{outBounds[port->prevPort].x + outBounds[port->prevPort].width, outBounds[port->prevPort].y + outBounds[port->prevPort].height / 2},
                             Vector2{port->nextPart->inBounds[port->nextPort].x,
                                     port->nextPart->inBounds[port->nextPort].y +
                                     port->nextPart->inBounds[port->nextPort].height / 2},
-                            Vector2{outBounds.x + outBounds.width + LINEBEND, outBounds.y + outBounds.height / 2},
+                            Vector2{outBounds[port->prevPort].x + outBounds[port->prevPort].width + LINEBEND, outBounds[port->prevPort].y + outBounds[port->prevPort].height / 2},
                             Vector2{port->nextPart->inBounds[port->nextPort].x - LINEBEND,
                                     port->nextPart->inBounds[port->nextPort].y +
                                     port->nextPart->inBounds[port->nextPort].height / 2},
@@ -126,9 +138,9 @@ void part::draw(Camera2D camera) {
 
     DrawRectangleLinesEx(bounds, 1 / camera.zoom, DARKGRAY);
 
-    if (Ports.size() > 0) {
+    if (portsInName.size() > 0) {
 
-        for (int i = 0; i < Ports.size(); ++i) {
+        for (int i = 0; i < portsInName.size(); ++i) {
 
             Rectangle inRect = inBounds[i];
 
@@ -137,12 +149,35 @@ void part::draw(Camera2D camera) {
                     inRect.y + inRect.height / 2,
                     6 + 1 / camera.zoom, DARKGRAY
             );
-            DrawText(Ports[i].c_str(), inRect.x + 10, inRect.y + inRect.height / 6, 20, DARKGRAY);
+            DrawText(portsInName[i].c_str(), inRect.x + 10, inRect.y + inRect.height / 6, 20, DARKGRAY);
             DrawCircle(
                     inRect.x,
                     inRect.y + inRect.height / 2,
                     6, GOLD
             );
+        }
+    }
+    if (dragOut) {
+
+
+        if (portsOutName.size() > 0) {
+
+            for (int i = 0; i < portsOutName.size(); ++i) {
+
+                Rectangle outRect = outBounds[i];
+
+                DrawCircle(
+                        outRect.x,
+                        outRect.y + outRect.height / 2,
+                        6 + 1 / camera.zoom, DARKGRAY
+                );
+                DrawText(portsOutName[i].c_str(), outRect.x + 10, outRect.y + outRect.height / 6, 20, DARKGRAY);
+                DrawCircle(
+                        outRect.x,
+                        outRect.y + outRect.height / 2,
+                        6, GOLD
+                );
+            }
         }
     }
     if (noMaxPorts) {
@@ -157,24 +192,13 @@ void part::draw(Camera2D camera) {
         DrawRectangleRoundedLines(inRectangle, 10, 10, 1 / camera.zoom, DARKGRAY);
 
     }
-    if (dragOut) {
-        DrawCircle(
-                outBounds.x + outBounds.width,
-                outBounds.y + outBounds.height / 2,
-                6 + 1 / camera.zoom, DARKGRAY
-        );
-        DrawCircle(
-                outBounds.x + outBounds.width,
-                outBounds.y + outBounds.height / 2,
-                6, GOLD
-        );
-    }
+
 
 
     if (isDraggingNext) {
         Vector2 startPoint;
-        startPoint.x = outBounds.x + outBounds.width;
-        startPoint.y = outBounds.y + outBounds.height / 2;
+        startPoint.x = outBound.x + outBound.width;
+        startPoint.y = outBound.y + outBound.height / 2;
         DrawLineV(startPoint, GetScreenToWorld2D(GetMousePosition(), camera), DARKGRAY);
 
     }
@@ -216,7 +240,7 @@ bool part::drag(Camera2D camera) {
                 int i = 0;
                 for (Rectangle bound: part->inBounds) {
                     if (insideRect(bound, worldmouse)) {
-                        this->next(part, i);
+                        this->next(currentDragginOut, part, i);
                         return true;
                     } else {
                         i++;
@@ -275,13 +299,15 @@ bool part::drag(Camera2D camera) {
 
 
         }
-        if (insideRect(outBounds, GetScreenToWorld2D(GetMousePosition(), camera)) &&
+        if (insideRect(outBound, GetScreenToWorld2D(GetMousePosition(), camera)) &&
             IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             isDraggingNext = true;
-
+            for (int i = 0; i < outBounds.size(); ++i) {
+                currentDragginOut = i;
+            }
         }
-        if (Ports.size() > 0) {
-            for (int i = 0; i <= Ports.size(); i++) {
+        if (portsInName.size() > 0) {
+            for (int i = 0; i <= portsInName.size(); i++) {
                 if (insideRect(inBounds[i], GetScreenToWorld2D(GetMousePosition(), camera)) &&
                     IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                     isDraggingPrev = true;
@@ -306,8 +332,8 @@ bool part::drag(Camera2D camera) {
 void part::postInitialize() {
 
 
-    if(portsIn.size() < Ports.size()) {
-        for (int i = 0; i < Ports.size(); ++i) {
+    if(portsIn.size() < portsInName.size()) {
+        for (int i = 0; i < portsInName.size(); ++i) {
             portsIn.push_back(nullptr);
         }
     }
@@ -317,18 +343,26 @@ void part::postInitialize() {
     bounds.y = position.y;
     bounds.width = 200;
 
-    bounds.height = max(75, Ports.size() * 25);
+    bounds.height = max(75, portsInName.size() * 25);
+    bounds.height = max(portsOutName.size() * 25, bounds.height);
 
     dragBounds = bounds;
     dragBounds.height = 25;
 
+    outBound = bounds;
+
+    outBound.width = bounds.width / 8;
+    outBound.height = bounds.height - dragBounds.height;
+    outBound.y = bounds.y + dragBounds.height;
+    outBound.x = bounds.x + bounds.width - outBound.width;
+
     inBounds.clear();
 
-    if (Ports.size() > 0) {
-        float step = (bounds.height - dragBounds.height) / (Ports.size());
+    if (portsInName.size() > 0) {
+        float step = (bounds.height - dragBounds.height) / (portsInName.size());
 
 
-        for (int i = 1; i <= Ports.size(); ++i) {
+        for (int i = 1; i <= portsInName.size(); ++i) {
             Rectangle P{bounds.x, bounds.y + (i - 1) * step + dragBounds.height, bounds.width / 8, step};
             inBounds.push_back(P);
         }
@@ -338,16 +372,22 @@ void part::postInitialize() {
         inBounds.push_back(P);
     }
 
+    if (portsOutName.size() > 0) {
+        float step = (bounds.height - dragBounds.height) / (portsOutName.size());
 
-    outBounds = bounds;
 
-    outBounds.width = bounds.width / 8;
-    outBounds.height = bounds.height - dragBounds.height;
-    outBounds.y = bounds.y + dragBounds.height;
-    outBounds.x = bounds.x + bounds.width - outBounds.width;
+        for (int i = 1; i <= portsInName.size(); ++i) {
+            Rectangle P{bounds.x + 7 * bounds.width / 8, bounds.y + (i - 1) * step + dragBounds.height, bounds.width / 8, step};
+            outBounds.push_back(P);
+        }
+
+    }
+
+
+
 }
 
-void part::Output(packet packet) {
+void part::Output(packet packet, std::string outName) {
     //std::vector<Port*> portsToProcess;
 
 
@@ -365,23 +405,24 @@ void part::Output(packet packet) {
     }
 }
 
-void part::next(part *part, int port) {
+void part::next(int prevPort, part *part, int nextPort ) {
 
     for (Port *p: portsOut) {
-        if (p->nextPart == part && p->_port == port) return;
+        if(p->prevPort == prevPort && p->nextPort == nextPort && p->nextPart == part) return;
     }
 
-    if (!part->noMaxPorts) delete part->portsIn[port];
+    if (!part->noMaxPorts) delete part->portsIn[nextPort];
 
-    new Port(part, port, this);
+    new Port(part, nextPort, this, prevPort);
 }
 
 
-Port::Port(part *next, int port, part *prev, int id) {
+Port::Port(part *next, int nextPort, part *prev, int prevPort, int id){
 
     nextPart = next;
     prevPart = prev;
-    nextPort = port;
+    this->nextPort = nextPort;
+    this->prevPort = prevPort;
     this->id = id;
     identifierPART = max(id, identifierPART) + 1;
 
@@ -389,8 +430,7 @@ Port::Port(part *next, int port, part *prev, int id) {
         next->portsIn.push_back(this);
 
     }else{
-        next->portsIn[port] = this;
-
+        next->portsIn[nextPort] = this;
     }
     prev->portsOut.push_back(this);
 

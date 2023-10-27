@@ -13,7 +13,7 @@ areaPolygon::areaPolygon(int x, int y, int id) : part(x, y, id) {
     dragOut = true;
 
 
-    this->Ports = std::vector<std::string>{
+    this->portsInName = std::vector<std::string>{
             "Xa",
             "Ya",
             "Za",

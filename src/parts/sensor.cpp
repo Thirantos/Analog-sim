@@ -8,7 +8,7 @@
 sensor::sensor(int x, int y, int id) : part(x, y, id) {
     name = "sensor";
 
-    this->Ports.push_back("input");
+    this->portsInName.push_back("input");
 
     postInitialize();
 }

@@ -41,10 +41,14 @@ public:
 
     Rectangle bounds{};
     std::vector<Rectangle> inBounds;
-    Rectangle outBounds = bounds;
+    std::vector<Rectangle> outBounds;
+    Rectangle outBound = bounds;
     Rectangle dragBounds = bounds;
-    std::vector<std::string> Ports{};
+    std::vector<std::string> portsInName{};
+    std::vector<std::string> portsOutName{};
     bool noMaxPorts = false;
+
+    int currentDragginOut = 0;
 
     std::vector<Port*> portsIn;
     std::vector<Port*> portsOut;
@@ -67,9 +71,9 @@ public:
 
     part(int x, int y, int id = identifierPART);
 
-    void next(part* part, int port);
+    void next(int prevPort, part *next, int nextPort);
 
-    void Output(packet packet);
+    void Output(packet packet, std::string outName = "out");
     void drawPorts(Camera2D camera);
     virtual void draw(Camera2D camera);
     virtual void drawIgnoreCam(Camera2D camera){};
@@ -90,9 +94,11 @@ public:
 
     part* nextPart;
     part* prevPart;
+
     int _port;
 
     int nextPort;
+    int prevPort;
     [[nodiscard]] packet value() const { return _packet; }
     bool operator==(const Port& other) const {
         // Define your own equality comparison logic here
@@ -108,7 +114,7 @@ public:
         return this->id != other.id;
     }
 
-    Port(part *next, int port, part *prev, int id = identifierPORT);
+    Port(part *next, int nextPort, part *prev, int prevPort, int id = identifierPORT);
 
     ~Port();
 
