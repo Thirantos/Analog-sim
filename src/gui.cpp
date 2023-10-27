@@ -15,6 +15,7 @@
 #include <rlImGui.h>
 #include <raymath.h>
 
+
 #warning "here are more classes added"
 
 
@@ -66,6 +67,8 @@ int gui::DrawGui() {
 
         ClearBackground(RAYWHITE);
 
+        std::cout << mouseMode << std::endl;
+
         updateParts();
 
 
@@ -104,7 +107,6 @@ void gui::imGuiMainMenu() {
         }
         ImGui::EndMenuBar();
     }
-
 
     const char* components[] = {
         "areaPolygon",
@@ -252,6 +254,7 @@ int gui::load() {
 }
 
 void gui::updateParts() {
+
 
     for (part* part: std::ranges::views::reverse(partsList)) {
         //part->onUse();

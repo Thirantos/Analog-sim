@@ -28,7 +28,7 @@ std::vector<part *> tempPartsProcess;
 bool mouseDragging;
 int identifierPART = 0;
 int identifierPORT = 0;
-
+mouseModeEnum mouseMode = none;
 
 
 
