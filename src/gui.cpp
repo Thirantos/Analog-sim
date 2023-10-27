@@ -18,7 +18,6 @@
 #warning "here are more classes added"
 
 
-
 float min(float a, float b) {
     if (a < b) {
         return a;
@@ -68,6 +67,8 @@ int gui::DrawGui() {
         ClearBackground(RAYWHITE);
 
         updateParts();
+
+
         dragSelection();
 
 
@@ -110,9 +111,7 @@ void gui::imGuiMainMenu() {
         "average",
         "dial",
         "dotProduct",
-        "normalizePolygonA",
-        "normalizePolygonB",
-        "normalizePolygonC",
+        "normalizePolygon",
         "plus",
         "sensor",
     };

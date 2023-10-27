@@ -25,10 +25,11 @@ std::vector<part *> partsInput;
 std::vector<Port *> portsList;
 std::vector<part *> partsProcess;
 std::vector<part *> tempPartsProcess;
-
 bool mouseDragging;
 int identifierPART = 0;
 int identifierPORT = 0;
+
+
 
 
 int max(int a, int b) {
@@ -67,7 +68,7 @@ part::part(int x, int y, int id) {
     this->position.x = x;
     this->position.y = y;
     this->id = id;
-    portsOutName = {"this"};
+    this->portsOutName = {"out"};
 
     identifierPART = max(id, identifierPART) + 1;
 }
@@ -197,8 +198,8 @@ void part::draw(Camera2D camera) {
 
     if (isDraggingNext) {
         Vector2 startPoint;
-        startPoint.x = outBound.x + outBound.width;
-        startPoint.y = outBound.y + outBound.height / 2;
+        startPoint.x = outBounds[currentDragginOut].x + outBounds[currentDragginOut].width;
+        startPoint.y = outBounds[currentDragginOut].y + outBounds[currentDragginOut].height / 2;
         DrawLineV(startPoint, GetScreenToWorld2D(GetMousePosition(), camera), DARKGRAY);
 
     }
@@ -223,8 +224,9 @@ bool part::drag(Camera2D camera) {
 #endif
 
 
-    if (IsMouseButtonUp(MOUSE_BUTTON_LEFT)) {
+    if (IsMouseButtonUp(MOUSE_BUTTON_LEFT) && mouseMode == dragginPart) {
         mouseDragging = false;
+        mouseMode = none;
         if (isDraggingNext) {
             isDraggingNext = false;
             for (part *part: partsList) {
@@ -275,8 +277,9 @@ bool part::drag(Camera2D camera) {
     }
 
 
-    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !isDraggingNext && !isDraggingPrev && !mouseDragging) {
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !isDraggingNext && !isDraggingPrev && (mouseMode == none || mouseMode == dragginPart)) {
         postInitialize();
+        mouseMode = dragginPart;
 
 
         if (insideRect(bounds, GetScreenToWorld2D(GetMousePosition(), camera))) {
@@ -373,10 +376,10 @@ void part::postInitialize() {
     }
 
     if (portsOutName.size() > 0) {
-        float step = (bounds.height - dragBounds.height) / (portsOutName.size());
+        int portsout = portsOutName.size();
+        float step = (bounds.height - dragBounds.height) / (portsout);
 
-
-        for (int i = 1; i <= portsInName.size(); ++i) {
+        for (int i = 1; i <= portsOutName.size(); ++i) {
             Rectangle P{bounds.x + 7 * bounds.width / 8, bounds.y + (i - 1) * step + dragBounds.height, bounds.width / 8, step};
             outBounds.push_back(P);
         }
@@ -391,8 +394,14 @@ void part::Output(packet packet, std::string outName) {
     //std::vector<Port*> portsToProcess;
 
 
-    for (Port *port: portsOut) {
-        port->setValue(packet);
+    for (int i = 0; i < portsOut.size(); ++i) {
+
+
+        if(outName != portsOutName[i]) continue;
+
+        portsOut[i]->setValue(packet);
+
+
         /*
         if(port->prevPart == nullptr || port->nextPart == nullptr) { continue; }
         if(port->prevPart->id > identifierPART || port->nextPart->id > identifierPART) { continue; }*/
@@ -401,7 +410,7 @@ void part::Output(packet packet, std::string outName) {
                   << port->nextPart->name << "(id: " << port->nextPart->id << ")" << std::endl;
         */
 
-        tempPartsProcess.push_back(port->nextPart);
+        tempPartsProcess.push_back(portsOut[i]->nextPart);
     }
 }
 
@@ -542,12 +551,8 @@ part* constructorFromName(const std::string &className, int x, int y, int id, js
         return d;
     } else if (className == "sensor") {
         return new sensor(x, y, id);
-    } else if (className == "normalizePolygonA") {
-        return new normalizePolygonA(x, y, id);
-    } else if (className == "normalizePolygonB") {
-        return new normalizePolygonB(x, y, id);
-    } else if (className == "normalizePolygonC") {
-        return new normalizePolygonC(x, y, id);
+    } else if (className == "normalizePolygon") {
+        return new normalizePolygon(x, y, id);
     } else if (className == "plus") {
         return new plus(x, y, id);
     } else if (className == "average") {

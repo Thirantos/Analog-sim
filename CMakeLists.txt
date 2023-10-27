@@ -59,12 +59,8 @@ add_subdirectory(libs/nativefiledialog-extended)
 
 
 add_executable(Analogsim src/main.cpp src/main.h src/component.cpp src/component.h src/gui.h src/gui.cpp src/serializer.cpp src/serializer.h src/parts/sensor.cpp src/parts/sensor.h src/settings.h src/parts/plus.cpp src/parts/plus.h src/parts/dial.cpp src/parts/dial.h src/parts/plus.cpp src/parts/average.cpp src/parts/average.h src/parts.h
-        src/parts/normalizePolygonA.cpp
-        src/parts/normalizePolygonA.h
-        src/parts/normalizePolygonB.cpp
-        src/parts/normalizePolygonB.h
-        src/parts/normalizePolygonC.cpp
-        src/parts/normalizePolygonC.h
+        src/parts/normalizePolygon.cpp
+        src/parts/normalizePolygon.h
         include/nfd.h
         include/rlImGui.cpp
         include/rlImGui.h

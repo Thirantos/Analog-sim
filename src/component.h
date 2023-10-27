@@ -9,9 +9,8 @@
 #include <string>
 #include <raylib.h>
 #include "serializer.h"
-
-enum mouseModeEnum {none, selectingMultiple, select, dragginPart};
-mouseModeEnum mouseMode;
+ enum mouseModeEnum: unsigned int  {none, selectingMultiple, select, dragginPart};
+static mouseModeEnum mouseMode;
 
 class part;
 class Port;

@@ -9,9 +9,7 @@
 #include "parts/plus.h"
 #include "parts/sensor.h"
 #include "parts/average.h"
-#include "parts/normalizePolygonA.h"
-#include "parts/normalizePolygonB.h"
-#include "parts/normalizePolygonC.h"
+#include "parts/normalizePolygon.h"
 #include "parts/dotProduct.h"
 #include "parts/areaPolygon.h"
 
