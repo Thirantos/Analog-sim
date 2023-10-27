@@ -11,7 +11,7 @@
 #include "serializer.h"
 
 
-enum mouseModeEnum: unsigned int  {none, selectingMultiple, select, dragginPart};
+enum mouseModeEnum: unsigned int  {none, selectingMultiple, select, dragginPart, usingMenu};
 extern mouseModeEnum mouseMode;
 
 class part;
@@ -22,11 +22,13 @@ extern std::vector<part*> partsInput;
 extern std::vector<part*> partsProcess;
 extern std::vector<part*> tempPartsProcess;
 extern std::vector<Port*> portsList;
+extern std::vector<part*> selectedParts;
 extern bool mouseDragging;
 extern int identifierPART;
 extern int identifierPORT;
 
 Rectangle cameraDisplace(Rectangle rect, Camera2D camera);
+Rectangle cameraAntiDisplace(Rectangle rect, Camera2D camera);
 
 struct packet{
     float voltage;
@@ -44,6 +46,7 @@ public:
     std::vector<Rectangle> inBounds;
     std::vector<Rectangle> outBounds;
     Rectangle outBound = bounds;
+    Rectangle inBound = bounds;
     Rectangle dragBounds = bounds;
     std::vector<std::string> portsInName{};
     std::vector<std::string> portsOutName{};
@@ -61,6 +64,8 @@ public:
     bool isDragging = false;
     bool isDraggingNext = false;
     bool isDraggingPrev = false;
+    bool isDraggingMove = false;
+
 
     virtual void  onUse(){}
     bool drag(Camera2D camera);
@@ -79,6 +84,7 @@ public:
     virtual void draw(Camera2D camera);
     virtual void drawIgnoreCam(Camera2D camera){};
     virtual void serialize(json* Data, json properties = NULL);
+    virtual void menu();
 
 
 };

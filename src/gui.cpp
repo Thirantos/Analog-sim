@@ -31,7 +31,7 @@ float min(float a, float b) {
 Rectangle selection;
 
 
-std::vector<part*> selectedParts;
+
 Vector2 selection1;
 Vector2 selection2;
 
@@ -67,15 +67,16 @@ int gui::DrawGui() {
 
         ClearBackground(RAYWHITE);
 
-        std::cout << mouseMode << std::endl;
-
         updateParts();
 
 
-        dragSelection();
 
 
         imGuiMainMenu();
+        dragSelection();
+
+        std::cout << mouseMode << std::endl;
+
 
         rlImGuiEnd();
         EndDrawing();
@@ -93,12 +94,16 @@ int gui::DrawGui() {
 
 void gui::imGuiMainMenu() {
 
+
+
+
     ImGui::SetNextWindowSize(ImVec2(400, GetScreenHeight() -20));
     ImGui::SetNextWindowPos(ImVec2(10, 10));
 
 
     ImGui::Begin("main menu", NULL, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
                                      ImGuiWindowFlags_NoResize);
+
     if (ImGui::BeginMenuBar()) {
         if (ImGui::BeginMenu("File")) {
             if (ImGui::MenuItem("Open..", "Ctrl+O")) { load(); }
@@ -130,9 +135,14 @@ void gui::imGuiMainMenu() {
         }
         ImGui::EndCombo();
     }
+    ImGui::SameLine();
+    Vector2 CentreScreen = {
+            float(GetScreenWidth()) / 2 - 100, float(GetScreenHeight()) / 2 - 75
+    };
+    CentreScreen = GetScreenToWorld2D(CentreScreen, camera);
+    if(ImGui::Button("add") && current_item != NULL)auto* p = constructorFromName(current_item, CentreScreen.x, CentreScreen.y);
 
-    if(ImGui::Button("add") && current_item != NULL)auto* p = constructorFromName(current_item, camera.target.x + GetScreenWidth() / 2 - 100, camera.target.y + GetScreenHeight() / 2 - 75);
-
+    ImGui::Separator();
 
     ImGui::BeginChild("Scrolling", ImVec2(150, 0), true);
         std::vector<part*> sortedParts = partsList;
@@ -140,31 +150,71 @@ void gui::imGuiMainMenu() {
 
         for (part* p: sortedParts) {
             bool selected = false;
-            if (std::find(selectedParts.begin(), selectedParts.end(),p) != selectedParts.end()){
+            auto i = std::find(selectedParts.begin(), selectedParts.end(),p);
+            if (i != selectedParts.end()){
                 selected = true;
             }
 
             if(ImGui::Selectable(p->name == NULL? "loading.." : p->name, selected)){
-                selectedParts.push_back(p);
+                if (i == selectedParts.end()){
+                    selectedParts.push_back(p);
+                }else{
+                    selectedParts.erase(i);
+                }
             }
         }
     ImGui::EndChild();
+        ImGui::SameLine();
+    ImGui::BeginChild("PartData", ImVec2(0, 0), false);
+    if(ImGui::Button("delete")){
+        for (part* part: selectedParts) {
+            part->~part();
+        }
+    }
+    for (part* part: selectedParts) {
+        if(ImGui::CollapsingHeader(part->name)) {
+            part->menu();
+        }
+
+    }
 
 
 
-
-
+    ImGui::EndChild();
+    if(ImGui::GetIO().WantCaptureMouse && (mouseMode == none || mouseMode == usingMenu))
+    {
+        mouseMode = usingMenu;
+    } else if(mouseMode == usingMenu){
+        mouseMode = none;
+    }
     ImGui::End();
 
 }
 
 void gui::dragSelection(){
-    if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT) && mouseMode == none) {
-        mouseMode = selectingMultiple;
+
+    Vector2 worldmouse = GetScreenToWorld2D(GetMousePosition(), camera);
+
+    if(IsMouseButtonDown(MOUSE_BUTTON_LEFT) && mouseMode == none) {
+        for (part *part: partsList) {
+            if (!CheckCollisionPointRec(worldmouse, part->bounds)) continue;
 
 
-        selection1.x = GetMouseX();
-        selection1.y = GetMouseY();
+            if (std::find(selectedParts.begin(), selectedParts.end(), part) != selectedParts.end()) return;
+
+            selectedParts.push_back(part);
+
+
+            return;
+        }
+
+        if (mouseMode == none) {
+            mouseMode = selectingMultiple;
+
+
+            selection1.x = GetMouseX();
+            selection1.y = GetMouseY();
+        }
     }
     if(IsMouseButtonDown(MOUSE_BUTTON_LEFT) && mouseMode == selectingMultiple){
         selection2.x = GetMouseX();
@@ -183,7 +233,8 @@ void gui::dragSelection(){
         selectedParts.clear();
 
         for (part* p: partsList) {
-            if (CheckCollisionRecs(selection, p->bounds)) selectedParts.push_back(p);
+            Rectangle s = cameraAntiDisplace(selection, camera);
+            if (CheckCollisionRecs(s, p->bounds)) selectedParts.push_back(p);
         }
 
         //selection.x = 0.0;
@@ -239,7 +290,7 @@ int gui::load() {
     nfdfilteritem_t filterItem[1] = {{"Analogsim file", "analogsim"}};
     nfdresult_t result = NFD_OpenDialog(&outPath, filterItem, 1, NULL);
     if (result == NFD_OKAY) {
-        serializer->deserialize(outPath);
+        serializer::deserialize(outPath);
         NFD_FreePath(outPath);
         NFD_Quit();
         return 0;

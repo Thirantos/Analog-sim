@@ -10,7 +10,7 @@
 
 class dial : public part{
 public:
-    int val;
+    float val;
     using part::part;
 
     dial(int x, int y, int id = identifierPART, float value = 0);
@@ -19,8 +19,9 @@ public:
 
 
     void draw(Camera2D camera) override;
-    void drawIgnoreCam(Camera2D camera) override;
+
     void serialize(json* Data, json properties = nullptr) override;
+    void menu() override;
 
 };
 

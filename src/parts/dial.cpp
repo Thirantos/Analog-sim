@@ -5,6 +5,7 @@
 #include <cmath>
 #include "dial.h"
 #include "raymath.h"
+#include <ImGui.h>
 
 
 dial::dial(int x, int y, int id, float value) : part(x, y, id) {
@@ -32,24 +33,16 @@ void dial::draw(Camera2D camera) {
 }
 
 
-void dial::drawIgnoreCam(Camera2D camera) {
-    part::drawIgnoreCam(camera);
-    Rectangle _spinner = bounds;
-
-    _spinner.height *= 0.5f;
-    _spinner.width *= 0.7f;
-
-    _spinner.y += _spinner.height * 0.7f;
-    _spinner.x += bounds.width * 0.15f;
-    _spinner = cameraDisplace(_spinner, camera);
-
-    //GuiSpinner(_spinner, "", &val, 0, 500, false);
-}
-
 void dial::serialize(json *Data, json prop){
     json properties;
     properties["value"]  = val;
     part::serialize(Data, properties);
+}
+
+void dial::menu(){
+    part::menu();
+    ImGui::SliderFloat("Value", &val, 0, 100);
+
 }
 
 

@@ -12,7 +12,7 @@
 #define RAYLIB_H
 
 #include "raymath.h"
-
+#include <imgui.h>
 
 #include <iostream>
 #include <utility>
@@ -25,11 +25,11 @@ std::vector<part *> partsInput;
 std::vector<Port *> portsList;
 std::vector<part *> partsProcess;
 std::vector<part *> tempPartsProcess;
+std::vector<part *> selectedParts;
 bool mouseDragging;
 int identifierPART = 0;
 int identifierPORT = 0;
 mouseModeEnum mouseMode = none;
-
 
 
 int max(int a, int b) {
@@ -62,6 +62,23 @@ Rectangle cameraDisplace(Rectangle rect, Camera2D camera) {
     return rect;
 }
 
+Rectangle cameraAntiDisplace(Rectangle rect, Camera2D camera) {
+
+
+    Vector2 topLeft = (Vector2) {rect.x, rect.y};
+    Vector2 botRight = (Vector2) {rect.x + rect.width, rect.y + rect.height};
+    topLeft = GetScreenToWorld2D(topLeft, camera);
+    botRight = GetScreenToWorld2D(botRight, camera);
+
+    rect.x = topLeft.x;
+    rect.y = topLeft.y;
+
+    rect.width = botRight.x - topLeft.x;
+    rect.height = botRight.y - topLeft.y;
+
+    return rect;
+}
+
 
 part::part(int x, int y, int id) {
     partsList.push_back(this);
@@ -73,33 +90,33 @@ part::part(int x, int y, int id) {
     identifierPART = max(id, identifierPART) + 1;
 }
 
-std::map<std::string, packet> part::getInputs(){
- // for(port* port : portsIn)
+std::map<std::string, packet> part::getInputs() {
+    // for(port* port : portsIn)
     std::map<std::string, packet> dict;
-    if(noMaxPorts) {
+    if (noMaxPorts) {
         for (int i = 0; i < portsIn.size(); ++i) {
-            float volt = portsIn[i]->value().voltage == NAN? 0 : portsIn[i]->value().voltage;
-            float amp = portsIn[i]->value().amperage == NAN? 0 : portsIn[i]->value().amperage;
+            float volt = portsIn[i]->value().voltage == NAN ? 0 : portsIn[i]->value().voltage;
+            float amp = portsIn[i]->value().amperage == NAN ? 0 : portsIn[i]->value().amperage;
 
             std::string s = std::to_string(i);
 
-            dict[s] = packet{.voltage = volt,.amperage = amp};
+            dict[s] = packet{.voltage = volt, .amperage = amp};
         }
     };
 
     for (int i = 0; i < portsInName.size(); ++i) {
 
-        if(portsIn[i] != nullptr){
+        if (portsIn[i] != nullptr) {
 
 
-            float volt = portsIn[i]->value().voltage == NAN? 0 : portsIn[i]->value().voltage;
-            float amp = portsIn[i]->value().amperage == NAN? 0 : portsIn[i]->value().amperage;
+            float volt = portsIn[i]->value().voltage == NAN ? 0 : portsIn[i]->value().voltage;
+            float amp = portsIn[i]->value().amperage == NAN ? 0 : portsIn[i]->value().amperage;
 
 
-            dict[portsInName[i]] = packet{.voltage = volt,.amperage = amp};
+            dict[portsInName[i]] = packet{.voltage = volt, .amperage = amp};
 
 
-        }else {
+        } else {
 
             dict[portsInName[i]] = packet{0, 0};
 
@@ -113,12 +130,17 @@ std::map<std::string, packet> part::getInputs(){
 
 void part::drawPorts(Camera2D camera) {
     for (Port *port: portsOut) {
-        if(port->nextPart->bounds.height == 0) {delete port; return;};
-        DrawLineBezierCubic(Vector2{outBounds[port->prevPort].x + outBounds[port->prevPort].width, outBounds[port->prevPort].y + outBounds[port->prevPort].height / 2},
+        if (port->nextPart->bounds.height == 0) {
+            delete port;
+            return;
+        };
+        DrawLineBezierCubic(Vector2{outBounds[port->prevPort].x + outBounds[port->prevPort].width,
+                                    outBounds[port->prevPort].y + outBounds[port->prevPort].height / 2},
                             Vector2{port->nextPart->inBounds[port->nextPort].x,
                                     port->nextPart->inBounds[port->nextPort].y +
                                     port->nextPart->inBounds[port->nextPort].height / 2},
-                            Vector2{outBounds[port->prevPort].x + outBounds[port->prevPort].width + LINEBEND, outBounds[port->prevPort].y + outBounds[port->prevPort].height / 2},
+                            Vector2{outBounds[port->prevPort].x + outBounds[port->prevPort].width + LINEBEND,
+                                    outBounds[port->prevPort].y + outBounds[port->prevPort].height / 2},
                             Vector2{port->nextPart->inBounds[port->nextPort].x - LINEBEND,
                                     port->nextPart->inBounds[port->nextPort].y +
                                     port->nextPart->inBounds[port->nextPort].height / 2},
@@ -161,25 +183,24 @@ void part::draw(Camera2D camera) {
     if (dragOut) {
 
 
-        if (portsOutName.size() > 0) {
+        for (int i = 0; i < portsOutName.size(); ++i) {
 
-            for (int i = 0; i < portsOutName.size(); ++i) {
+            Rectangle outRect = outBounds[i];
 
-                Rectangle outRect = outBounds[i];
-
-                DrawCircle(
-                        outRect.x,
-                        outRect.y + outRect.height / 2,
-                        6 + 1 / camera.zoom, DARKGRAY
-                );
-                DrawText(portsOutName[i].c_str(), outRect.x + 10, outRect.y + outRect.height / 6, 20, DARKGRAY);
-                DrawCircle(
-                        outRect.x,
-                        outRect.y + outRect.height / 2,
-                        6, GOLD
-                );
-            }
+            DrawCircle(
+                    outRect.x + outRect.width,
+                    outRect.y + outRect.height / 2,
+                    6 + 1 / camera.zoom, DARKGRAY
+            );
+            DrawText(portsOutName[i].c_str(), outRect.x + outRect.width - MeasureText(portsOutName[i].c_str(), 20) - 10,
+                     outRect.y + outRect.height / 2 - 10, 20, DARKGRAY);
+            DrawCircle(
+                    outRect.x + outRect.width,
+                    outRect.y + outRect.height / 2,
+                    6, GOLD
+            );
         }
+
     }
     if (noMaxPorts) {
 
@@ -195,12 +216,14 @@ void part::draw(Camera2D camera) {
     }
 
 
-
     if (isDraggingNext) {
-        Vector2 startPoint;
-        startPoint.x = outBounds[currentDragginOut].x + outBounds[currentDragginOut].width;
-        startPoint.y = outBounds[currentDragginOut].y + outBounds[currentDragginOut].height / 2;
-        DrawLineV(startPoint, GetScreenToWorld2D(GetMousePosition(), camera), DARKGRAY);
+
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
+            Vector2 startPoint;
+            startPoint.x = outBounds[currentDragginOut].x + outBounds[currentDragginOut].width;
+            startPoint.y = outBounds[currentDragginOut].y + outBounds[currentDragginOut].height / 2;
+            DrawLineV(startPoint, GetScreenToWorld2D(GetMousePosition(), camera), DARKGRAY);
+        }
 
     }
     if (isDraggingPrev) {
@@ -215,37 +238,25 @@ void part::draw(Camera2D camera) {
 
 bool part::drag(Camera2D camera) {
 
-#ifdef ANASIMDEBUG
-
-    DrawRectangleRec(dragBounds, CLITERAL(Color){255,0,0,128});
-    DrawRectangleRec(outBounds, CLITERAL(Color){0,255,0,128});
-    DrawRectangleRec(inBounds, CLITERAL(Color){0,0,255,128});
-
-#endif
+    Vector2 MouseWorld = GetScreenToWorld2D(GetMousePosition(), camera);
 
 
     if (IsMouseButtonUp(MOUSE_BUTTON_LEFT) && mouseMode == dragginPart) {
         mouseDragging = false;
-        mouseMode = none;
         if (isDraggingNext) {
+            mouseMode = none;
             isDraggingNext = false;
             for (part *part: partsList) {
                 if (part == this) { continue; }
-                bool skip = false;
-                for (Port *p: portsOut) {
-                    if (p->nextPart == part) {
-                        skip = true;
-                    }
-                }
-                Vector2 worldmouse = GetScreenToWorld2D(GetMousePosition(), camera);
-                if (skip || !insideRect(part->bounds,worldmouse)) continue;
-                int i = 0;
-                for (Rectangle bound: part->inBounds) {
-                    if (insideRect(bound, worldmouse)) {
-                        this->next(currentDragginOut, part, i);
-                        return true;
-                    } else {
-                        i++;
+                if (!insideRect(part->inBound, MouseWorld)) continue;
+
+                if(part->noMaxPorts) { this->next(currentDragginOut, part, 0)
+                ;
+                return true;}
+                for (int j = 0; j < part->inBounds.size(); ++j) {
+                        if (insideRect(part->inBounds[j], MouseWorld)) {
+                            this->next(currentDragginOut, part, j);
+                            return true;
                     }
                 }
 
@@ -255,6 +266,7 @@ bool part::drag(Camera2D camera) {
 
         }
         if (isDraggingPrev) {
+            mouseMode = none;
             for (Port *port: portsIn) {
                 if (port == NULL) continue;
                 if (!insideRect(port->prevPart->bounds, GetScreenToWorld2D(GetMousePosition(), camera))) continue;
@@ -272,17 +284,23 @@ bool part::drag(Camera2D camera) {
             }
             isDraggingPrev = false;
         }
+        if (isDraggingMove) {
+            mouseMode = none;
+            isDraggingMove = false;
+        }
         return false;
 
     }
 
 
-    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !isDraggingNext && !isDraggingPrev && (mouseMode == none || mouseMode == dragginPart)) {
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && !isDraggingNext && !isDraggingPrev &&
+        (mouseMode == none || mouseMode == dragginPart)) {
         postInitialize();
-        mouseMode = dragginPart;
+
+        if(std::find(selectedParts.begin(), selectedParts.end(),this) == selectedParts.end()) return false;
 
 
-        if (insideRect(bounds, GetScreenToWorld2D(GetMousePosition(), camera))) {
+        if (insideRect(bounds, MouseWorld) && mouseMode == none) {
             mouseDragging = true;
 
             partsList.erase(std::remove(partsList.begin(), partsList.end(), this), partsList.end());
@@ -291,27 +309,31 @@ bool part::drag(Camera2D camera) {
 
         }
 
-
         Vector2 lastmousepos;
-        lastmousepos.x = GetScreenToWorld2D(GetMousePosition(), camera).x - GetMouseDelta().x;
-        lastmousepos.y = GetScreenToWorld2D(GetMousePosition(), camera).y - GetMouseDelta().y;
+        lastmousepos.x = MouseWorld.x - GetMouseDelta().x;
+        lastmousepos.y = MouseWorld.y - GetMouseDelta().y;
 
-        if (insideRect(dragBounds, lastmousepos)) {
+        if (insideRect(dragBounds, lastmousepos) || isDraggingMove && mouseMode != dragginPart) {
+
+
+            isDraggingMove = true;
             position.x += GetMouseDelta().x / camera.zoom;
             position.y += GetMouseDelta().y / camera.zoom;
 
 
         }
-        if (insideRect(outBound, GetScreenToWorld2D(GetMousePosition(), camera)) &&
+        if (insideRect(outBound, MouseWorld) &&
             IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             isDraggingNext = true;
             for (int i = 0; i < outBounds.size(); ++i) {
+                if (!insideRect(outBounds[i], MouseWorld)) continue;
+
                 currentDragginOut = i;
             }
         }
         if (portsInName.size() > 0) {
             for (int i = 0; i <= portsInName.size(); i++) {
-                if (insideRect(inBounds[i], GetScreenToWorld2D(GetMousePosition(), camera)) &&
+                if (insideRect(inBounds[i], MouseWorld) &&
                     IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                     isDraggingPrev = true;
 
@@ -319,13 +341,13 @@ bool part::drag(Camera2D camera) {
 
             }
         } else if (noMaxPorts) {
-            if (insideRect(inBounds[0], GetScreenToWorld2D(GetMousePosition(), camera)) &&
+            if (insideRect(inBounds[0], MouseWorld) &&
                 IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
                 isDraggingPrev = true;
 
             }
         }
-
+        mouseMode = dragginPart;
         return true;
     }
     return false;
@@ -335,7 +357,7 @@ bool part::drag(Camera2D camera) {
 void part::postInitialize() {
 
 
-    if(portsIn.size() < portsInName.size()) {
+    if (portsIn.size() < portsInName.size()) {
         for (int i = 0; i < portsInName.size(); ++i) {
             portsIn.push_back(nullptr);
         }
@@ -357,9 +379,11 @@ void part::postInitialize() {
     outBound.width = bounds.width / 8;
     outBound.height = bounds.height - dragBounds.height;
     outBound.y = bounds.y + dragBounds.height;
+    inBound = outBound;
     outBound.x = bounds.x + bounds.width - outBound.width;
 
     inBounds.clear();
+    outBounds.clear();
 
     if (portsInName.size() > 0) {
         float step = (bounds.height - dragBounds.height) / (portsInName.size());
@@ -380,12 +404,12 @@ void part::postInitialize() {
         float step = (bounds.height - dragBounds.height) / (portsout);
 
         for (int i = 1; i <= portsOutName.size(); ++i) {
-            Rectangle P{bounds.x + 7 * bounds.width / 8, bounds.y + (i - 1) * step + dragBounds.height, bounds.width / 8, step};
+            Rectangle P{bounds.x + 7 * bounds.width / 8, bounds.y + (i - 1) * step + dragBounds.height,
+                        bounds.width / 8, step};
             outBounds.push_back(P);
         }
 
     }
-
 
 
 }
@@ -397,7 +421,7 @@ void part::Output(packet packet, std::string outName) {
     for (int i = 0; i < portsOut.size(); ++i) {
 
 
-        if(outName != portsOutName[i]) continue;
+        if (outName != portsOutName[i]) continue;
 
         portsOut[i]->setValue(packet);
 
@@ -414,10 +438,10 @@ void part::Output(packet packet, std::string outName) {
     }
 }
 
-void part::next(int prevPort, part *part, int nextPort ) {
+void part::next(int prevPort, part *part, int nextPort) {
 
     for (Port *p: portsOut) {
-        if(p->prevPort == prevPort && p->nextPort == nextPort && p->nextPart == part) return;
+        if (p->prevPort == prevPort && p->nextPort == nextPort && p->nextPart == part) return;
     }
 
     if (!part->noMaxPorts) delete part->portsIn[nextPort];
@@ -426,7 +450,7 @@ void part::next(int prevPort, part *part, int nextPort ) {
 }
 
 
-Port::Port(part *next, int nextPort, part *prev, int prevPort, int id){
+Port::Port(part *next, int nextPort, part *prev, int prevPort, int id) {
 
     nextPart = next;
     prevPart = prev;
@@ -435,10 +459,10 @@ Port::Port(part *next, int nextPort, part *prev, int prevPort, int id){
     this->id = id;
     identifierPART = max(id, identifierPART) + 1;
 
-    if(next->noMaxPorts){
+    if (next->noMaxPorts) {
         next->portsIn.push_back(this);
 
-    }else{
+    } else {
         next->portsIn[nextPort] = this;
     }
     prev->portsOut.push_back(this);
@@ -453,10 +477,10 @@ void Port::setValue(packet packet) {
 
 part::~part() {
 
-    for (Port *port: portsOut){
+    for (Port *port: portsOut) {
         delete port;
     }
-    for (Port *port: portsIn){
+    for (Port *port: portsIn) {
         delete port;
     }
 
@@ -480,7 +504,10 @@ part::~part() {
         partsList.erase(it);
     }
 
-
+    auto it5 = std::find(selectedParts.begin(), selectedParts.end(), this);
+    if (it5 != selectedParts.end()) {
+        selectedParts.erase(it5);
+    }
 
 
 }
@@ -493,6 +520,12 @@ void part::serialize(json *Data, json properties) {
     partj["type"] = name;
     partj["data"] = std::move(properties);
     Data->push_back(partj);
+
+}
+
+void part::menu() {
+    const char *ide = ("id: " + std::to_string(id)).c_str();
+    ImGui::Text(ide);
 
 }
 
@@ -512,9 +545,9 @@ Port::~Port() {
     }
 
 
-    std::vector<Port*> tempPortsOut;
-    for (Port* port: prevPart->portsOut){
-        if (port != this){
+    std::vector<Port *> tempPortsOut;
+    for (Port *port: prevPart->portsOut) {
+        if (port != this) {
             tempPortsOut.push_back(port);
         }
     }
@@ -543,10 +576,10 @@ void Port::serialize(json *Data) {
 
 #include "parts.h"
 
-part* constructorFromName(const std::string &className, int x, int y, int id, json data) {
+part *constructorFromName(const std::string &className, int x, int y, int id, json data) {
     if (className == "dial") {
-        dial* d = new dial(x, y, id);
-        if(data.is_null()) return d;
+        dial *d = new dial(x, y, id);
+        if (data.is_null()) return d;
         d->val = data["value"];
         return d;
     } else if (className == "sensor") {
