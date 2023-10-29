@@ -65,10 +65,17 @@ add_executable(Analogsim src/main.cpp src/main.h src/component.cpp src/component
         include/rlImGui.cpp
         include/rlImGui.h
         include/rlImGuiColors.h
+        include/RaylibSerialize.hpp
         src/parts/dotProduct.cpp
         src/parts/dotProduct.h
         src/parts/areaPolygon.cpp
         src/parts/areaPolygon.h
+        src/parts/combineVector.cpp
+        src/parts/combineVector.h
+        src/parts/combineVector.h
+        src/parts/separateVector.cpp
+        src/parts/separateVector.h
+        src/parts/separateVector.h
 )
 #target_compile_options(Analogsim PRIVATE -Wall -Wextra -Wpedantic -Werror)
 target_link_libraries(Analogsim PRIVATE raylib nfd imgui_glfw)

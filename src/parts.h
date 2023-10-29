@@ -12,6 +12,8 @@
 #include "parts/normalizePolygon.h"
 #include "parts/dotProduct.h"
 #include "parts/areaPolygon.h"
+#include "parts/combineVector.h"
+#include "parts/separateVector.h"
 
 
 

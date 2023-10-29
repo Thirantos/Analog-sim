@@ -11,12 +11,8 @@ dotProduct::dotProduct(int x, int y, int id) : part(x, y, id) {
 
 
     this->portsInName = std::vector<std::string>{
-            "Xa",
-            "Ya",
-            "Za",
-            "Xb",
-            "Yb",
-            "Zb",
+        "v3_A",
+        "v3_B"
     };
 
 
@@ -27,15 +23,15 @@ dotProduct::dotProduct(int x, int y, int id) : part(x, y, id) {
 
 void dotProduct::onUse() {
 
-    packet output = {.voltage=NAN, .amperage =0};
+    packet output = {._float=NAN};
 
     std::map<std::string, packet> input = getInputs();
 
     double dot = Vector3DotProduct(
-            {input["Xa"].voltage,input["Ya"].voltage,input["Za"].voltage },
-            {input["Xb"].voltage,input["Yb"].voltage,input["Zb"].voltage });
+            input["v3_A"]._vector3 ,
+            input["v3_A"]._vector3);
 
-    output.voltage = dot;
+    output._float = dot;
     Output(output);
 
 

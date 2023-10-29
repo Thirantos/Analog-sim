@@ -12,6 +12,7 @@
 #define RAYLIB_H
 
 #include "raymath.h"
+#include <RaylibSerialize.hpp>
 #include <imgui.h>
 
 #include <iostream>
@@ -85,7 +86,7 @@ part::part(int x, int y, int id) {
     this->position.x = x;
     this->position.y = y;
     this->id = id;
-    this->portsOutName = {"out"};
+    this->portsOutName = {"f_out"};
 
     identifierPART = max(id, identifierPART) + 1;
 }
@@ -95,12 +96,14 @@ std::map<std::string, packet> part::getInputs() {
     std::map<std::string, packet> dict;
     if (noMaxPorts) {
         for (int i = 0; i < portsIn.size(); ++i) {
-            float volt = portsIn[i]->value().voltage == NAN ? 0 : portsIn[i]->value().voltage;
-            float amp = portsIn[i]->value().amperage == NAN ? 0 : portsIn[i]->value().amperage;
+            float valueF = portsIn[i]->value()._float;
+            Vector3 valueV3 = portsIn[i]->value()._vector3;
+            Matrix valueM = portsIn[i]->value()._matrix;
+
 
             std::string s = std::to_string(i);
 
-            dict[s] = packet{.voltage = volt, .amperage = amp};
+            dict[s] = packet{._float = valueF,._vector3= valueV3, ._matrix = valueM};
         }
     };
 
@@ -109,16 +112,17 @@ std::map<std::string, packet> part::getInputs() {
         if (portsIn[i] != nullptr) {
 
 
-            float volt = portsIn[i]->value().voltage == NAN ? 0 : portsIn[i]->value().voltage;
-            float amp = portsIn[i]->value().amperage == NAN ? 0 : portsIn[i]->value().amperage;
+            float valueF = portsIn[i]->value()._float;
+            Vector3 valueV3 = portsIn[i]->value()._vector3;
+            Matrix valueM = portsIn[i]->value()._matrix;
 
 
-            dict[portsInName[i]] = packet{.voltage = volt, .amperage = amp};
+            dict[portsInName[i]] = packet{._float = valueF,._vector3= valueV3, ._matrix = valueM};
 
 
         } else {
 
-            dict[portsInName[i]] = packet{0, 0};
+            dict[portsInName[i]] = packet{._float = NULL,._vector3= NULL, ._matrix = NULL};
 
         }
     }
@@ -165,6 +169,14 @@ void part::draw(Camera2D camera) {
 
         for (int i = 0; i < portsInName.size(); ++i) {
 
+            std::stringstream ss(portsInName[i]);
+            std::string str;
+            std::vector<std::string> portData;
+            while (getline(ss, str, '_')) portData.push_back(str);
+            std::string portType = portData[0];
+            std::string portName = portData[1];
+            Color color = colorFromType(portType);
+
             Rectangle inRect = inBounds[i];
 
             DrawCircle(
@@ -172,11 +184,11 @@ void part::draw(Camera2D camera) {
                     inRect.y + inRect.height / 2,
                     6 + 1 / camera.zoom, DARKGRAY
             );
-            DrawText(portsInName[i].c_str(), inRect.x + 10, inRect.y + inRect.height / 6, 20, DARKGRAY);
+            DrawText(portName.c_str(), inRect.x + 10, inRect.y + inRect.height / 2 - 10, 20, DARKGRAY);
             DrawCircle(
                     inRect.x,
                     inRect.y + inRect.height / 2,
-                    6, GOLD
+                    6, color
             );
         }
     }
@@ -185,6 +197,14 @@ void part::draw(Camera2D camera) {
 
         for (int i = 0; i < portsOutName.size(); ++i) {
 
+            std::stringstream ss(portsOutName[i]);
+            std::string str;
+            std::vector<std::string> portData;
+            while (getline(ss, str, '_')) portData.push_back(str);
+            std::string portType = portData[0];
+            std::string portName = portData[1];
+            Color color = colorFromType(portType);
+
             Rectangle outRect = outBounds[i];
 
             DrawCircle(
@@ -192,12 +212,12 @@ void part::draw(Camera2D camera) {
                     outRect.y + outRect.height / 2,
                     6 + 1 / camera.zoom, DARKGRAY
             );
-            DrawText(portsOutName[i].c_str(), outRect.x + outRect.width - MeasureText(portsOutName[i].c_str(), 20) - 10,
+            DrawText(portName.c_str(), outRect.x + outRect.width - MeasureText(portName.c_str(), 20) - 10,
                      outRect.y + outRect.height / 2 - 10, 20, DARKGRAY);
             DrawCircle(
                     outRect.x + outRect.width,
                     outRect.y + outRect.height / 2,
-                    6, GOLD
+                    6, color
             );
         }
 
@@ -250,8 +270,8 @@ bool part::drag(Camera2D camera) {
                 if (part == this) { continue; }
                 if (!insideRect(part->inBound, MouseWorld)) continue;
 
-                if(part->noMaxPorts) { this->next(currentDragginOut, part, 0)
-                ;
+                if(part->noMaxPorts) { this->next(currentDragginOut, part, 0);
+
                 return true;}
                 for (int j = 0; j < part->inBounds.size(); ++j) {
                         if (insideRect(part->inBounds[j], MouseWorld)) {
@@ -317,8 +337,12 @@ bool part::drag(Camera2D camera) {
 
 
             isDraggingMove = true;
-            position.x += GetMouseDelta().x / camera.zoom;
-            position.y += GetMouseDelta().y / camera.zoom;
+            for (part* p: selectedParts) {
+                p->position.x += GetMouseDelta().x / camera.zoom;
+                p->position.y += GetMouseDelta().y / camera.zoom;
+            }
+
+
 
 
         }
@@ -368,8 +392,8 @@ void part::postInitialize() {
     bounds.y = position.y;
     bounds.width = 200;
 
-    bounds.height = max(75, portsInName.size() * 25);
-    bounds.height = max(portsOutName.size() * 25, bounds.height);
+    bounds.height = max(75, portsInName.size() * 25 + 25);
+    bounds.height = max(portsOutName.size() * 25 + 25, bounds.height);
 
     dragBounds = bounds;
     dragBounds.height = 25;
@@ -444,7 +468,21 @@ void part::next(int prevPort, part *part, int nextPort) {
         if (p->prevPort == prevPort && p->nextPort == nextPort && p->nextPart == part) return;
     }
 
+    std::stringstream ss1(this->portsOutName[prevPort]);
+    std::string str1;
+    std::vector<std::string> portData1;
+    while (getline(ss1, str1, '_')) portData1.push_back(str1);
+
+    std::stringstream ss2(part->portsInName[nextPort]);
+    std::string str2;
+    std::vector<std::string> portData2;
+    while (getline(ss2, str2, '_')) portData2.push_back(str2);
+
+    if(portData2[0] != portData1[0]) return;
+
+
     if (!part->noMaxPorts) delete part->portsIn[nextPort];
+
 
     new Port(part, nextPort, this, prevPort);
 }
@@ -569,8 +607,10 @@ void Port::serialize(json *Data) {
     portj["prev"] = prevPart->id;
     portj["next"] = nextPart->id;
     portj["port"] = nextPort;
-    portj["valueAMP"] = value().amperage;
-    portj["valueVOLT"] = value().voltage;
+    portj["valueM"] = value()._matrix;
+    portj["valueF"] = value()._float;
+    portj["valueV3"] = value()._vector3;
+
     Data->push_back(portj);
 }
 
@@ -594,6 +634,10 @@ part *constructorFromName(const std::string &className, int x, int y, int id, js
         return new dotProduct(x, y, id);
     } else if (className == "areaPolygon") {
         return new areaPolygon(x, y, id);
+    } else if (className == "combineVector") {
+        return new combineVector(x, y, id);
+    } else if (className == "separateVector") {
+        return new separateVector(x, y, id);
     } else {
         // Handle unknown class names or return a default
         return new part(x, y, id);
@@ -610,4 +654,16 @@ part *partFromId(int id) {
         }
     }
     return nullptr;
+}
+
+Color colorFromType(std::string type) {
+    if(type == "f") {// float
+        return GOLD;
+    }else if (type == "v3"){// vector3
+        return RED;
+    }else if (type == "m"){// matrix
+        return GREEN;
+    }
+
+    return BLACK;
 }

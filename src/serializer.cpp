@@ -7,6 +7,7 @@
 #include <fstream>
 #include "json.hpp"
 #include <iostream>
+#include <RaylibSerialize.hpp>
 
 using json = nlohmann::json;
 
@@ -64,11 +65,12 @@ void serializer::deserialize(std::string filePath) {
                                partFromId(port["prev"].template get<int>()), port["id"].template get<int>());
 
 
-            float amp = port["valueAMP"].is_null() ? 0 : port["valueAMP"].template get<float>();
-            float volt = port["valueVOLT"].is_null() ? 0 : port["valueVOLT"].template get<float>();
+            float valueF = port["valueF"];;
+            Vector3 valueV3 = port["valueV3"];
+            Matrix valueM = port["valueM"];
 
             p->setValue(
-                    {.voltage = volt, .amperage = amp});
+                    {._float = valueF, ._vector3 = valueV3, ._matrix = valueM});
         }
     }
 }

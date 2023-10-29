@@ -29,10 +29,14 @@ extern int identifierPORT;
 
 Rectangle cameraDisplace(Rectangle rect, Camera2D camera);
 Rectangle cameraAntiDisplace(Rectangle rect, Camera2D camera);
+Color colorFromType(std::string type);
+
 
 struct packet{
-    float voltage;
-    float amperage;
+    float _float;
+    Vector3 _vector3;
+    Matrix _matrix;
+
 };
 
 class part{
@@ -60,7 +64,7 @@ public:
     std::map<std::string, packet> getInputs();
 
 
-    bool dragOut{};
+    bool dragOut = true;
     bool isDragging = false;
     bool isDraggingNext = false;
     bool isDraggingPrev = false;
@@ -79,7 +83,7 @@ public:
 
     void next(int prevPort, part *next, int nextPort);
 
-    void Output(packet packet, std::string outName = "out");
+    void Output(packet packet, std::string outName = "f_out");
     void drawPorts(Camera2D camera);
     virtual void draw(Camera2D camera);
     virtual void drawIgnoreCam(Camera2D camera){};
@@ -92,8 +96,9 @@ public:
 class Port{
 private:
     packet _packet = packet{
-        .voltage = 0,
-        .amperage = 0
+        ._float = 0,
+        ._vector3 = {0,0,0},
+        ._matrix = {0},
     };
 public:
 

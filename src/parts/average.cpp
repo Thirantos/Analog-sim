@@ -20,12 +20,10 @@ void average::onUse() {
 
     for(Port* port : portsList){
         if(port->nextPart != this) continue;
-        p.amperage += port->value().amperage;
-        p.voltage += port->value().voltage;
+        p._float += port->value()._float;
         i += 1;
     }
-    p.amperage = p.amperage/i;
-    p.voltage = p.voltage/i;
+    p._float = p._float / i;
 
     Output(p);
 }

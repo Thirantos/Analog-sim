@@ -59,7 +59,7 @@ int gui::DrawGui() {
         BeginDrawing();
         rlImGuiBegin();
 
-        mouseMove();
+        if(mouseMode != usingMenu) { mouseMove(); }
 
 
         MousePos.x += GetMouseDelta().x;
@@ -75,7 +75,7 @@ int gui::DrawGui() {
         imGuiMainMenu();
         dragSelection();
 
-        std::cout << mouseMode << std::endl;
+
 
 
         rlImGuiEnd();
@@ -117,6 +117,8 @@ void gui::imGuiMainMenu() {
         "areaPolygon",
         "average",
         "dial",
+        "combineVector",
+        "separateVector",
         "dotProduct",
         "normalizePolygon",
         "plus",
@@ -181,6 +183,9 @@ void gui::imGuiMainMenu() {
 
 
     ImGui::EndChild();
+
+
+
     if(ImGui::GetIO().WantCaptureMouse && (mouseMode == none || mouseMode == usingMenu))
     {
         mouseMode = usingMenu;
