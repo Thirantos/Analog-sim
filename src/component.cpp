@@ -636,8 +636,14 @@ part *constructorFromName(const std::string &className, int x, int y, int id, js
         return new areaPolygon(x, y, id);
     } else if (className == "combineVector") {
         return new combineVector(x, y, id);
+    } else if (className == "projectVector") {
+        return new projectVector(x, y, id);
     } else if (className == "separateVector") {
         return new separateVector(x, y, id);
+    } else if (className == "vectorBetweenVectors") {
+        return new vectorBetweenVectors(x, y, id);
+    } else if (className == "c24") {
+        return new c24(x, y, id);
     } else {
         // Handle unknown class names or return a default
         return new part(x, y, id);

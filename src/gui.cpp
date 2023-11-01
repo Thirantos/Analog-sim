@@ -114,15 +114,18 @@ void gui::imGuiMainMenu() {
     }
 
     const char* components[] = {
-        "areaPolygon",
-        "average",
-        "dial",
-        "combineVector",
-        "separateVector",
-        "dotProduct",
-        "normalizePolygon",
-        "plus",
-        "sensor",
+            "areaPolygon",
+            "average",
+            "dial",
+            "combineVector",
+            "separateVector",
+            "vectorBetweenVectors",
+            "dotProduct",
+            "normalizePolygon",
+            "projectVector",
+            "c24",
+            "plus",
+            "sensor",
     };
     static const char* current_item = NULL;
     if (ImGui::BeginCombo("##combo", current_item)) // The second parameter is the label previewed before opening the combo.
