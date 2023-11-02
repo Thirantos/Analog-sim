@@ -123,6 +123,8 @@ void gui::imGuiMainMenu() {
             "dotProduct",
             "normalizePolygon",
             "projectVector",
+            "middlePolygon",
+            "scaleVector",
             "c24",
             "plus",
             "sensor",
@@ -160,7 +162,7 @@ void gui::imGuiMainMenu() {
                 selected = true;
             }
 
-            if(ImGui::Selectable(p->name == NULL? "loading.." : p->name, selected)){
+            if(ImGui::Selectable(p->name == NULL? "loading.." : (std::string(p->name) + "##" + std::to_string(p->id)).c_str(), selected)){
                 if (i == selectedParts.end()){
                     selectedParts.push_back(p);
                 }else{
@@ -177,9 +179,7 @@ void gui::imGuiMainMenu() {
         }
     }
     for (part* part: selectedParts) {
-        if(ImGui::CollapsingHeader(part->name)) {
             part->menu();
-        }
 
     }
 

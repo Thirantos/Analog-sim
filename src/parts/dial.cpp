@@ -6,6 +6,8 @@
 #include "dial.h"
 #include "raymath.h"
 #include <ImGui.h>
+#include <string>
+#include <sstream>
 
 
 dial::dial(int x, int y, int id, float value) : part(x, y, id) {
@@ -40,9 +42,12 @@ void dial::serialize(json *Data, json prop){
 }
 
 void dial::menu(){
-    part::menu();
-    ImGui::SliderFloat("Value", &val, 0, 100);
+    if (ImGui::CollapsingHeader((std::string(name) + "##" + std::to_string(id)).c_str())) {
 
+        std::stringstream value("Value##" + std::to_string(id));
+
+        ImGui::SliderFloat(value.str().c_str(), &val, 0, 100);
+    }
 }
 
 

@@ -11,6 +11,9 @@
 
 #define RAYLIB_H
 
+#define PARTNAME(partname) \
+    else if (className == #partname ) { \
+    return new partname(x, y, id); }
 #include "raymath.h"
 #include <RaylibSerialize.hpp>
 #include <imgui.h>
@@ -18,6 +21,7 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <sstream>
 #include <cstdlib>
 
 
@@ -562,8 +566,10 @@ void part::serialize(json *Data, json properties) {
 }
 
 void part::menu() {
-    const char *ide = ("id: " + std::to_string(id)).c_str();
-    ImGui::Text(ide);
+    if (ImGui::CollapsingHeader((std::string(name) + "##" + std::to_string(id)).c_str())) {
+        const char *ide = ("id: " + std::to_string(id)).c_str();
+        ImGui::Text(ide);
+    }
 
 }
 
@@ -622,29 +628,18 @@ part *constructorFromName(const std::string &className, int x, int y, int id, js
         if (data.is_null()) return d;
         d->val = data["value"];
         return d;
-    } else if (className == "sensor") {
-        return new sensor(x, y, id);
-    } else if (className == "normalizePolygon") {
-        return new normalizePolygon(x, y, id);
-    } else if (className == "plus") {
-        return new plus(x, y, id);
-    } else if (className == "average") {
-        return new average(x, y, id);
-    } else if (className == "dotProduct") {
-        return new dotProduct(x, y, id);
-    } else if (className == "areaPolygon") {
-        return new areaPolygon(x, y, id);
-    } else if (className == "combineVector") {
-        return new combineVector(x, y, id);
-    } else if (className == "projectVector") {
-        return new projectVector(x, y, id);
-    } else if (className == "separateVector") {
-        return new separateVector(x, y, id);
-    } else if (className == "vectorBetweenVectors") {
-        return new vectorBetweenVectors(x, y, id);
-    } else if (className == "c24") {
-        return new c24(x, y, id);
-    } else {
+    }
+    PARTNAME(sensor)
+    PARTNAME(normalizePolygon)
+    PARTNAME(plus)
+    PARTNAME(average)
+    PARTNAME(dotProduct)
+    PARTNAME(areaPolygon)
+    PARTNAME(combineVector)
+    PARTNAME(separateVector)
+    PARTNAME(middlePolygon)
+    PARTNAME(scaleVector)
+    else {
         // Handle unknown class names or return a default
         return new part(x, y, id);
     }

@@ -14,12 +14,11 @@
 #include "parts/areaPolygon.h"
 #include "parts/combineVector.h"
 #include "parts/separateVector.h"
+#include "parts/middlePolygon.h"
+#include "parts/scaleVector.h"
 #include "parts/vectorBetweenVectors.h"
 #include "parts/projectVector.h"
 #include "parts/c24.h"
-
-
-
 
 
 #endif //ANALOGSIM_PARTS_H

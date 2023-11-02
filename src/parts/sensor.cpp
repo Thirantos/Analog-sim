@@ -10,6 +10,9 @@ sensor::sensor(int x, int y, int id) : part(x, y, id) {
 
     this->portsInName.push_back("f_input");
 
+    this->portsOutName = {};
+
+
     postInitialize();
 }
 

@@ -83,6 +83,11 @@ add_executable(Analogsim src/main.cpp src/main.h src/component.cpp src/component
         src/parts/projectVector.h
         src/parts/c24.cpp
         src/parts/c24.h
+        src/parts/middlePolygon.cpp
+        src/parts/middlePolygon.h
+        src/parts/scaleVector.cpp
+        src/parts/scaleVector.h
+        src/parts/scaleVector.h
 )
 #target_compile_options(Analogsim PRIVATE -Wall -Wextra -Wpedantic -Werror)
 target_link_libraries(Analogsim PRIVATE raylib nfd imgui_glfw)
