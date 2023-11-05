@@ -14,8 +14,12 @@ class matrix {
 public:
     matrix(int xsize, int ysize);
     float* at(int x, int y);
+    void set(int x, int y, float f);
 
-    matrix operator*(matrix kernel); //matrix convolution of multiplication
+
+    matrix operator%(matrix kernel); //matrix convolution
+    matrix operator*(matrix other);  //matrix multiplication
+
 
 };
 
