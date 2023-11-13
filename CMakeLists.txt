@@ -90,6 +90,8 @@ add_executable(Analogsim src/main.cpp src/main.h src/component.cpp src/component
         src/parts/scaleVector.h
         src/matrix.cpp
         src/matrix.h
+        src/parts/matrixKernel.cpp
+        src/parts/matrixKernel.h
 )
 #target_compile_options(Analogsim PRIVATE -Wall -Wextra -Wpedantic -Werror)
 target_link_libraries(Analogsim PRIVATE raylib nfd imgui_glfw)

@@ -126,6 +126,8 @@ void gui::imGuiMainMenu() {
             "middlePolygon",
             "scaleVector",
             "c24",
+            "matrixKernel",
+
             "plus",
             "sensor",
     };
@@ -172,6 +174,7 @@ void gui::imGuiMainMenu() {
         }
     ImGui::EndChild();
         ImGui::SameLine();
+
     ImGui::BeginChild("PartData", ImVec2(0, 0), false);
     if(ImGui::Button("delete")){
         for (part* part: selectedParts) {
@@ -182,8 +185,6 @@ void gui::imGuiMainMenu() {
             part->menu();
 
     }
-
-
 
     ImGui::EndChild();
 

@@ -89,5 +89,6 @@
             "binaryPath": "/Users/thijme/Documents/GitHub/Analog-sim/main.exe",
             "binaryArgs": []
         }
-    ]
+    ],
+    "docify.commentService.docstringFormat": "Doxygen"
 }

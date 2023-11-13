@@ -49,3 +49,4 @@ matrix matrix::operator%(matrix kernel) {
 
     return output;
 }
+

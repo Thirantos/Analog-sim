@@ -7,6 +7,7 @@
 #include <fstream>
 #include "json.hpp"
 #include <iostream>
+#include "matrix.h"
 #include <RaylibSerialize.hpp>
 
 using json = nlohmann::json;
@@ -67,7 +68,7 @@ void serializer::deserialize(std::string filePath) {
 
             float valueF = port["valueF"];;
             Vector3 valueV3 = port["valueV3"];
-            Matrix valueM = port["valueM"];
+            matrix valueM = port["valueM"];
 
             p->setValue(
                     {._float = valueF, ._vector3 = valueV3, ._matrix = valueM});

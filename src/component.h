@@ -9,6 +9,7 @@
 #include <string>
 #include <raylib.h>
 #include "serializer.h"
+#include "matrix.h"
 
 
 enum mouseModeEnum: unsigned int  {none, selectingMultiple, select, dragginPart, usingMenu};
@@ -33,9 +34,10 @@ Color colorFromType(std::string type);
 
 
 struct packet{
+
     float _float;
     Vector3 _vector3;
-    Matrix _matrix;
+    matrix _matrix = matrix(0,0);
 
 };
 
@@ -98,7 +100,7 @@ private:
     packet _packet = packet{
         ._float = 0,
         ._vector3 = {0,0,0},
-        ._matrix = {0},
+        ._matrix = matrix(0,0),
     };
 public:
 

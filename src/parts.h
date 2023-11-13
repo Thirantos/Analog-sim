@@ -19,6 +19,8 @@
 #include "parts/vectorBetweenVectors.h"
 #include "parts/projectVector.h"
 #include "parts/c24.h"
+#include "parts/matrixKernel.h"
+
 
 
 #endif //ANALOGSIM_PARTS_H

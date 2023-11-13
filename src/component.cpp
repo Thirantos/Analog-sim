@@ -102,7 +102,7 @@ std::map<std::string, packet> part::getInputs() {
         for (int i = 0; i < portsIn.size(); ++i) {
             float valueF = portsIn[i]->value()._float;
             Vector3 valueV3 = portsIn[i]->value()._vector3;
-            Matrix valueM = portsIn[i]->value()._matrix;
+            matrix valueM = portsIn[i]->value()._matrix;
 
 
             std::string s = std::to_string(i);
@@ -118,7 +118,7 @@ std::map<std::string, packet> part::getInputs() {
 
             float valueF = portsIn[i]->value()._float;
             Vector3 valueV3 = portsIn[i]->value()._vector3;
-            Matrix valueM = portsIn[i]->value()._matrix;
+            matrix valueM = portsIn[i]->value()._matrix;
 
 
             dict[portsInName[i]] = packet{._float = valueF,._vector3= valueV3, ._matrix = valueM};
@@ -126,7 +126,7 @@ std::map<std::string, packet> part::getInputs() {
 
         } else {
 
-            dict[portsInName[i]] = packet{._float = NULL,._vector3= NULL, ._matrix = NULL};
+            dict[portsInName[i]] = packet{._float = NULL,._vector3= NULL, ._matrix = matrix(0,0)};
 
         }
     }
@@ -638,7 +638,12 @@ part *constructorFromName(const std::string &className, int x, int y, int id, js
     PARTNAME(combineVector)
     PARTNAME(separateVector)
     PARTNAME(middlePolygon)
+    PARTNAME(projectVector)
+    PARTNAME(vectorBetweenVectors)
     PARTNAME(scaleVector)
+    PARTNAME(c24)
+    PARTNAME(matrixKernel)
+
     else {
         // Handle unknown class names or return a default
         return new part(x, y, id);
@@ -668,3 +673,5 @@ Color colorFromType(std::string type) {
 
     return BLACK;
 }
+
+
