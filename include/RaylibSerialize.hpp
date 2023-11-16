@@ -410,48 +410,6 @@ namespace nlohmann {
     };
 
 
-//matrix
-    template<>
-    struct adl_serializer<matrix> {
-        static void to_json(json &j, matrix opt) {
-
-
-            std::vector<float> data;
-            for (int x = 0; x < opt.sizeX; ++x) {
-                for (int y = 0; y < opt.sizeY; ++y) {
-                    data.push_back(*opt.at(x, y));
-                }
-            }
-
-            j["matrix"] = {
-                    {"sizeX", opt.sizeX},
-                    {"sizeY", opt.sizeY},
-                    {"data",  data},
-            };
-
-
-        }
-
-        static void from_json(const json &j, matrix &opt) {
-            const json &json = j.at("matrix");
-            opt = matrix(json.at("sizeX").get<int>(), json.at("sizeY").get<int>());
-
-
-            std::vector<float> data = json.at("data").get<std::vector<float>>();
-
-
-            int i = 0;
-            for (int x = 0; x < opt.sizeX; ++x) {
-                for (int y = 0; y < opt.sizeY; ++y) {
-                    opt.set(x, y, data[i]);
-                    i++;
-                }
-            }
-
-
-        }
-    };
-
 
 }
 

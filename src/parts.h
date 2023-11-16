@@ -20,6 +20,8 @@
 #include "parts/projectVector.h"
 #include "parts/c24.h"
 #include "parts/matrixKernel.h"
+#include "parts/lightBalance.h"
+
 
 
 

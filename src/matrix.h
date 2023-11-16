@@ -21,6 +21,8 @@ public:
 
     matrix operator%(matrix kernel); //matrix convolution
     matrix operator*(matrix other);  //matrix multiplication
+    nlohmann::json to_json(nlohmann::json &j);
+    static matrix from_json(nlohmann::json &j);
 
 
 };

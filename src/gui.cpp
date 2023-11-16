@@ -127,7 +127,7 @@ void gui::imGuiMainMenu() {
             "scaleVector",
             "c24",
             "matrixKernel",
-
+                "lightBalance",
             "plus",
             "sensor",
     };
@@ -153,7 +153,7 @@ void gui::imGuiMainMenu() {
 
     ImGui::Separator();
 
-    ImGui::BeginChild("Scrolling", ImVec2(150, 0), true);
+    ImGui::BeginChild("Scrolling", ImVec2(150, 0), ImGuiChildFlags_Border);
         std::vector<part*> sortedParts = partsList;
         std::sort(sortedParts.begin(), sortedParts.end());
 
@@ -175,7 +175,7 @@ void gui::imGuiMainMenu() {
     ImGui::EndChild();
         ImGui::SameLine();
 
-    ImGui::BeginChild("PartData", ImVec2(0, 0), false);
+    ImGui::BeginChild("PartData", ImVec2(0, 0));
     if(ImGui::Button("delete")){
         for (part* part: selectedParts) {
             part->~part();

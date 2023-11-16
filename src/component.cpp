@@ -613,7 +613,7 @@ void Port::serialize(json *Data) {
     portj["prev"] = prevPart->id;
     portj["next"] = nextPart->id;
     portj["port"] = nextPort;
-    portj["valueM"] = value()._matrix;
+    value()._matrix.to_json(portj["valueM"]);
     portj["valueF"] = value()._float;
     portj["valueV3"] = value()._vector3;
 
@@ -643,6 +643,8 @@ part *constructorFromName(const std::string &className, int x, int y, int id, js
     PARTNAME(scaleVector)
     PARTNAME(c24)
     PARTNAME(matrixKernel)
+    PARTNAME(lightBalance)
+
 
     else {
         // Handle unknown class names or return a default
