@@ -31,7 +31,6 @@ float min(float a, float b) {
 Rectangle selection;
 
 
-
 Vector2 selection1;
 Vector2 selection2;
 
@@ -59,7 +58,7 @@ int gui::DrawGui() {
         BeginDrawing();
         rlImGuiBegin();
 
-        if(mouseMode != usingMenu) { mouseMove(); }
+        if (mouseMode != usingMenu) { mouseMove(); }
 
 
         MousePos.x += GetMouseDelta().x;
@@ -70,12 +69,8 @@ int gui::DrawGui() {
         updateParts();
 
 
-
-
         imGuiMainMenu();
         dragSelection();
-
-
 
 
         rlImGuiEnd();
@@ -95,14 +90,12 @@ int gui::DrawGui() {
 void gui::imGuiMainMenu() {
 
 
-
-
-    ImGui::SetNextWindowSize(ImVec2(400, GetScreenHeight() -20));
+    ImGui::SetNextWindowSize(ImVec2(400, GetScreenHeight() - 20));
     ImGui::SetNextWindowPos(ImVec2(10, 10));
 
 
-    ImGui::Begin("main menu", NULL, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
-                                     ImGuiWindowFlags_NoResize);
+    ImGui::Begin("AnalogSim", NULL, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoCollapse |
+                                    ImGuiWindowFlags_NoResize);
 
     if (ImGui::BeginMenuBar()) {
         if (ImGui::BeginMenu("File")) {
@@ -113,9 +106,11 @@ void gui::imGuiMainMenu() {
         ImGui::EndMenuBar();
     }
 
-    const char* components[] = {
+    const char *components[] = {
             "areaPolygon",
             "average",
+            "polgonPairRegister",
+
             "dial",
             "combineVector",
             "separateVector",
@@ -127,16 +122,18 @@ void gui::imGuiMainMenu() {
             "scaleVector",
             "c24",
             "matrixKernel",
-                "lightBalance",
+            "lightBalance",
             "plus",
             "sensor",
+            "boxKernel",
     };
-    static const char* current_item = NULL;
-    if (ImGui::BeginCombo("##combo", current_item)) // The second parameter is the label previewed before opening the combo.
+    static const char *current_item = NULL;
+    if (ImGui::BeginCombo("##combo",
+                          current_item)) // The second parameter is the label previewed before opening the combo.
     {
-        for (int n = 0; n < IM_ARRAYSIZE(components); n++)
-        {
-            bool is_selected = (current_item == components[n]); // You can store your selection however you want, outside or inside your objects
+        for (int n = 0; n < IM_ARRAYSIZE(components); n++) {
+            bool is_selected = (current_item ==
+                                components[n]); // You can store your selection however you want, outside or inside your objects
             if (ImGui::Selectable(components[n], is_selected))
                 current_item = components[n];
             if (is_selected)
@@ -149,62 +146,63 @@ void gui::imGuiMainMenu() {
             float(GetScreenWidth()) / 2 - 100, float(GetScreenHeight()) / 2 - 75
     };
     CentreScreen = GetScreenToWorld2D(CentreScreen, camera);
-    if(ImGui::Button("add") && current_item != NULL)auto* p = constructorFromName(current_item, CentreScreen.x, CentreScreen.y);
+    if (ImGui::Button("add") && current_item != NULL)
+        auto *p = constructorFromName(current_item, CentreScreen.x, CentreScreen.y);
 
     ImGui::Separator();
 
     ImGui::BeginChild("Scrolling", ImVec2(150, 0), ImGuiChildFlags_Border);
-        std::vector<part*> sortedParts = partsList;
-        std::sort(sortedParts.begin(), sortedParts.end());
+    std::vector<part *> sortedParts = partsList;
+    std::sort(sortedParts.begin(), sortedParts.end());
 
-        for (part* p: sortedParts) {
-            bool selected = false;
-            auto i = std::find(selectedParts.begin(), selectedParts.end(),p);
-            if (i != selectedParts.end()){
-                selected = true;
-            }
+    for (part *p: sortedParts) {
+        bool selected = false;
+        auto i = std::find(selectedParts.begin(), selectedParts.end(), p);
+        if (i != selectedParts.end()) {
+            selected = true;
+        }
 
-            if(ImGui::Selectable(p->name == NULL? "loading.." : (std::string(p->name) + "##" + std::to_string(p->id)).c_str(), selected)){
-                if (i == selectedParts.end()){
-                    selectedParts.push_back(p);
-                }else{
-                    selectedParts.erase(i);
-                }
+        if (ImGui::Selectable(
+                p->name == NULL ? "loading.." : (std::string(p->name) + "##" + std::to_string(p->id)).c_str(),
+                selected)) {
+            if (i == selectedParts.end()) {
+                selectedParts.push_back(p);
+            } else {
+                selectedParts.erase(i);
             }
         }
+    }
     ImGui::EndChild();
-        ImGui::SameLine();
+    ImGui::SameLine();
 
     ImGui::BeginChild("PartData", ImVec2(0, 0));
-    if(ImGui::Button("delete")){
-        for (part* part: selectedParts) {
+    if (ImGui::Button("delete")) {
+        for (part *part: selectedParts) {
             part->~part();
         }
     }
-    for (part* part: selectedParts) {
-            part->menu();
+    for (part *part: selectedParts) {
+        part->menu();
 
     }
 
     ImGui::EndChild();
 
 
-
-    if(ImGui::GetIO().WantCaptureMouse && (mouseMode == none || mouseMode == usingMenu))
-    {
+    if (ImGui::GetIO().WantCaptureMouse && (mouseMode == none || mouseMode == usingMenu)) {
         mouseMode = usingMenu;
-    } else if(mouseMode == usingMenu){
+    } else if (mouseMode == usingMenu) {
         mouseMode = none;
     }
     ImGui::End();
 
 }
 
-void gui::dragSelection(){
+void gui::dragSelection() {
 
     Vector2 worldmouse = GetScreenToWorld2D(GetMousePosition(), camera);
 
-    if(IsMouseButtonDown(MOUSE_BUTTON_LEFT) && mouseMode == none) {
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && mouseMode == none) {
         for (part *part: partsList) {
             if (!CheckCollisionPointRec(worldmouse, part->bounds)) continue;
 
@@ -225,23 +223,23 @@ void gui::dragSelection(){
             selection1.y = GetMouseY();
         }
     }
-    if(IsMouseButtonDown(MOUSE_BUTTON_LEFT) && mouseMode == selectingMultiple){
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) && mouseMode == selectingMultiple) {
         selection2.x = GetMouseX();
         selection2.y = GetMouseY();
 
         selection = {
-                .x = min(selection1.x, selection2.x),.y= min(selection1.y, selection2.y),
-                .width= abs(selection1.x- selection2.x),.height=  abs(selection1.y- selection2.y)
+                .x = min(selection1.x, selection2.x), .y= min(selection1.y, selection2.y),
+                .width= abs(selection1.x - selection2.x), .height=  abs(selection1.y - selection2.y)
         };
 
 
-        DrawRectangleRec(selection, {75,75,128,100});
+        DrawRectangleRec(selection, {75, 75, 128, 100});
     }
-    if(IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && mouseMode == selectingMultiple){
+    if (IsMouseButtonReleased(MOUSE_BUTTON_LEFT) && mouseMode == selectingMultiple) {
         mouseMode = none;
         selectedParts.clear();
 
-        for (part* p: partsList) {
+        for (part *p: partsList) {
             Rectangle s = cameraAntiDisplace(selection, camera);
             if (CheckCollisionRecs(s, p->bounds)) selectedParts.push_back(p);
         }
@@ -281,7 +279,8 @@ int gui::save() {
         NFD_FreePath(outPath);
         NFD_Quit();
         return 0;
-    } else if (result == NFD_CANCEL) {return 1;
+    } else if (result == NFD_CANCEL) {
+        return 1;
     } else {
         printf("Error: %s\n", NFD_GetError());
         return 1;
@@ -316,7 +315,7 @@ int gui::load() {
 void gui::updateParts() {
 
 
-    for (part* part: std::ranges::views::reverse(partsList)) {
+    for (part *part: std::ranges::views::reverse(partsList)) {
         //part->onUse();
 
         part->drag(camera);
@@ -335,30 +334,30 @@ void gui::updateParts() {
 
     BeginMode2D(camera);
 
-    for (part* part: partsList) {
+    for (part *part: partsList) {
         if (part->bounds.height == 0) delete part;
         part->drawPorts(camera);
 
     }
-    for(part* part: selectedParts){
+    for (part *part: selectedParts) {
         Rectangle b = part->bounds;
         int out = 7;
         b.width += 2 * out;
         b.height += 2 * out;
         b.x -= out;
         b.y -= out;
-        DrawRectangleRec(b, {75,75,128,100});
+        DrawRectangleRec(b, {75, 75, 128, 100});
     }
 
-    for (part* part: partsList) {
+    for (part *part: partsList) {
         //part->onUse();
-        if (part->bounds.height == 0)  delete part;
+        if (part->bounds.height == 0) delete part;
         part->draw(camera);
     }
 
     EndMode2D();
 
-    for (part* part: partsList) {
+    for (part *part: partsList) {
         if (part->bounds.height == 0) delete part;
         part->drawIgnoreCam(camera);
 

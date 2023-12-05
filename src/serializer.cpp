@@ -68,13 +68,14 @@ void serializer::deserialize(std::string filePath) {
 
             float valueF = port["valueF"];;
             Vector3 valueV3 = port["valueV3"];
+            bool boolean = port["valueB"];
 
 
             matrix valueM = matrix::from_json(port["valueM"]);
 
 
             p->setValue(
-                    {._float = valueF, ._vector3 = valueV3, ._matrix = valueM});
+                    {._float = valueF, ._vector3 = valueV3, ._matrix = valueM, ._boolean = boolean});
         }
     }
 }

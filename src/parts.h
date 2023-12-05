@@ -21,6 +21,8 @@
 #include "parts/c24.h"
 #include "parts/matrixKernel.h"
 #include "parts/lightBalance.h"
+#include "parts/boxKernel.h"
+#include "parts/polgonPairRegister.h"
 
 
 

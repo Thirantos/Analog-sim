@@ -34,8 +34,8 @@ matrix matrix::operator%(matrix kernel) {
 
 
             float f = *this->at(x, y);
-            int centerX = kernel.matrixValue.size();
-            int centerY = kernel.matrixValue[0].size();
+            int centerX = kernel.matrixValue.size()/2;
+            int centerY = kernel.matrixValue[0].size()/2;
 
             for (int x2 = 0; x2 < kernel.matrixValue.size(); ++x2) {
                 for (int y2 = 0; y2 < kernel.matrixValue[x2].size(); ++y2) {

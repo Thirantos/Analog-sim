@@ -1,9 +1,6 @@
 
 #ifndef ANALOGSIM_COMPONENT_H
 #define ANALOGSIM_COMPONENT_H
-#define PART_DIAL 1
-#define PART_PLUS 2
-#define PART_SENSOR 3
 
 #include <vector>
 #include <string>
@@ -38,6 +35,7 @@ struct packet{
     float _float;
     Vector3 _vector3;
     matrix _matrix = matrix(0,0);
+    bool _boolean;
 
 };
 

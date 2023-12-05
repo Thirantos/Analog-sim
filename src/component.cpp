@@ -616,6 +616,8 @@ void Port::serialize(json *Data) {
     value()._matrix.to_json(portj["valueM"]);
     portj["valueF"] = value()._float;
     portj["valueV3"] = value()._vector3;
+    portj["valueB"] = value()._boolean;
+
 
     Data->push_back(portj);
 }
@@ -642,6 +644,9 @@ part *constructorFromName(const std::string &className, int x, int y, int id, js
     PARTNAME(vectorBetweenVectors)
     PARTNAME(scaleVector)
     PARTNAME(c24)
+    PARTNAME(boxKernel)
+    PARTNAME(polgonPairRegister)
+
     PARTNAME(matrixKernel)
     PARTNAME(lightBalance)
 
@@ -671,7 +676,10 @@ Color colorFromType(std::string type) {
         return RED;
     }else if (type == "m"){// matrix
         return GREEN;
+    }else if (type == "b") {// matrix
+        return BLUE;
     }
+
 
     return BLACK;
 }
